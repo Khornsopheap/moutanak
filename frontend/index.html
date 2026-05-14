@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moutanak — Farm to Door</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: oklch(62.7% 0.194 149.214);
+            --green-dark: oklch(45% 0.16 150);
+            --green-light: oklch(96.2% 0.044 156.743);
+            --accent: oklch(72.3% 0.219 149.579);
+            --amber: oklch(78% 0.17 70);
+        }
+        * { box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--green-light); }
+        h1, h2, .display { font-family: 'Playfair Display', serif; }
+
+        .slide { display: none; animation: fadeSlide 0.6s ease; }
+        .slide.active { display: flex; }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        #cart-drawer { transform: translateX(100%); transition: transform 0.35s cubic-bezier(.4,0,.2,1); }
+        #cart-drawer.open { transform: translateX(0); }
+        #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        #cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        #mobile-menu.open { max-height: 400px; }
+
+        #toast { transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(.4,0,.2,1); }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        #search-bar { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease; }
+        #search-bar.open { max-height: 80px; padding-top: 12px; padding-bottom: 12px; }
+
+        .product-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); }
+        .product-card .add-btn { transition: all 0.2s; }
+        .product-card:hover .add-btn { background: var(--green-dark); }
+
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s; }
+        .dot.active { background: var(--green); transform: scale(1.3); }
+
+        .qty-btn { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+        .qty-btn:hover { background: #e5e7eb; }
+
+        .cat-pill.active { background: var(--green); color: white; }
+
+        @keyframes pulse-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        .badge-pulse { animation: pulse-badge 0.4s ease; }
+
+        .cat-scroll::-webkit-scrollbar { height: 4px; }
+        .cat-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        .heart-btn { transition: transform 0.2s, color 0.2s; }
+        .heart-btn:hover { transform: scale(1.2); }
+        .heart-btn.liked { color: #ef4444; }
+
+        /* Banner gradient overlay */
+        .hero-gradient { background: linear-gradient(135deg, oklch(96.2% 0.044 156.743) 40%, oklch(90% 0.08 150) 100%); }
+
+        /* Promo badge */
+        .promo-badge { background: linear-gradient(135deg, #f97316, #ef4444); }
+
+        /* Star rating */
+        .stars { color: #fbbf24; }
+
+        /* Section fade in */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.6s ease both; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="sticky top-0 z-50 mt-4 px-[5vw]">
+    <div class="flex justify-between items-center px-5 border border-slate-200 rounded-full py-2.5 bg-white/90 backdrop-blur-md shadow-lg">
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--green)">
+                <i class="fa-solid fa-leaf text-white text-sm"></i>
+            </div>
+            <span class="font-bold text-xl" style="font-family:'Playfair Display',serif; color:var(--green-dark)">Moutanak</span>
+        </div>
+        <!-- Desktop nav -->
+        <ul class="hidden lg:flex gap-7 font-medium text-slate-600 items-center">
+            <li><a href="#" class="hover:text-green-600 transition">Home</a></li>
+            <li><a href="#" class="hover:text-green-600 transition">Products</a></li>
+            <li><a href="#" class="hover:text-green-600 transition">Categories</a></li>
+            <li><a href="#" class="hover:text-green-600 transition">Deals</a></li>
+            <li><a href="#" class="hover:text-green-600 transition">Contact</a></li>
+        </ul>
+        <!-- Actions -->
+        <div class="flex items-center gap-2">
+            <button onclick="toggleSearch()" class="hidden lg:flex w-9 h-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition text-slate-500 cursor-pointer">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
+            <button onclick="openCart()" class="relative w-9 h-9 flex items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition text-slate-500 cursor-pointer">
+                <i class="fa-solid fa-basket-shopping text-sm"></i>
+                <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full text-white text-[10px] font-bold flex items-center justify-center hidden" style="background:var(--green)">0</span>
+            </button>
+            <button 
+                onclick="openSellerModal()" 
+                class="hidden lg:flex items-center gap-2 border border-green-500 text-green-700 font-semibold px-5 py-2 rounded-full text-sm cursor-pointer transition hover:bg-green-50">
+                <i class="fa-solid fa-store"></i>
+                Become a Seller
+            </button>
+            <button onclick="openModal()" class="hidden lg:flex items-center gap-2 text-white font-semibold px-5 py-2 rounded-full text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+                Sign Up
+            </button>
+            <button onclick="toggleMobileMenu()" class="lg:hidden w-9 h-9 flex items-center justify-center rounded-full border border-slate-200 cursor-pointer">
+                <i class="fa-solid fa-bars text-slate-600" id="menu-icon"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Search bar dropdown -->
+    <div id="search-bar" class="px-5 bg-white/90 backdrop-blur-md rounded-2xl mx-2 mt-2 border border-slate-200">
+        <div class="relative">
+            <input id="search-input" type="text" placeholder="Search for fresh vegetables, fruits, dairy…" oninput="filterProducts(this.value)"
+                class="w-full border border-slate-200 rounded-full py-2.5 px-5 pr-10 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 text-sm">
+            <span class="absolute right-4 top-2.5 text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+        </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="lg:hidden bg-white/95 backdrop-blur-md rounded-2xl mx-2 mt-2 border border-slate-200 overflow-hidden">
+        <div class="px-5 py-4 flex flex-col gap-3 text-slate-700 font-medium">
+            <a href="#" class="py-1.5 hover:text-green-600 border-b border-slate-100">Home</a>
+            <a href="#" class="py-1.5 hover:text-green-600 border-b border-slate-100">Products</a>
+            <a href="#" class="py-1.5 hover:text-green-600 border-b border-slate-100">Categories</a>
+            <a href="#" class="py-1.5 hover:text-green-600 border-b border-slate-100">Deals</a>
+            <a href="#" class="py-1.5 hover:text-green-600 border-b border-slate-100">Contact</a>
+            <div class="flex gap-3 pt-2">
+                <button onclick="openModal()" class="flex-1 text-white font-semibold py-2 rounded-full text-sm cursor-pointer" style="background:var(--green)">Sign Up</button>
+                <button onclick="openModalLogin()" class="flex-1 border border-green-500 text-green-600 font-semibold py-2 rounded-full text-sm cursor-pointer">Log In</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO SLIDESHOW -->
+<section class="mx-[5vw] mt-6 rounded-3xl overflow-hidden relative" style="min-height:420px">
+    <!-- Slide 1 -->
+    <div class="slide active hero-gradient min-h-[420px] items-center justify-between px-10 lg:px-20 gap-8 relative">
+        <div class="flex-1 py-10">
+            <span class="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 text-white" style="background:var(--green)">🌿 Fresh & Organic</span>
+            <h1 class="text-4xl lg:text-6xl font-black leading-tight text-slate-800 mb-4">Farm to Door<br><span style="color:var(--green)">Delivered Fresh</span></h1>
+            <p class="text-slate-600 text-lg mb-8 max-w-md">Order from hundreds of local farms and get everything delivered fast, fresh, and right to your doorstep.</p>
+            <div class="flex gap-3 flex-wrap">
+                <button onclick="scrollToProducts()" class="px-7 py-3 rounded-full font-semibold text-white text-base shadow-lg cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+                    <i class="fa-solid fa-basket-shopping mr-2"></i>Shop Now
+                </button>
+                <button class="px-7 py-3 rounded-full font-semibold border-2 border-green-500 text-green-700 text-base cursor-pointer hover:bg-green-50 transition">
+                    <i class="fa-solid fa-play mr-2"></i>Watch Video
+                </button>
+            </div>
+            <div class="flex gap-8 mt-8">
+                <div><p class="font-black text-2xl text-slate-800">500+</p><p class="text-slate-500 text-sm">Products</p></div>
+                <div><p class="font-black text-2xl text-slate-800">50k+</p><p class="text-slate-500 text-sm">Customers</p></div>
+                <div><p class="font-black text-2xl text-slate-800">1hr</p><p class="text-slate-500 text-sm">Delivery</p></div>
+            </div>
+        </div>
+        <div class="hidden md:flex flex-1 justify-center items-end">
+            <img src="https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg" alt="Fresh Vegetables" class="w-80 h-80 object-cover rounded-full shadow-2xl border-4 border-white">
+        </div>
+    </div>
+    <!-- Slide 2 -->
+    <div class="slide hero-gradient min-h-[420px] items-center justify-between px-10 lg:px-20 gap-8" style="background: linear-gradient(135deg, oklch(98% 0.03 70) 40%, oklch(92% 0.08 65) 100%)">
+        <div class="flex-1 py-10">
+            <span class="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 text-white promo-badge">🔥 Hot Deals</span>
+            <h1 class="text-4xl lg:text-6xl font-black leading-tight text-slate-800 mb-4">Up to <span class="text-orange-500">40% OFF</span><br>This Weekend</h1>
+            <p class="text-slate-600 text-lg mb-8 max-w-md">Flash sale on premium organic produce. Limited time only — grab the freshest deals before they're gone!</p>
+            <div class="flex gap-4 mb-8">
+                <div class="text-center bg-white rounded-2xl px-4 py-3 shadow-md">
+                    <p id="cd-h" class="font-black text-3xl text-orange-500">04</p><p class="text-xs text-slate-500 font-medium">Hours</p>
+                </div>
+                <div class="text-center bg-white rounded-2xl px-4 py-3 shadow-md">
+                    <p id="cd-m" class="font-black text-3xl text-orange-500">23</p><p class="text-xs text-slate-500 font-medium">Mins</p>
+                </div>
+                <div class="text-center bg-white rounded-2xl px-4 py-3 shadow-md">
+                    <p id="cd-s" class="font-black text-3xl text-orange-500">59</p><p class="text-xs text-slate-500 font-medium">Secs</p>
+                </div>
+            </div>
+            <button onclick="scrollToProducts()" class="px-7 py-3 rounded-full font-semibold text-white text-base shadow-lg cursor-pointer transition promo-badge">
+                <i class="fa-solid fa-fire mr-2"></i>Grab the Deal
+            </button>
+        </div>
+        <div class="hidden md:flex flex-1 justify-center items-center">
+            <div class="relative">
+                <img src="https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg" alt="Deals" class="w-80 h-80 object-cover rounded-3xl shadow-2xl border-4 border-white rotate-3">
+                <div class="absolute -top-4 -right-4 w-20 h-20 rounded-full promo-badge text-white flex items-center justify-center font-black text-lg shadow-xl">40%<br>OFF</div>
+            </div>
+        </div>
+    </div>
+    <!-- Slide 3 -->
+    <div class="slide hero-gradient min-h-[420px] items-center justify-between px-10 lg:px-20 gap-8" style="background: linear-gradient(135deg, oklch(97% 0.02 260) 40%, oklch(91% 0.06 255) 100%)">
+        <div class="flex-1 py-10">
+            <span class="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 text-white bg-blue-500">🚀 Free Delivery</span>
+            <h1 class="text-4xl lg:text-6xl font-black leading-tight text-slate-800 mb-4">Free Delivery<br><span class="text-blue-500">On Every Order</span></h1>
+            <p class="text-slate-600 text-lg mb-8 max-w-md">Subscribe to our membership plan and enjoy unlimited free same-day delivery. Fresh produce, zero fees.</p>
+            <button class="px-7 py-3 rounded-full font-semibold text-white text-base shadow-lg cursor-pointer transition bg-blue-500 hover:bg-blue-600">
+                <i class="fa-solid fa-crown mr-2"></i>Get Membership
+            </button>
+        </div>
+        <div class="hidden md:flex flex-1 justify-center items-center">
+            <img src="https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg" alt="Delivery" class="w-72 h-72 object-cover rounded-3xl shadow-2xl border-4 border-white -rotate-3">
+        </div>
+    </div>
+    <!-- Controls -->
+    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div class="dot active" onclick="goToSlide(0)"></div>
+        <div class="dot" onclick="goToSlide(1)"></div>
+        <div class="dot" onclick="goToSlide(2)"></div>
+    </div>
+    <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer transition z-10">
+        <i class="fa-solid fa-chevron-left text-slate-600 text-sm"></i>
+    </button>
+    <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer transition z-10">
+        <i class="fa-solid fa-chevron-right text-slate-600 text-sm"></i>
+    </button>
+</section>
+
+<!-- TRUST BADGES -->
+<section class="mx-[5vw] my-8 grid grid-cols-2 lg:grid-cols-4 gap-4 fade-up">
+    <div class="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-slate-100">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:oklch(95% 0.06 150)">
+            <i class="fa-solid fa-truck-fast text-xl" style="color:var(--green)"></i>
+        </div>
+        <div><p class="font-bold text-sm text-slate-800">Same Day Delivery</p><p class="text-xs text-slate-500">Order before 2PM</p></div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-slate-100">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:oklch(95% 0.06 150)">
+            <i class="fa-solid fa-leaf text-xl" style="color:var(--green)"></i>
+        </div>
+        <div><p class="font-bold text-sm text-slate-800">100% Organic</p><p class="text-xs text-slate-500">Certified products</p></div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-slate-100">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:oklch(95% 0.06 150)">
+            <i class="fa-solid fa-rotate-left text-xl" style="color:var(--green)"></i>
+        </div>
+        <div><p class="font-bold text-sm text-slate-800">Easy Returns</p><p class="text-xs text-slate-500">30-day return policy</p></div>
+    </div>
+    <div class="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-slate-100">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:oklch(95% 0.06 150)">
+            <i class="fa-solid fa-lock text-xl" style="color:var(--green)"></i>
+        </div>
+        <div><p class="font-bold text-sm text-slate-800">Secure Payment</p><p class="text-xs text-slate-500">100% secure checkout</p></div>
+    </div>
+</section>
+
+<!-- CATEGORY PILLS -->
+<section class="mx-[5vw] mb-6">
+    <div class="flex gap-3 overflow-x-auto cat-scroll pb-2 items-center">
+        <p class="font-bold text-slate-700 text-sm whitespace-nowrap mr-2">Browse:</p>
+        <button class="cat-pill active whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white cursor-pointer transition hover:bg-green-50" onclick="filterCat('all', this)">All Items</button>
+        <button class="cat-pill whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white cursor-pointer transition hover:bg-green-50" onclick="filterCat('vegetable', this)">🥦 Vegetables</button>
+        <button class="cat-pill whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white cursor-pointer transition hover:bg-green-50" onclick="filterCat('fruit', this)">🍎 Fruits</button>
+        <button class="cat-pill whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white cursor-pointer transition hover:bg-green-50" onclick="filterCat('dairy', this)">🥛 Dairy</button>
+        <button class="cat-pill whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white cursor-pointer transition hover:bg-green-50" onclick="filterCat('grain', this)">🌾 Grains</button>
+        <button class="cat-pill whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 bg-white cursor-pointer transition hover:bg-green-50" onclick="filterCat('herb', this)">🌿 Herbs</button>
+    </div>
+</section>
+
+<!-- HORIZONTAL CATEGORY CARDS SCROLL -->
+<section class="mx-[5vw] mb-8">
+    <div class="flex gap-4 overflow-x-auto cat-scroll pb-2 snap-x snap-mandatory">
+        <div class="snap-center shrink-0 w-56 rounded-2xl bg-white border border-slate-200 p-4 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition group">
+            <img class="w-24 h-24 object-cover rounded-xl group-hover:scale-105 transition" src="https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg" alt="Vegetables">
+            <div class="text-center"><p class="font-bold text-slate-800">Vegetables</p><p class="text-xs text-slate-500">120+ products</p></div>
+            <button class="w-full rounded-full py-1.5 text-sm font-semibold text-white cursor-pointer transition" style="background:var(--green)">View All</button>
+        </div>
+        <div class="snap-center shrink-0 w-56 rounded-2xl bg-white border border-slate-200 p-4 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition group">
+            <img class="w-24 h-24 object-cover rounded-xl group-hover:scale-105 transition" src="https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg" alt="Fruits">
+            <div class="text-center"><p class="font-bold text-slate-800">Fruits</p><p class="text-xs text-slate-500">80+ products</p></div>
+            <button class="w-full rounded-full py-1.5 text-sm font-semibold text-white cursor-pointer transition" style="background:var(--green)">View All</button>
+        </div>
+        <div class="snap-center shrink-0 w-56 rounded-2xl bg-white border border-slate-200 p-4 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition group">
+            <img class="w-24 h-24 object-cover rounded-xl group-hover:scale-105 transition" src="https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg" alt="Dairy">
+            <div class="text-center"><p class="font-bold text-slate-800">Dairy & Eggs</p><p class="text-xs text-slate-500">45+ products</p></div>
+            <button class="w-full rounded-full py-1.5 text-sm font-semibold text-white cursor-pointer transition" style="background:var(--green)">View All</button>
+        </div>
+        <div class="snap-center shrink-0 w-56 rounded-2xl bg-white border border-slate-200 p-4 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition group">
+            <img class="w-24 h-24 object-cover rounded-xl group-hover:scale-105 transition" src="https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg" alt="Grains">
+            <div class="text-center"><p class="font-bold text-slate-800">Grains & Rice</p><p class="text-xs text-slate-500">30+ products</p></div>
+            <button class="w-full rounded-full py-1.5 text-sm font-semibold text-white cursor-pointer transition" style="background:var(--green)">View All</button>
+        </div>
+        <div class="snap-center shrink-0 w-56 rounded-2xl bg-white border border-slate-200 p-4 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition group">
+            <img class="w-24 h-24 object-cover rounded-xl group-hover:scale-105 transition" src="https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg" alt="Herbs">
+            <div class="text-center"><p class="font-bold text-slate-800">Herbs & Spices</p><p class="text-xs text-slate-500">60+ products</p></div>
+            <button class="w-full rounded-full py-1.5 text-sm font-semibold text-white cursor-pointer transition" style="background:var(--green)">View All</button>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUCTS SECTION -->
+<section id="products-section" class="mx-[5vw] my-6">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-black text-slate-800">Fresh Products</h2>
+        <div class="flex items-center gap-3">
+            <span id="product-count" class="text-sm text-slate-500">Showing 8 items</span>
+            <button class="text-sm font-semibold cursor-pointer transition hover:underline" style="color:var(--green)">View All →</button>
+        </div>
+    </div>
+    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <!-- Products rendered by JS -->
+    </div>
+    <div id="no-results" class="hidden text-center py-20 text-slate-500">
+        <i class="fa-solid fa-magnifying-glass text-5xl mb-4 block"></i>
+        <p class="text-xl font-bold">No products found</p>
+        <p class="text-sm mt-2">Try a different search or category</p>
+    </div>
+</section>
+
+<!-- PROMO BANNER -->
+<section class="mx-[5vw] my-8 rounded-3xl overflow-hidden relative" style="background: linear-gradient(135deg, oklch(45% 0.16 150), oklch(62.7% 0.194 149.214))">
+    <div class="flex flex-col md:flex-row items-center justify-between px-10 py-8 gap-6">
+        <div class="text-white">
+            <p class="text-sm font-semibold uppercase tracking-widest opacity-80 mb-2">Limited Time Offer</p>
+            <h2 class="text-3xl lg:text-4xl font-black mb-3">Get 20% Off Your<br>First Order!</h2>
+            <p class="opacity-80 mb-5">Use code <span class="bg-white/20 px-3 py-1 rounded-full font-mono font-bold">FRESH20</span> at checkout</p>
+            <button onclick="openModal()" class="bg-white font-bold px-8 py-3 rounded-full cursor-pointer hover:bg-slate-100 transition text-sm" style="color:var(--green-dark)">Claim Offer</button>
+        </div>
+        <img src="https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg" alt="Promo" class="w-52 h-52 object-cover rounded-2xl shadow-xl border-4 border-white/30 hidden md:block">
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="mx-[5vw] my-8">
+    <h2 class="text-2xl font-black text-slate-800 mb-6">What Customers Say</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="stars mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="text-slate-600 text-sm mb-4">"Absolutely love the freshness! My vegetables arrived within an hour and they were perfectly crisp. Will order again!"</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background:var(--green)">SR</div>
+                <div><p class="font-bold text-sm text-slate-800">Sophea Ros</p><p class="text-xs text-slate-500">Phnom Penh</p></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="stars mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="text-slate-600 text-sm mb-4">"Best grocery app I've used. Super easy to navigate, prices are fair, and the delivery is lightning fast!"</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm bg-blue-500">KV</div>
+                <div><p class="font-bold text-sm text-slate-800">Kunthea Vong</p><p class="text-xs text-slate-500">Siem Reap</p></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="stars mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+            <p class="text-slate-600 text-sm mb-4">"Great selection of organic produce. The herbs are always so aromatic and the corn is the sweetest I've ever had."</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm bg-orange-400">DN</div>
+                <div><p class="font-bold text-sm text-slate-800">Dara Noun</p><p class="text-xs text-slate-500">Battambang</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="mx-[5vw] mb-8 mt-6 bg-slate-800 rounded-3xl text-white px-8 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--green)"><i class="fa-solid fa-leaf text-white text-sm"></i></div>
+                <span class="font-bold text-xl" style="font-family:'Playfair Display',serif">Moutanak</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">Farm-fresh groceries delivered to your door. Supporting local farmers, one order at a time.</p>
+            <div class="flex gap-3 mt-4">
+                <a href="#" class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center hover:bg-green-600 transition cursor-pointer"><i class="fab fa-facebook-f text-sm"></i></a>
+                <a href="#" class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center hover:bg-green-600 transition cursor-pointer"><i class="fab fa-instagram text-sm"></i></a>
+                <a href="#" class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center hover:bg-green-600 transition cursor-pointer"><i class="fab fa-tiktok text-sm"></i></a>
+            </div>
+        </div>
+        <div>
+            <p class="font-bold mb-4 text-sm uppercase tracking-wider text-slate-300">Quick Links</p>
+            <ul class="space-y-2 text-slate-400 text-sm">
+                <li><a href="#" class="hover:text-white transition">Home</a></li>
+                <li><a href="#" class="hover:text-white transition">Products</a></li>
+                <li><a href="#" class="hover:text-white transition">Deals & Offers</a></li>
+                <li><a href="#" class="hover:text-white transition">About Us</a></li>
+            </ul>
+        </div>
+        <div>
+            <p class="font-bold mb-4 text-sm uppercase tracking-wider text-slate-300">Help</p>
+            <ul class="space-y-2 text-slate-400 text-sm">
+                <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                <li><a href="#" class="hover:text-white transition">Shipping Policy</a></li>
+                <li><a href="#" class="hover:text-white transition">Returns</a></li>
+                <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+            </ul>
+        </div>
+        <div>
+            <p class="font-bold mb-4 text-sm uppercase tracking-wider text-slate-300">Newsletter</p>
+            <p class="text-slate-400 text-sm mb-3">Get fresh deals in your inbox every week.</p>
+            <div class="flex gap-2">
+                <input type="email" placeholder="your@email.com" class="flex-1 bg-slate-700 rounded-full px-4 py-2 text-sm outline-none border border-slate-600 focus:border-green-500">
+                <button class="px-4 py-2 rounded-full text-white text-sm font-semibold cursor-pointer" style="background:var(--green)"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="border-t border-slate-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-slate-500 text-sm">
+        <p>© 2026 Moutanak. All rights reserved.</p>
+        <div class="flex gap-4">
+            <i class="fab fa-cc-visa text-2xl text-slate-400"></i>
+            <i class="fab fa-cc-mastercard text-2xl text-slate-400"></i>
+            <i class="fab fa-cc-paypal text-2xl text-slate-400"></i>
+        </div>
+    </div>
+</footer>
+
+<!-- CART OVERLAY -->
+<div id="cart-overlay" class="fixed inset-0 bg-black/50 z-60" onclick="closeCart()"></div>
+
+<!-- CART DRAWER -->
+<div id="cart-drawer" class="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-70 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+        <h2 class="text-xl font-black text-slate-800">My Cart <span id="cart-count-text" class="text-base font-normal text-slate-500">(0 items)</span></h2>
+        <button onclick="closeCart()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center cursor-pointer transition">
+            <i class="fa-solid fa-xmark text-slate-600"></i>
+        </button>
+    </div>
+    <div id="cart-items" class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div id="cart-empty" class="text-center py-20 text-slate-400">
+            <i class="fa-solid fa-basket-shopping text-5xl mb-4 block"></i>
+            <p class="font-bold text-lg">Your cart is empty</p>
+            <p class="text-sm mt-1">Add some fresh products!</p>
+        </div>
+    </div>
+    <div class="px-6 py-5 border-t border-slate-100 bg-slate-50">
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-slate-600 text-sm">Subtotal</span>
+            <span id="cart-subtotal" class="font-bold text-slate-800">$0.00</span>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-slate-600 text-sm">Delivery</span>
+            <span class="font-semibold text-green-600 text-sm">FREE</span>
+        </div>
+        <div class="flex justify-between items-center mb-5 text-lg font-black text-slate-800">
+            <span>Total</span>
+            <span id="cart-total">$0.00</span>
+        </div>
+        <button class="w-full py-3 rounded-full text-white font-bold text-base cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+            <i class="fa-solid fa-lock mr-2"></i>Checkout
+        </button>
+        <button onclick="closeCart()" class="w-full py-3 mt-2 rounded-full border border-slate-200 text-slate-600 font-semibold text-base cursor-pointer hover:bg-slate-100 transition">
+            Continue Shopping
+        </button>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-80 px-6 py-3 rounded-full text-white font-semibold shadow-2xl flex items-center gap-3 text-sm pointer-events-none" style="background:var(--green)">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toast-message">Added to cart!</span>
+</div>
+
+<!-- SIGN UP MODAL -->
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-70 p-4">
+    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden relative">
+        <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center cursor-pointer transition z-10">
+            <i class="fa-solid fa-xmark text-slate-600"></i>
+        </button>
+        <div class="flex flex-col lg:flex-row">
+            <div class="hidden lg:flex lg:w-1/2 items-center justify-center" style="background: linear-gradient(135deg, oklch(62.7% 0.194 149.214), oklch(45% 0.16 150))">
+                <div class="p-12 text-white text-center">
+                    <i class="fa-solid fa-leaf text-6xl mb-6 block"></i>
+                    <h2 class="text-3xl font-black mb-3" style="font-family:'Playfair Display',serif">Join Moutanak</h2>
+                    <p class="opacity-80">Get access to exclusive deals and fresh produce delivered to your door.</p>
+                </div>
+            </div>
+            <div class="w-full lg:w-1/2 p-8">
+                <h2 class="text-2xl font-black text-slate-800 mb-1" style="font-family:'Playfair Display',serif">Create Account</h2>
+                <p class="text-slate-500 text-sm mb-6">Join thousands of happy customers</p>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <label class="block mb-1.5 text-sm font-semibold text-slate-700">Username</label>
+                        <input type="text" placeholder="Enter your username" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
+                        <i class="fa-solid fa-circle-user absolute right-4 top-9 text-slate-400"></i>
+                    </div>
+                    <div class="relative">
+                        <label class="block mb-1.5 text-sm font-semibold text-slate-700">Email</label>
+                        <input type="email" placeholder="Enter your email" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
+                        <i class="fa-solid fa-envelope absolute right-4 top-9 text-slate-400"></i>
+                    </div>
+                    <div class="relative">
+                        <label class="block mb-1.5 text-sm font-semibold text-slate-700">Phone Number</label>
+                        <input type="text" placeholder="Enter your phone number" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
+                        <i class="fa-solid fa-phone absolute right-4 top-9 text-slate-400"></i>
+                    </div>
+                    <div class="relative">
+                        <label class="block mb-1.5 text-sm font-semibold text-slate-700">Password</label>
+                        <input id="signup-pwd" type="password" placeholder="Create a password" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
+                        <i class="fa-solid fa-eye absolute right-4 top-9 text-slate-400 cursor-pointer" onclick="togglePwd('signup-pwd', this)"></i>
+                    </div>
+                    <button class="w-full py-3 rounded-xl text-white font-bold text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+                        Create Account
+                    </button>
+                </div>
+                <p class="text-center text-slate-500 text-sm mt-4">Already have an account? <a href="#" onclick="closeModal();openModalLogin()" class="font-bold hover:underline" style="color:var(--green)">Log In</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="modallogin" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-70 p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative p-8">
+        <button onclick="closeModalLogin()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center cursor-pointer transition">
+            <i class="fa-solid fa-xmark text-slate-600"></i>
+        </button>
+        <div class="text-center mb-6">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:var(--green)">
+                <i class="fa-solid fa-leaf text-white text-xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800" style="font-family:'Playfair Display',serif">Welcome Back</h2>
+            <p class="text-slate-500 text-sm mt-1">Sign in to your account</p>
+        </div>
+        <div class="space-y-4">
+            <div class="relative">
+                <label class="block mb-1.5 text-sm font-semibold text-slate-700">Username</label>
+                <input type="text" placeholder="Enter your username" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
+                <i class="fa-solid fa-circle-user absolute right-4 top-9 text-slate-400"></i>
+            </div>
+            <div class="relative">
+                <label class="block mb-1.5 text-sm font-semibold text-slate-700">Password</label>
+                <input id="login-pwd" type="password" placeholder="Enter your password" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
+                <i class="fa-solid fa-eye absolute right-4 top-9 text-slate-400 cursor-pointer" onclick="togglePwd('login-pwd', this)"></i>
+                <p class="text-right mt-1 text-xs font-semibold cursor-pointer hover:underline" style="color:var(--green)">Forgot password?</p>
+            </div>
+            <button class="w-full py-3 rounded-xl text-white font-bold text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+                Sign In
+            </button>
+            <button class="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                <i class="fab fa-google text-red-500"></i> Continue with Google
+            </button>
+        </div>
+        <p class="text-center text-slate-500 text-sm mt-4">Don't have an account? <a href="#" onclick="closeModalLogin();openModal()" class="font-bold hover:underline" style="color:var(--green)">Sign Up</a></p>
+    </div>
+</div>
+
+<script>
+// ===== PRODUCTS DATA =====
+const products = [
+    { id:1, name:'Organic Sweet Corn', price:2.50, img:'https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg', cat:'vegetable', badge:'Organic', rating:5, reviews:42, inStock:true },
+    { id:2, name:'Fresh Broccoli Crown', price:3.00, img:'https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg', cat:'vegetable', badge:'Local', rating:4, reviews:28, inStock:true },
+    { id:3, name:'Crisp Gala Apples', price:4.50, img:'https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg', cat:'fruit', badge:'Sale', rating:5, reviews:61, inStock:true },
+    { id:4, name:'Free Range Eggs (12)', price:6.00, img:'https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg', cat:'dairy', badge:null, rating:5, reviews:89, inStock:true },
+    { id:5, name:'Jasmine Rice 1kg', price:3.50, img:'https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg', cat:'grain', badge:'Best Seller', rating:4, reviews:114, inStock:true },
+    { id:6, name:'Fresh Mint Bundle', price:1.50, img:'https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg', cat:'herb', badge:'New', rating:4, reviews:17, inStock:true },
+    { id:7, name:'Baby Spinach 200g', price:2.00, img:'https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg', cat:'vegetable', badge:'Organic', rating:5, reviews:33, inStock:false },
+    { id:8, name:'Ripe Banana Bunch', price:1.80, img:'https://i.pinimg.com/1200x/9a/f9/54/9af95411a83b13ab636ff3775005546d.jpg', cat:'fruit', badge:null, rating:4, reviews:52, inStock:true },
+];
+
+let cart = {};
+let liked = new Set();
+
+function badgeColor(b) {
+    const colors = { Organic:'bg-green-100 text-green-700', Local:'bg-blue-100 text-blue-700', Sale:'bg-red-100 text-red-600', New:'bg-purple-100 text-purple-700', 'Best Seller':'bg-amber-100 text-amber-700' };
+    return colors[b] || 'bg-slate-100 text-slate-600';
+}
+function stars(n) {
+    let s='';
+    for(let i=1;i<=5;i++) s += `<i class="fa-${i<=n?'solid':'regular'} fa-star text-xs"></i>`;
+    return s;
+}
+
+function renderProducts(list) {
+    const grid = document.getElementById('product-grid');
+    const noRes = document.getElementById('no-results');
+    document.getElementById('product-count').textContent = `Showing ${list.length} item${list.length!==1?'s':''}`;
+    if(!list.length) { grid.innerHTML=''; noRes.classList.remove('hidden'); return; }
+    noRes.classList.add('hidden');
+    grid.innerHTML = list.map(p => `
+    <div class="product-card bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 relative" data-cat="${p.cat}">
+        ${p.badge ? `<span class="absolute top-3 left-3 z-10 text-xs font-bold px-2 py-0.5 rounded-full ${badgeColor(p.badge)}">${p.badge}</span>` : ''}
+        <button class="heart-btn absolute top-3 right-3 z-10 text-slate-300 ${liked.has(p.id)?'liked':''} cursor-pointer" onclick="toggleLike(${p.id}, this)">
+            <i class="fa-${liked.has(p.id)?'solid':'regular'} fa-heart text-xl"></i>
+        </button>
+        <div class="overflow-hidden h-44 bg-slate-50 flex items-center justify-center">
+            <img class="w-full h-full object-cover hover:scale-105 transition duration-300" src="${p.img}" alt="${p.name}">
+        </div>
+        <div class="p-4">
+            <p class="font-bold text-sm text-slate-800 mb-1 leading-snug">${p.name}</p>
+            <div class="flex items-center gap-1 mb-1 stars">${stars(p.rating)} <span class="text-xs text-slate-400 font-normal ml-1">(${p.reviews})</span></div>
+            <p class="text-xs mb-3 font-semibold ${p.inStock?'text-green-500':'text-red-400'}">
+                <i class="fa-solid fa-circle-${p.inStock?'check':'xmark'} mr-1"></i>${p.inStock?'In Stock':'Out of Stock'}
+            </p>
+            <div class="flex items-center justify-between gap-2">
+                <p class="font-black text-lg text-slate-800">$${p.price.toFixed(2)}</p>
+                ${p.inStock ? `<button onclick="addToCart(${p.id})" class="add-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition" style="background:var(--green)">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>` : `<button disabled class="px-3 py-2 rounded-xl text-slate-400 text-xs font-bold bg-slate-100 cursor-not-allowed">Unavailable</button>`}
+            </div>
+        </div>
+    </div>`).join('');
+}
+
+function toggleLike(id, el) {
+    if(liked.has(id)) { liked.delete(id); el.classList.remove('liked'); el.innerHTML='<i class="fa-regular fa-heart text-xl"></i>'; }
+    else { liked.add(id); el.classList.add('liked'); el.innerHTML='<i class="fa-solid fa-heart text-xl"></i>'; showToast('💚 Added to wishlist'); }
+}
+
+function addToCart(id) {
+    const p = products.find(x=>x.id===id);
+    if(!p) return;
+    cart[id] = cart[id] ? { ...cart[id], qty: cart[id].qty+1 } : { ...p, qty:1 };
+    updateCartUI();
+    showToast(`🛒 ${p.name} added to cart!`);
+    // animate badge
+    const badge = document.getElementById('cart-badge');
+    badge.classList.add('badge-pulse');
+    setTimeout(()=>badge.classList.remove('badge-pulse'),400);
+}
+
+function removeFromCart(id) {
+    delete cart[id];
+    updateCartUI();
+    renderCartDrawer();
+}
+
+function changeQty(id, delta) {
+    if(!cart[id]) return;
+    cart[id].qty += delta;
+    if(cart[id].qty <= 0) removeFromCart(id);
+    else { updateCartUI(); renderCartDrawer(); }
+}
+
+function updateCartUI() {
+    const total = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+    const subtotal = Object.values(cart).reduce((s,i)=>s+i.price*i.qty,0);
+    const badge = document.getElementById('cart-badge');
+    if(total>0) { badge.textContent=total; badge.classList.remove('hidden'); }
+    else { badge.classList.add('hidden'); }
+    document.getElementById('cart-count-text').textContent=`(${total} item${total!==1?'s':''})`;
+    document.getElementById('cart-subtotal').textContent=`$${subtotal.toFixed(2)}`;
+    document.getElementById('cart-total').textContent=`$${subtotal.toFixed(2)}`;
+}
+
+function renderCartDrawer() {
+    const el = document.getElementById('cart-items');
+    const empty = document.getElementById('cart-empty');
+    const items = Object.values(cart);
+    if(!items.length) { el.innerHTML=''; el.appendChild(empty); empty.classList.remove('hidden'); return; }
+    empty.classList.add('hidden');
+    el.innerHTML = items.map(i=>`
+    <div class="flex gap-3 items-center">
+        <img src="${i.img}" class="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-100">
+        <div class="flex-1 min-w-0">
+            <p class="font-semibold text-sm text-slate-800 truncate">${i.name}</p>
+            <p class="text-xs text-slate-500 mt-0.5">$${i.price.toFixed(2)} each</p>
+            <div class="flex items-center gap-2 mt-2">
+                <button onclick="changeQty(${i.id},-1)" class="qty-btn border border-slate-200 text-slate-600"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                <span class="text-sm font-bold w-5 text-center">${i.qty}</span>
+                <button onclick="changeQty(${i.id},1)" class="qty-btn border border-slate-200 text-slate-600"><i class="fa-solid fa-plus text-[10px]"></i></button>
+            </div>
+        </div>
+        <div class="text-right flex-shrink-0">
+            <p class="font-black text-slate-800">$${(i.price*i.qty).toFixed(2)}</p>
+            <button onclick="removeFromCart(${i.id})" class="text-xs text-red-400 hover:text-red-600 mt-1 cursor-pointer transition">Remove</button>
+        </div>
+    </div>`).join('<div class="border-t border-slate-100"></div>');
+}
+
+function openCart() { 
+    document.getElementById('cart-drawer').classList.add('open');
+    document.getElementById('cart-overlay').classList.add('open');
+    renderCartDrawer();
+}
+function closeCart() {
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-message').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ===== SEARCH & FILTER =====
+let currentCat = 'all';
+let currentSearch = '';
+
+function filterProducts(q) {
+    currentSearch = q.toLowerCase();
+    applyFilters();
+}
+function filterCat(cat, btn) {
+    currentCat = cat;
+    document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+}
+function applyFilters() {
+    let list = products;
+    if(currentCat!=='all') list = list.filter(p=>p.cat===currentCat);
+    if(currentSearch) list = list.filter(p=>p.name.toLowerCase().includes(currentSearch));
+    renderProducts(list);
+}
+
+// ===== SLIDESHOW =====
+let currentSlide = 0;
+const slideInterval = 5000;
+let slideTimer;
+
+function goToSlide(n) {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    currentSlide = (n + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+    resetSlideTimer();
+}
+function nextSlide() { goToSlide(currentSlide+1); }
+function prevSlide() { goToSlide(currentSlide-1); }
+function resetSlideTimer() { clearInterval(slideTimer); slideTimer = setInterval(nextSlide, slideInterval); }
+slideTimer = setInterval(nextSlide, slideInterval);
+
+// ===== COUNTDOWN =====
+let cdSec = 4*3600+23*60+59;
+setInterval(()=>{
+    cdSec--;
+    if(cdSec<0) cdSec=86399;
+    const h=Math.floor(cdSec/3600), m=Math.floor((cdSec%3600)/60), s=cdSec%60;
+    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+},1000);
+
+// ===== MODALS =====
+function openModal() { document.getElementById('modal').classList.remove('hidden'); document.getElementById('modal').classList.add('flex'); }
+function closeModal() { document.getElementById('modal').classList.add('hidden'); document.getElementById('modal').classList.remove('flex'); }
+function openModalLogin() { document.getElementById('modallogin').classList.remove('hidden'); document.getElementById('modallogin').classList.add('flex'); }
+function closeModalLogin() { document.getElementById('modallogin').classList.add('hidden'); document.getElementById('modallogin').classList.remove('flex'); }
+
+// close modal on backdrop click
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('modallogin').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModalLogin(); });
+
+// ===== MOBILE MENU =====
+function toggleMobileMenu() {
+    const m = document.getElementById('mobile-menu');
+    const icon = document.getElementById('menu-icon');
+    m.classList.toggle('open');
+    icon.className = m.classList.contains('open') ? 'fa-solid fa-xmark text-slate-600' : 'fa-solid fa-bars text-slate-600';
+}
+
+// ===== SEARCH BAR =====
+function toggleSearch() {
+    const sb = document.getElementById('search-bar');
+    sb.classList.toggle('open');
+    if(sb.classList.contains('open')) document.getElementById('search-input').focus();
+}
+
+// ===== PASSWORD TOGGLE =====
+function togglePwd(id, icon) {
+    const inp = document.getElementById(id);
+    if(inp.type==='password') { inp.type='text'; icon.className=icon.className.replace('fa-eye','fa-eye-slash'); }
+    else { inp.type='password'; icon.className=icon.className.replace('fa-eye-slash','fa-eye'); }
+}
+
+// ===== SELLER PAGE =====
+function openSellerPage() {
+    document.getElementById('seller-page').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSellerPage() {
+    document.getElementById('seller-page').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// ===== SCROLL TO PRODUCTS =====
+function scrollToProducts() { document.getElementById('products-section').scrollIntoView({behavior:'smooth', block:'start'}); }
+
+// Init
+renderProducts(products);
+</script>
+
+<!-- SELLER PAGE -->
+<section id="seller-page" class="hidden fixed inset-0 z-[100] bg-slate-50 overflow-y-auto">
+    
+    <!-- Top Bar -->
+    <div class="sticky top-0 bg-white border-b border-slate-200 px-[5vw] py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+            <button onclick="closeSellerPage()" class="w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 transition cursor-pointer">
+                <i class="fa-solid fa-arrow-left text-slate-600"></i>
+            </button>
+
+            <div>
+                <h2 class="text-2xl font-black text-slate-800" style="font-family:'Playfair Display',serif">
+                    Become a Seller
+                </h2>
+                <p class="text-sm text-slate-500">Start selling fresh products on Moutanak</p>
+            </div>
+        </div>
+
+        <button class="hidden md:block px-6 py-3 rounded-full text-white font-bold cursor-pointer"
+            style="background:var(--green)">
+            Submit Application
+        </button>
+    </div>
+
+    <!-- Hero -->
+    <div class="px-[5vw] py-10">
+        <div class="rounded-3xl overflow-hidden p-10 text-white flex flex-col lg:flex-row items-center justify-between gap-8"
+            style="background: linear-gradient(135deg, oklch(45% 0.16 150), oklch(62.7% 0.194 149.214))">
+
+            <div class="max-w-xl">
+                <span class="bg-white/20 px-4 py-1 rounded-full text-sm font-semibold">
+                    🌿 Trusted Marketplace
+                </span>
+
+                <h1 class="text-4xl lg:text-5xl font-black mt-5 mb-4 leading-tight"
+                    style="font-family:'Playfair Display',serif">
+                    Grow Your Farm Business Online
+                </h1>
+
+                <p class="text-white/80 text-lg mb-6">
+                    Join hundreds of local farmers and reach thousands of customers looking for fresh organic products every day.
+                </p>
+
+                <div class="flex gap-4 flex-wrap">
+                    <div class="bg-white/10 rounded-2xl px-5 py-4">
+                        <p class="text-3xl font-black">50K+</p>
+                        <p class="text-sm text-white/70">Customers</p>
+                    </div>
+
+                    <div class="bg-white/10 rounded-2xl px-5 py-4">
+                        <p class="text-3xl font-black">500+</p>
+                        <p class="text-sm text-white/70">Active Sellers</p>
+                    </div>
+
+                    <div class="bg-white/10 rounded-2xl px-5 py-4">
+                        <p class="text-3xl font-black">24/7</p>
+                        <p class="text-sm text-white/70">Seller Support</p>
+                    </div>
+                </div>
+            </div>
+
+            <img src="https://i.pinimg.com/736x/1c/09/8d/1c098de09433dfd928107f372640d969.jpg"
+                class="w-80 h-80 object-cover rounded-3xl border-4 border-white/30 shadow-2xl">
+        </div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="px-[5vw] pb-10">
+        <h2 class="text-3xl font-black text-slate-800 mb-6"
+            style="font-family:'Playfair Display',serif">
+            Why Sell With Us?
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                    style="background:oklch(95% 0.06 150)">
+                    <i class="fa-solid fa-chart-line text-2xl" style="color:var(--green)"></i>
+                </div>
+
+                <h3 class="font-black text-xl text-slate-800 mb-2">Increase Sales</h3>
+
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    Reach more customers online and grow your business faster than traditional markets.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                    style="background:oklch(95% 0.06 150)">
+                    <i class="fa-solid fa-truck-fast text-2xl" style="color:var(--green)"></i>
+                </div>
+
+                <h3 class="font-black text-xl text-slate-800 mb-2">Fast Delivery</h3>
+
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    Our delivery system helps your products arrive fresh and quickly to customers.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                    style="background:oklch(95% 0.06 150)">
+                    <i class="fa-solid fa-handshake text-2xl" style="color:var(--green)"></i>
+                </div>
+
+                <h3 class="font-black text-xl text-slate-800 mb-2">Trusted Platform</h3>
+
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    Build trust with verified customers and secure online payments.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seller Form -->
+    <div class="px-[5vw] pb-16">
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 max-w-4xl mx-auto">
+
+            <h2 class="text-3xl font-black text-slate-800 mb-2"
+                style="font-family:'Playfair Display',serif">
+                Seller Registration
+            </h2>
+
+            <p class="text-slate-500 mb-8">
+                Fill in your information to start selling on Moutanak.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <div>
+                    <label class="block mb-2 text-sm font-semibold text-slate-700">
+                        Full Name
+                    </label>
+
+                    <input type="text"
+                        placeholder="Enter your full name"
+                        class="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-semibold text-slate-700">
+                        Farm / Shop Name
+                    </label>
+
+                    <input type="text"
+                        placeholder="Enter business name"
+                        class="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-semibold text-slate-700">
+                        Phone Number
+                    </label>
+
+                    <input type="text"
+                        placeholder="Enter phone number"
+                        class="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-semibold text-slate-700">
+                        Email Address
+                    </label>
+
+                    <input type="email"
+                        placeholder="Enter email address"
+                        class="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block mb-2 text-sm font-semibold text-slate-700">
+                        What Products Do You Sell?
+                    </label>
+
+                    <textarea rows="5"
+                        placeholder="Vegetables, fruits, dairy, herbs..."
+                        class="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"></textarea>
+                </div>
+
+            </div>
+
+            <button
+                class="mt-8 w-full py-4 rounded-2xl text-white font-bold text-lg cursor-pointer transition"
+                style="background:var(--green)"
+                onmouseover="this.style.background='var(--green-dark)'"
+                onmouseout="this.style.background='var(--green)'">
+                Submit Seller Application
+            </button>
+
+        </div>
+    </div>
+
+</section>
+</body>
+</html>
