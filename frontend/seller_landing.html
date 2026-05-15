@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moutanak Seller Central — Empowering Khmer Produce</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: oklch(62.7% 0.194 149.214);
+            --green-dark: oklch(45% 0.16 150);
+            --green-light: oklch(96.2% 0.044 156.743);
+            --accent: oklch(72.3% 0.219 149.579);
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--green-light); scroll-behavior: smooth; }
+        h1, h2, h3, .display { font-family: 'Playfair Display', serif; }
+
+        .slide { display: none; animation: fadeSlide 0.6s ease; }
+        .slide.active { display: flex; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+        #cart-drawer { transform: translateX(100%); transition: transform 0.4s cubic-bezier(.4,0,.2,1); }
+        #cart-drawer.open { transform: translateX(0); }
+        #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        #cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        .product-card { transition: all 0.3s ease; }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s; }
+        .dot.active { background: var(--green); transform: scale(1.3); }
+
+        #toast { transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(.4,0,.2,1); }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        .cat-pill.active { background: var(--green); color: white; border-color: var(--green); }
+        .stat-card { background: white; border-radius: 2rem; padding: 2rem; border: 1px solid var(--green-light); transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--green); }
+    </style>
+</head>
+<body class="min-h-screen text-slate-900">
+
+<!-- NAVBAR -->
+<nav class="sticky top-0 z-50 mt-4 px-[5vw]">
+    <div class="flex justify-between items-center px-6 border border-slate-200 rounded-full py-3 bg-white/90 backdrop-blur-md shadow-lg">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-white" style="background:var(--green)">
+                <i class="fa-solid fa-leaf text-sm"></i>
+            </div>
+            <span class="font-black text-2xl tracking-tight text-slate-800 display">Moutanak</span>
+        </div>
+        <ul class="hidden lg:flex gap-8 font-semibold text-slate-600">
+            <li><a href="#" class="hover:text-green-600 transition">Benefits</a></li>
+            <li><a href="#success-stories" class="hover:text-green-600 transition">Success Stories</a></li>
+            <li><a href="#earning-potential" class="hover:text-green-600 transition">Earning Potential</a></li>
+            <li><a href="#faq" class="hover:text-green-600 transition">Support</a></li>
+        </ul>
+        <div class="flex items-center gap-4">
+            <button onclick="window.location.href='seller_register.html'"  class="px-6 py-2.5 rounded-full font-bold text-white text-sm shadow-lg transition hover:scale-105 active:scale-95 cursor-pointer" style="background:var(--green)">
+                Register Now
+            </button>
+            <button class="md:hidden text-xl text-slate-600"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO SLIDESHOW -->
+<section class="max-w-7xl mx-auto px-[5vw] mt-8">
+    <div class="h-[550px] rounded-[3.5rem] overflow-hidden relative shadow-2xl">
+        <!-- Slide 1 -->
+        <div class="slide active h-full items-center justify-between px-12 lg:px-24 bg-white flex gap-12">
+            <div class="flex-1">
+                <span class="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 bg-green-100 text-green-700">💰 Profit Focused</span>
+                <h1 class="text-5xl lg:text-7xl font-black leading-tight text-slate-900 mb-6 tracking-tight">Turn Your Produce into <span class="text-green-600">Pure Profit</span></h1>
+                <p class="text-slate-500 text-lg mb-10 max-w-lg leading-relaxed">Top sellers on Moutanak earn an average of <b>$2,500/month</b>. We don't just list products; we build empires for Khmer farmers and artisans.</p>
+                <div class="flex gap-4">
+                    <button onclick="openSellerModal()" class="px-10 py-4 rounded-full font-bold text-white shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer" style="background:var(--green)">Open Your Store Now</button>
+                </div>
+            </div>
+            <div class="hidden lg:block flex-1 relative h-full">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                <div class="absolute bottom-12 left-[-10%] bg-white p-6 rounded-3xl shadow-2xl flex items-center gap-4 border border-green-50">
+                    <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600"><i class="fa-solid fa-wallet text-2xl"></i></div>
+                    <div><p class="font-bold text-2xl text-slate-900">$12,450.00</p><p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Top Earner This Week</p></div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide h-full items-center justify-between px-12 lg:px-24 bg-white flex gap-12" style="background: linear-gradient(135deg, white, var(--green-light))">
+            <div class="flex-1">
+                <span class="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 bg-amber-100 text-amber-700">📈 Viral Growth</span>
+                <h1 class="text-5xl lg:text-7xl font-black leading-tight text-slate-900 mb-6 tracking-tight">Your Store, <br><span class="text-amber-500">Always Busy</span></h1>
+                <p class="text-slate-500 text-lg mb-10 max-w-lg leading-relaxed">Our platform serves over <b>500,000 active shoppers</b> every month. We handle the marketing, you handle the harvest.</p>
+                <button onclick="scrollToSuccess()" class="px-10 py-4 rounded-full font-bold text-white bg-amber-500 shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer">See Success Stories</button>
+            </div>
+            <div class="hidden lg:block flex-1 rounded-[2.5rem] overflow-hidden h-[85%] border-8 border-white shadow-2xl rotate-2">
+                <img src="https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+            </div>
+        </div>
+        <!-- Controls -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+            <div class="dot active" onclick="goToSlide(0)"></div>
+            <div class="dot" onclick="goToSlide(1)"></div>
+        </div>
+    </div>
+</section>
+
+<!-- REAL REVENUE STATS -->
+<section id="earning-potential" class="max-w-7xl mx-auto px-[5vw] py-16">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Total Seller Payouts</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">$8.2M+</h3>
+            <p class="text-green-600 text-xs font-bold mt-2"><i class="fa-solid fa-arrow-trend-up"></i> +12% this month</p>
+        </div>
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Active Stores</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">1,580</h3>
+            <p class="text-slate-500 text-xs font-bold mt-2">Verified Khmer Sellers</p>
+        </div>
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Average Order Value</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">$42.50</h3>
+            <p class="text-green-600 text-xs font-bold mt-2">Highest in category</p>
+        </div>
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Platform Traffic</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">520K</h3>
+            <p class="text-slate-500 text-xs font-bold mt-2">Monthly active visitors</p>
+        </div>
+    </div>
+</section>
+
+
+<!-- WHY SELL SECTION -->
+<section id="why-sell" class="max-w-7xl mx-auto px-[5vw] py-24">
+    <div class="text-center mb-16">
+        <h2 class="text-5xl font-black text-slate-900 mb-4">Why Sell with Us?</h2>
+        <p class="text-slate-500 text-xl max-w-2xl mx-auto">We provide the tools and reach you need to scale your business across the Kingdom.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div class="md:col-span-8 bg-white p-12 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-12 hover:border-green-300 transition-colors cursor-default">
+            <div class="flex-1">
+                <div class="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-8 text-2xl"><i class="fa-solid fa-users"></i></div>
+                <h3 class="text-3xl font-black mb-4">Reach More Customers</h3>
+                <p class="text-slate-500 text-lg leading-relaxed">Tap into our massive database of active shoppers seeking high-quality Khmer products. We handle the traffic so you can focus on your craft.</p>
+            </div>
+            <div class="w-full md:w-1/2 rounded-[2rem] overflow-hidden aspect-video shadow-2xl">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3daiUnPYwV4fNM-IEAXL9OYr469drXPz2r1WWbp746qcPxzFcTVIOyoVGOw-8lZNBhbncsKsh4UoNnB3Wl-yxzEr83CY3rPDz1CUHGhM62qvzLp6749qA1G936hcMnBvSBjyPpGVfP6lXHgLajYr2cAiA3Kxz8JIgP-fWltXF338er63eM-ojSmu2GQAwnzzKdDoRykW2e1-ZeNkOeM6DK112x7tDoJRoIEBFa7LS_45iIfbyRqERT3r_KLNHRMk5xoOx3pX1cKk" class="w-full h-full object-cover">
+            </div>
+        </div>
+        <div class="md:col-span-4 bg-green-600 p-12 rounded-[3rem] text-white flex flex-col justify-between shadow-2xl shadow-green-200">
+            <div>
+                <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-8 text-2xl"><i class="fa-solid fa-seedling"></i></div>
+                <h3 class="text-3xl font-black mb-4">Support Khmer Produce</h3>
+                <p class="text-white/80 text-lg">Join a movement that prioritizes local artisans and farmers. Build national pride through quality commerce.</p>
+            </div>
+            <i class="fa-solid fa-store text-9xl absolute -bottom-4 -right-4 opacity-10"></i>
+        </div>
+        <div class="md:col-span-4 bg-slate-100 p-12 rounded-[3rem] flex flex-col justify-between border border-slate-200 group hover:bg-white transition-colors">
+            <div>
+                <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-8 text-2xl text-green-600 shadow-sm"><i class="fa-solid fa-percent"></i></div>
+                <h3 class="text-3xl font-black mb-4 tracking-tight">Low Commission</h3>
+                <p class="text-slate-500 text-lg">We believe in fair trade. Our transparent, low-fee structure ensures you keep more of your profits.</p>
+            </div>
+            <div class="mt-12 flex justify-between items-center py-4 border-t border-slate-200 group-hover:border-green-200 transition">
+                <span class="text-2xl font-black text-green-600">Starting from 2%</span>
+                <i class="fa-solid fa-arrow-right text-slate-300 group-hover:text-green-600 group-hover:translate-x-2 transition"></i>
+            </div>
+        </div>
+        <div class="md:col-span-8 bg-white p-12 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col md:flex-row-reverse items-center gap-12 hover:border-green-300 transition-colors cursor-default">
+            <div class="flex-1">
+                <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 mb-8 text-2xl"><i class="fa-solid fa-headset"></i></div>
+                <h3 class="text-3xl font-black mb-4">Seller Support</h3>
+                <p class="text-slate-500 text-lg leading-relaxed">Dedicated account managers and local Khmer-speaking support to help you navigate every step of your store's growth.</p>
+            </div>
+            <div class="w-full md:w-1/2 rounded-[2rem] overflow-hidden aspect-video shadow-2xl">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuATpR8lFzjPnVFXc3qd-xYlSIZOYQVj3kgmE9K3Pv3D--UtcXylLub9Ywrs_maV6Fk-sUXlSGJCJJnWo12RY3U6vZwMoHPxEvMIUwJPssPGdEEGLNswwhlIwkB7DyOWkKuESe0-Vw-7_y5drF1KtNEJR7RiI9TQJIv68hv16kmJDmMmqog-kNB7VP3pTouewnYaPLu3zbDCxS_PiT4Fq2p6KRoZZE3HqRyJJqrrl5fJkFOQmi09qB-GgTVadZlla2lPBLdgXPBAj34" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STEPS SUCCESS -->
+<section class="bg-white py-24 px-[5vw]">
+    <div class="max-w-7xl mx-auto text-center">
+        <h2 class="text-4xl font-black display text-slate-800 mb-20">3 Simple Steps to Success</h2>
+        <div class="relative grid grid-cols-1 md:grid-cols-3 gap-16">
+            <div class="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-px border-t-2 border-dashed border-slate-200 z-0"></div>
+            <div class="flex flex-col items-center gap-6 relative z-10">
+                <div class="w-22 h-22 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-600 text-2xl shadow-xl shadow-green-50"><i class="fa-solid fa-user-plus"></i></div>
+                <h4 class="text-2xl font-bold">Register</h4>
+                <p class="text-slate-500 max-w-xs">Create your seller account in minutes with basic business information.</p>
+            </div>
+            <div class="flex flex-col items-center gap-6 relative z-10">
+                <div class="w-22 h-22 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-600 text-2xl shadow-xl shadow-green-50"><i class="fa-solid fa-upload"></i></div>
+                <h4 class="text-2xl font-bold">List Products</h4>
+                <p class="text-slate-500 max-w-xs">Upload high-quality photos and descriptions of your Khmer produce.</p>
+            </div>
+            <div class="flex flex-col items-center gap-6 relative z-10">
+                <div class="w-22 h-22 rounded-full bg-green-600 border-4 border-white flex items-center justify-center text-white text-2xl shadow-2xl shadow-green-200"><i class="fa-solid fa-rocket"></i></div>
+                <h4 class="text-2xl font-bold">Start Earning</h4>
+                <p class="text-slate-500 max-w-xs">Receive orders, fulfill them, and get paid weekly directly to your bank.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SUCCESS STORIES SECTION -->
+<section id="success-stories" class="max-w-7xl mx-auto px-[5vw] py-24 border-y border-slate-100">
+    <div class="text-center mb-16">
+        <h2 class="text-4xl font-black display text-slate-900 mb-2">Powering these Khmer Brands</h2>
+        <p class="text-slate-500 text-lg">See how these local businesses achieved massive growth with us.</p>
+    </div>
+    <div id="seller-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Seller Success Card 1 -->
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative group overflow-hidden">
+            <div class="h-56 rounded-[1.5rem] overflow-hidden mb-8 bg-slate-50">
+                <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            </div>
+            <div class="mb-6">
+                <h4 class="text-2xl font-black text-slate-800 mb-1 italic">Vanna's Spicy Farm</h4>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    <span class="text-slate-400 font-bold ml-2">4.9/5</span>
+                </div>
+            </div>
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Total Items Sold:</span><span class="font-bold">12,400+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Revenue (6-Mo):</span><span class="font-black text-green-600">$45,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Province:</span><span class="font-bold">Kampot</span></div>
+            </div>
+            <p class="text-slate-500 italic text-sm mb-8 leading-relaxed">"Moutanak completely changed my life. I used to sell only to local markets, now I have customers from Phnom Penh to Siem Reap!"</p>
+        </div>
+
+        <!-- Seller Success Card 2 -->
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative group overflow-hidden">
+            <div class="h-56 rounded-[1.5rem] overflow-hidden mb-8 bg-slate-50">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            </div>
+            <div class="mb-6">
+                <h4 class="text-2xl font-black text-slate-800 mb-1 italic">The Khmer Weaver</h4>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    <span class="text-slate-400 font-bold ml-2">4.7/5</span>
+                </div>
+            </div>
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Total Items Sold:</span><span class="font-bold">8,200+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Revenue (6-Mo):</span><span class="font-black text-green-600">$21,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Province:</span><span class="font-bold">Takeo</span></div>
+            </div>
+            <p class="text-slate-500 italic text-sm mb-8 leading-relaxed">"Joining the Seller Central was the best decision for my small business. The commission is very fair and logistics are effortless."</p>
+        </div>
+
+        <!-- Seller Success Card 3 -->
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative group overflow-hidden">
+            <div class="h-56 rounded-[1.5rem] overflow-hidden mb-8 bg-slate-50">
+                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            </div>
+            <div class="mb-6">
+                <h4 class="text-2xl font-black text-slate-800 mb-1 italic">Gold Jasmine Coop</h4>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    <span class="text-slate-400 font-bold ml-2">5.0/5</span>
+                </div>
+            </div>
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Total Items Sold:</span><span class="font-bold">25,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Revenue (6-Mo):</span><span class="font-black text-green-600">$180,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Province:</span><span class="font-bold">Battambang</span></div>
+            </div>
+            <p class="text-slate-500 italic text-sm mb-8 leading-relaxed">"We scaled from 5 families to 50 families. Moutanak gave us national visibility and a reliable flow of orders every single day."</p>
+        </div>
+    </div>
+    <div class="mt-16 text-center">
+        <button onclick="openSellerModal()" class="px-12 py-5 bg-slate-900 text-white font-black rounded-full shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1">Start Your Story Today</button>
+    </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faq" class="max-w-7xl mx-auto px-[5vw] py-24">
+    <div class="flex flex-col md:flex-row gap-20">
+        <div class="md:w-1/3">
+            <h2 class="text-4xl font-black display text-slate-900 mb-6">Frequently Asked Questions</h2>
+            <p class="text-slate-500 text-lg leading-relaxed mb-10">Everything you need to know about becoming a successful seller on Moutanak.</p>
+            <div class="p-8 rounded-3xl bg-amber-50 border border-amber-100">
+                <p class="font-bold text-amber-900 mb-2">Still have questions?</p>
+                <p class="text-amber-800/70 text-sm mb-6">Our support team is here to help 24/7 in Khmer and English.</p>
+                <button class="flex items-center gap-2 text-amber-700 font-bold hover:gap-4 transition-all">Contact Support <i class="fa-solid fa-phone"></i></button>
+            </div>
+        </div>
+        <div class="flex-1 space-y-4">
+            <details class="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm open:shadow-md transition">
+                <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none list-none text-slate-800">
+                    What documents do I need to register?
+                    <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 border-t border-slate-50 pt-6">Valid Cambodian ID or Passport, business registration (if applicable), and bank account for automated payouts.</div>
+            </details>
+            <details class="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm open:shadow-md transition">
+                <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none list-none text-slate-800">
+                    How do I get paid?
+                    <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 border-t border-slate-50 pt-6">Payouts are sent weekly to your registered bank account for all orders fulfilled in the previous 7 days.</div>
+            </details>
+            <details class="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm open:shadow-md transition">
+                <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none list-none text-slate-800">
+                    Is delivery handled by Moutanak?
+                    <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 border-t border-slate-50 pt-6">Yes! We provide full logistics support, helping you deliver fresh from farm to door anywhere in the country.</div>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="max-w-7xl mx-auto px-[5vw] pb-24">
+    <div class="bg-slate-900 rounded-[3.5rem] p-16 md:p-32 text-center relative overflow-hidden text-white shadow-2xl">
+        <div class="relative z-10 max-w-2xl mx-auto">
+            <h2 class="text-5xl md:text-7xl font-black display mb-8">Ready to boost your profit?</h2>
+            <p class="text-white/60 text-lg mb-12">Join 1,500+ successful Cambodian sellers and start growing your brand with national pride.</p>
+            <button onclick="openSellerModal()" class="px-12 py-5 bg-green-600 text-white font-black text-xl rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all">Start Earning Today</button>
+        </div>
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute top-[-50%] left-[-20%] w-[150%] h-[150%] bg-green-500 blur-[200px] rounded-full"></div>
+            <div class="absolute bottom-[-50%] right-[-20%] w-[150%] h-[150%] bg-amber-500 blur-[200px] rounded-full"></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="bg-white border-t border-slate-100 px-[5vw] py-16">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+        <div class="flex flex-col gap-3 items-center md:items-start">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-leaf text-green-600 text-xl"></i>
+                <span class="font-black text-xl display">Moutanak</span>
+            </div>
+            <p class="text-slate-400 text-sm">© 2024 Moutanak Commerce. All Rights Reserved.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-8 font-bold text-slate-500">
+            <a href="#" class="hover:text-green-600 transition">About</a>
+            <a href="#" class="hover:text-green-600 transition">Terms</a>
+            <a href="#" class="hover:text-green-600 transition">Privacy</a>
+            <a href="#" class="hover:text-green-600 transition">Contact</a>
+        </div>
+        <div class="flex gap-4">
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition"><i class="fa-brands fa-facebook"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition"><i class="fa-brands fa-instagram"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition"><i class="fa-brands fa-tiktok"></i></div>
+        </div>
+    </div>
+</footer>
+
+<!-- SELLER MODAL (REGISTER) -->
+<div id="seller-modal" class="hidden fixed inset-0 z-[100] bg-black/70 backdrop-blur-md items-center justify-center p-6 bg-transparent">
+    <div class="bg-white rounded-[3rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto relative animate-in zoom-in duration-300 shadow-2xl">
+        <button onclick="closeSellerModal()" class="absolute top-8 right-8 text-3xl text-slate-300 hover:text-slate-500 z-10 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex flex-col lg:flex-row h-full">
+            <div class="lg:w-2/5 bg-green-600 p-12 text-white flex flex-col justify-center">
+                <i class="fa-solid fa-rocket text-6xl mb-8"></i>
+                <h2 class="text-4xl font-black display mb-6 leading-tight">Your Success Starts Today</h2>
+                <p class="text-white/70 text-lg leading-relaxed mb-8">Join the largest quality-conscious marketplace in Cambodia and scale your profit with expert tools.</p>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-green-200"></i><span>Priority listing placement</span></div>
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-green-200"></i><span>2% lowest commission</span></div>
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-green-200"></i><span>Instant payout access</span></div>
+                </div>
+            </div>
+            <div class="flex-1 p-12 overflow-y-auto">
+                <h3 class="text-3xl font-black display mb-8">Store Registration</h3>
+                <div class="space-y-6">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-bold text-slate-700">Full Name</label>
+                        <input type="text" placeholder="John Doe" class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:border-green-600 transition">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-bold text-slate-700">Business/Store Name</label>
+                        <input type="text" placeholder="Khmer Fresh Farm" class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:border-green-600 transition">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-bold text-slate-700">Phone Number (For Payouts)</label>
+                        <input type="tel" placeholder="+855 000 0000" class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:border-green-600 transition">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-bold text-slate-700">Province</label>
+                        <select class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:border-green-600 transition bg-white cursor-pointer">
+                            <option>Phnom Penh</option>
+                            <option>Siem Reap</option>
+                            <option>Kampot</option>
+                            <option>Battambang</option>
+                            <option>Kandal</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-bold text-slate-700">Business Type</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="px-4 py-3 rounded-xl border border-slate-200 text-sm font-bold hover:border-green-600 transition">Farmer</button>
+                            <button class="px-4 py-3 rounded-xl border border-slate-200 text-sm font-bold hover:border-green-600 transition">Artisan</button>
+                        </div>
+                    </div>
+                    <button class="w-full py-5 bg-green-600 text-white font-black rounded-2xl shadow-xl hover:bg-green-700 transition active:scale-95">Open My Store</button>
+                    <p class="text-center text-slate-400 text-xs mt-4">By clicking "Open My Store", you agree to the Moutanak Seller Agreement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 px-8 py-4 rounded-full text-white font-bold shadow-2xl flex items-center gap-3 z-[110]">
+    <i class="fa-solid fa-circle-check text-green-400"></i>
+    <span id="toast-text">Application submitted!</span>
+</div>
+
+<script>
+    // MODALS / DRAWER
+    function openSellerModal() { document.getElementById('seller-modal').className = 'fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-6'; }
+    function closeSellerModal() { document.getElementById('seller-modal').className = 'hidden fixed inset-0 z-[100]'; }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        const txt = document.getElementById('toast-text');
+        txt.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // SLIDESHOW
+    let currentSlide = 0;
+    function goToSlide(n) {
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+    setInterval(() => goToSlide(currentSlide + 1), 6000);
+
+    function scrollToSuccess() { document.getElementById('success-stories').scrollIntoView({ behavior: 'smooth' }); }
+</script>
+</body>
+</html>
+

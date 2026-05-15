@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moutanak Seller Central — Empowering Khmer Produce</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sand: '#F0EDE5',
+                        cream: '#F5F0E8',
+                        lemon: '#EDE8C0',
+                        sage: '#D6E8D0',
+                        mint: '#C8DFC8',
+                        sky: '#C8DCE8',
+                        green: {
+                            DEFAULT: '#3A8C3F',
+                            light: '#5AAF5F',
+                            dark: '#2A6A2E',
+                            pale: '#EAF3E0',
+                        },
+                        charcoal: '#1A2218',
+                    },
+                    fontFamily: {
+                        display: ['Sora', 'sans-serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --sand: #F0EDE5;
+            --cream: #F5F0E8;
+            --lemon: #EDE8C0;
+            --sage: #D6E8D0;
+            --mint: #C8DFC8;
+            --sky: #C8DCE8;
+            --green: #3A8C3F;
+            --green-light: #5AAF5F;
+            --green-dark: #2A6A2E;
+            --green-pale: #EAF3E0;
+            --charcoal: #1A2218;
+        }
+
+        body { 
+            font-family: 'DM Sans', sans-serif; 
+            background: var(--sand); 
+            color: var(--charcoal);
+            scroll-behavior: smooth; 
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse 55% 40% at 10% 20%, #D6E8D080 0%, transparent 60%),
+                radial-gradient(ellipse 45% 50% at 90% 80%, #C8DCE870 0%, transparent 60%),
+                radial-gradient(ellipse 35% 30% at 80% 10%, #EDE8C060 0%, transparent 55%);
+        }
+
+        h1, h2, h3, .brand, .display { 
+            font-family: 'Sora', sans-serif; 
+        }
+
+        .slide { 
+            display: none; 
+            animation: fadeSlide 0.6s ease; 
+        }
+
+        .slide.active { 
+            display: flex; 
+        }
+
+        @keyframes fadeSlide { 
+            from { opacity: 0; transform: translateX(30px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+
+        .dot { 
+            width: 10px; 
+            height: 10px; 
+            border-radius: 50%; 
+            background: #ccc; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+        }
+
+        .dot.active { 
+            background: var(--green); 
+            transform: scale(1.3); 
+        }
+
+        #toast { 
+            transform: translateY(100px); 
+            opacity: 0; 
+            transition: all 0.4s cubic-bezier(.4,0,.2,1); 
+        }
+
+        #toast.show { 
+            transform: translateY(0); 
+            opacity: 1; 
+        }
+
+        .stat-card { 
+            background: white; 
+            border-radius: 2rem; 
+            padding: 2rem; 
+            border: 1px solid var(--sage); 
+            transition: all 0.3s; 
+        }
+
+        .stat-card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--green); 
+            box-shadow: 0 10px 30px -10px rgba(26, 34, 24, 0.1);
+        }
+
+        .step-pill {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 50%;
+            font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px;
+            transition: all .3s;
+        }
+        .step-pill.done { background: var(--green); color: #fff; }
+        .step-pill.active { background: var(--charcoal); color: #fff; box-shadow: 0 0 0 4px var(--mint); }
+        .step-pill.idle { background: #fff; color: var(--charcoal); border: 1.5px solid var(--sage); }
+
+        .step-line { flex: 1; height: 2px; margin: 0 6px; border-radius: 2px; transition: background .3s; }
+        .step-line.done { background: var(--green); }
+        .step-line.idle { background: var(--sage); }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+
+        .finput {
+            width: 100%;
+            border: 1.5px solid var(--sage);
+            border-radius: 14px;
+            padding: 11px 14px;
+            font-size: 14px;
+            background: #fff;
+            color: var(--charcoal);
+            outline: none;
+            transition: .2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .finput:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(200, 223, 200, 0.44); }
+        .finput::placeholder { color: rgba(26, 34, 24, 0.3); }
+
+        select.finput { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233A8C3F' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+        textarea.finput { resize: vertical; min-height: 88px; line-height: 1.6; }
+
+        .flabel {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 12px; font-weight: 600; color: var(--charcoal);
+            margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em;
+        }
+
+        .ubox {
+            border: 2px dashed var(--mint);
+            border-radius: 16px;
+            padding: 20px 12px;
+            text-align: center;
+            background: #F5FBF0;
+            cursor: pointer;
+            transition: .2s;
+        }
+        .ubox:hover { border-color: var(--green); background: var(--green-pale); }
+        .ubox.uploaded { border-color: var(--green); border-style: solid; background: var(--green-pale); }
+        .ubox input[type=file] { display: none; }
+
+        .id-group {
+            border: 1.5px solid var(--sage);
+            border-radius: 20px;
+            padding: 16px;
+            background: #FAFDF8;
+        }
+
+        .pay-card {
+            border: 1.5px solid var(--sage);
+            border-radius: 18px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .check-row {
+            display: flex; align-items: flex-start; gap: 12px;
+            border: 1.5px solid var(--sage);
+            border-radius: 16px;
+            padding: 14px 16px;
+            background: #fff;
+        }
+        .check-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--green); flex-shrink: 0; margin-top: 1px; cursor: pointer; }
+
+        .btn-next {
+            background: var(--charcoal); color: #fff;
+            border: none; border-radius: 14px;
+            padding: 12px 28px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            transition: .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-next:hover { background: var(--green); }
+        .btn-next.submit-btn { background: var(--green); }
+        .btn-next.submit-btn:hover { background: var(--green-dark); }
+
+        .btn-prev {
+            border: 1.5px solid var(--sage); background: #fff; color: var(--charcoal);
+            border-radius: 14px; padding: 12px 22px;
+            font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-prev:hover { background: var(--sand); }
+
+        .tip-box {
+            background: var(--green-pale);
+            border-left: 3px solid var(--green);
+            border-radius: 0 12px 12px 0;
+            padding: 10px 14px;
+            font-size: 12px; color: var(--green-dark); font-weight: 500;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp .4s ease both; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-900">
+
+<!-- NAVBAR -->
+<nav class="sticky top-0 z-50 mt-4 px-[5vw]">
+    <div class="flex justify-between items-center px-6 border border-slate-200 rounded-full py-3 bg-white/90 backdrop-blur-md shadow-lg">
+        <div class="flex items-center gap-2">
+            <span class="brand text-2xl font-extrabold text-charcoal">
+                Moutanak<span class="text-green-600">.</span>
+            </span>
+        </div>
+        <ul class="hidden lg:flex gap-8 font-semibold text-slate-600">
+            <li><a href="#" class="hover:text-green-600 transition">Benefits</a></li>
+            <li><a href="#success-stories" class="hover:text-green-600 transition">Success Stories</a></li>
+            <li><a href="#earning-potential" class="hover:text-green-600 transition">Earning Potential</a></li>
+            <li><a href="#faq" class="hover:text-green-600 transition">Support</a></li>
+        </ul>
+        <div class="flex items-center gap-4">
+            <button onclick="openSellerModal()" class="px-6 py-2.5 rounded-full font-bold text-white text-sm shadow-lg transition hover:scale-105 active:scale-95 cursor-pointer" style="background:var(--green)">
+                Register Now
+            </button>
+            <button class="md:hidden text-xl text-slate-600"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO SLIDESHOW -->
+<section class="max-w-7xl mx-auto px-[5vw] mt-8">
+    <div class="h-[550px] rounded-[3.5rem] overflow-hidden relative shadow-2xl border border-sage/30">
+        <!-- Slide 1 -->
+        <div class="slide active h-full items-center justify-between px-12 lg:px-24 bg-white flex gap-12">
+            <div class="flex-1">
+                <span class="inline-block text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 bg-green-pale text-green-dark border border-mint">💰 Profit Focused</span>
+                <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight text-charcoal mb-6 tracking-tight">Turn Your Produce into <span class="text-green">Pure Profit</span></h1>
+                <p class="text-charcoal/60 text-lg mb-10 max-w-lg leading-relaxed">Top sellers on Moutanak earn an average of <b>$2,500/month</b>. We build digital empires for Khmer farmers and artisans.</p>
+                <div class="flex gap-4">
+                    <button onclick="openSellerModal()" class="px-10 py-4 rounded-full font-bold text-white shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer bg-green">Open Your Store Now</button>
+                </div>
+            </div>
+            <div class="hidden lg:block flex-1 relative h-full">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                <div class="absolute bottom-12 left-[-10%] bg-white p-6 rounded-3xl shadow-2xl flex items-center gap-4 border border-sage">
+                    <div class="w-14 h-14 bg-lemon rounded-2xl flex items-center justify-center text-charcoal"><i class="fa-solid fa-wallet text-2xl"></i></div>
+                    <div><p class="font-bold text-2xl text-charcoal">$12,450.00</p><p class="text-[10px] text-charcoal/50 font-bold uppercase tracking-wider">Top Earner This Week</p></div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide h-full items-center justify-between px-12 lg:px-24 bg-white flex gap-12" style="background: radial-gradient(ellipse 80% 100% at 30% 50%,#C8DFC8 0%,#EDE8C0 60%,#F5F0E8 100%)">
+            <div class="flex-1">
+                <span class="inline-block text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 bg-sky/30 text-sky-800 border border-sky/50">📈 Viral Growth</span>
+                <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight text-charcoal mb-6 tracking-tight">Your Store, <br><span class="text-green">Always Busy</span></h1>
+                <p class="text-charcoal/60 text-lg mb-10 max-w-lg leading-relaxed">Our platform serves over <b>500,000 active shoppers</b> every month. We handle the marketing, you handle the harvest.</p>
+                <button onclick="scrollToSuccess()" class="px-10 py-4 rounded-full font-bold text-white bg-charcoal shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer">See Success Stories</button>
+            </div>
+            <div class="hidden lg:block flex-1 rounded-[2.5rem] overflow-hidden h-[85%] border-8 border-white shadow-2xl rotate-2">
+                <img src="https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+            </div>
+        </div>
+        <!-- Controls -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+            <div class="dot active" onclick="goToSlide(0)"></div>
+            <div class="dot" onclick="goToSlide(1)"></div>
+        </div>
+    </div>
+</section>
+
+<!-- REAL REVENUE STATS -->
+<section id="earning-potential" class="max-w-7xl mx-auto px-[5vw] py-16">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Total Seller Payouts</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">$8.2M+</h3>
+            <p class="text-green-600 text-xs font-bold mt-2"><i class="fa-solid fa-arrow-trend-up"></i> +12% this month</p>
+        </div>
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Active Stores</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">1,580</h3>
+            <p class="text-slate-500 text-xs font-bold mt-2">Verified Khmer Sellers</p>
+        </div>
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Average Order Value</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">$42.50</h3>
+            <p class="text-green-600 text-xs font-bold mt-2">Highest in category</p>
+        </div>
+        <div class="stat-card">
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mb-2">Platform Traffic</p>
+            <h3 class="text-3xl font-black text-slate-800 lg:text-4xl">520K</h3>
+            <p class="text-slate-500 text-xs font-bold mt-2">Monthly active visitors</p>
+        </div>
+    </div>
+</section>
+
+
+<!-- WHY SELL SECTION -->
+<section id="why-sell" class="max-w-7xl mx-auto px-[5vw] py-24">
+    <div class="text-center mb-16">
+        <h2 class="text-5xl font-black text-slate-900 mb-4">Why Sell with Us?</h2>
+        <p class="text-slate-500 text-xl max-w-2xl mx-auto">We provide the tools and reach you need to scale your business across the Kingdom.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div class="md:col-span-8 bg-white p-12 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-12 hover:border-green-300 transition-colors cursor-default">
+            <div class="flex-1">
+                <div class="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-8 text-2xl"><i class="fa-solid fa-users"></i></div>
+                <h3 class="text-3xl font-black mb-4">Reach More Customers</h3>
+                <p class="text-slate-500 text-lg leading-relaxed">Tap into our massive database of active shoppers seeking high-quality Khmer products. We handle the traffic so you can focus on your craft.</p>
+            </div>
+            <div class="w-full md:w-1/2 rounded-[2rem] overflow-hidden aspect-video shadow-2xl">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3daiUnPYwV4fNM-IEAXL9OYr469drXPz2r1WWbp746qcPxzFcTVIOyoVGOw-8lZNBhbncsKsh4UoNnB3Wl-yxzEr83CY3rPDz1CUHGhM62qvzLp6749qA1G936hcMnBvSBjyPpGVfP6lXHgLajYr2cAiA3Kxz8JIgP-fWltXF338er63eM-ojSmu2GQAwnzzKdDoRykW2e1-ZeNkOeM6DK112x7tDoJRoIEBFa7LS_45iIfbyRqERT3r_KLNHRMk5xoOx3pX1cKk" class="w-full h-full object-cover">
+            </div>
+        </div>
+        <div class="md:col-span-4 bg-green-600 p-12 rounded-[3rem] text-white flex flex-col justify-between shadow-2xl shadow-green-200">
+            <div>
+                <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-8 text-2xl"><i class="fa-solid fa-seedling"></i></div>
+                <h3 class="text-3xl font-black mb-4">Support Khmer Produce</h3>
+                <p class="text-white/80 text-lg">Join a movement that prioritizes local artisans and farmers. Build national pride through quality commerce.</p>
+            </div>
+            <i class="fa-solid fa-store text-9xl absolute -bottom-4 -right-4 opacity-10"></i>
+        </div>
+        <div class="md:col-span-4 bg-slate-100 p-12 rounded-[3rem] flex flex-col justify-between border border-slate-200 group hover:bg-white transition-colors">
+            <div>
+                <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-8 text-2xl text-green-600 shadow-sm"><i class="fa-solid fa-percent"></i></div>
+                <h3 class="text-3xl font-black mb-4 tracking-tight">Low Commission</h3>
+                <p class="text-slate-500 text-lg">We believe in fair trade. Our transparent, low-fee structure ensures you keep more of your profits.</p>
+            </div>
+            <div class="mt-12 flex justify-between items-center py-4 border-t border-slate-200 group-hover:border-green-200 transition">
+                <span class="text-2xl font-black text-green-600">Starting from 2%</span>
+                <i class="fa-solid fa-arrow-right text-slate-300 group-hover:text-green-600 group-hover:translate-x-2 transition"></i>
+            </div>
+        </div>
+        <div class="md:col-span-8 bg-white p-12 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col md:flex-row-reverse items-center gap-12 hover:border-green-300 transition-colors cursor-default">
+            <div class="flex-1">
+                <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 mb-8 text-2xl"><i class="fa-solid fa-headset"></i></div>
+                <h3 class="text-3xl font-black mb-4">Seller Support</h3>
+                <p class="text-slate-500 text-lg leading-relaxed">Dedicated account managers and local Khmer-speaking support to help you navigate every step of your store's growth.</p>
+            </div>
+            <div class="w-full md:w-1/2 rounded-[2rem] overflow-hidden aspect-video shadow-2xl">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuATpR8lFzjPnVFXc3qd-xYlSIZOYQVj3kgmE9K3Pv3D--UtcXylLub9Ywrs_maV6Fk-sUXlSGJCJJnWo12RY3U6vZwMoHPxEvMIUwJPssPGdEEGLNswwhlIwkB7DyOWkKuESe0-Vw-7_y5drF1KtNEJR7RiI9TQJIv68hv16kmJDmMmqog-kNB7VP3pTouewnYaPLu3zbDCxS_PiT4Fq2p6KRoZZE3HqRyJJqrrl5fJkFOQmi09qB-GgTVadZlla2lPBLdgXPBAj34" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STEPS SUCCESS -->
+<section class="bg-white py-24 px-[5vw]">
+    <div class="max-w-7xl mx-auto text-center">
+        <h2 class="text-4xl font-black display text-slate-800 mb-20">3 Simple Steps to Success</h2>
+        <div class="relative grid grid-cols-1 md:grid-cols-3 gap-16">
+            <div class="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-px border-t-2 border-dashed border-slate-200 z-0"></div>
+            <div class="flex flex-col items-center gap-6 relative z-10">
+                <div class="w-22 h-22 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-600 text-2xl shadow-xl shadow-green-50"><i class="fa-solid fa-user-plus"></i></div>
+                <h4 class="text-2xl font-bold">Register</h4>
+                <p class="text-slate-500 max-w-xs">Create your seller account in minutes with basic business information.</p>
+            </div>
+            <div class="flex flex-col items-center gap-6 relative z-10">
+                <div class="w-22 h-22 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-600 text-2xl shadow-xl shadow-green-50"><i class="fa-solid fa-upload"></i></div>
+                <h4 class="text-2xl font-bold">List Products</h4>
+                <p class="text-slate-500 max-w-xs">Upload high-quality photos and descriptions of your Khmer produce.</p>
+            </div>
+            <div class="flex flex-col items-center gap-6 relative z-10">
+                <div class="w-22 h-22 rounded-full bg-green-600 border-4 border-white flex items-center justify-center text-white text-2xl shadow-2xl shadow-green-200"><i class="fa-solid fa-rocket"></i></div>
+                <h4 class="text-2xl font-bold">Start Earning</h4>
+                <p class="text-slate-500 max-w-xs">Receive orders, fulfill them, and get paid weekly directly to your bank.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SUCCESS STORIES SECTION -->
+<section id="success-stories" class="max-w-7xl mx-auto px-[5vw] py-24 border-y border-slate-100">
+    <div class="text-center mb-16">
+        <h2 class="text-4xl font-black display text-slate-900 mb-2">Powering these Khmer Brands</h2>
+        <p class="text-slate-500 text-lg">See how these local businesses achieved massive growth with us.</p>
+    </div>
+    <div id="seller-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Seller Success Card 1 -->
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative group overflow-hidden">
+            <div class="h-56 rounded-[1.5rem] overflow-hidden mb-8 bg-slate-50">
+                <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            </div>
+            <div class="mb-6">
+                <h4 class="text-2xl font-black text-slate-800 mb-1 italic">Vanna's Spicy Farm</h4>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    <span class="text-slate-400 font-bold ml-2">4.9/5</span>
+                </div>
+            </div>
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Total Items Sold:</span><span class="font-bold">12,400+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Revenue (6-Mo):</span><span class="font-black text-green-600">$45,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Province:</span><span class="font-bold">Kampot</span></div>
+            </div>
+            <p class="text-slate-500 italic text-sm mb-8 leading-relaxed">"Moutanak completely changed my life. I used to sell only to local markets, now I have customers from Phnom Penh to Siem Reap!"</p>
+        </div>
+
+        <!-- Seller Success Card 2 -->
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative group overflow-hidden">
+            <div class="h-56 rounded-[1.5rem] overflow-hidden mb-8 bg-slate-50">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            </div>
+            <div class="mb-6">
+                <h4 class="text-2xl font-black text-slate-800 mb-1 italic">The Khmer Weaver</h4>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    <span class="text-slate-400 font-bold ml-2">4.7/5</span>
+                </div>
+            </div>
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Total Items Sold:</span><span class="font-bold">8,200+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Revenue (6-Mo):</span><span class="font-black text-green-600">$21,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Province:</span><span class="font-bold">Takeo</span></div>
+            </div>
+            <p class="text-slate-500 italic text-sm mb-8 leading-relaxed">"Joining the Seller Central was the best decision for my small business. The commission is very fair and logistics are effortless."</p>
+        </div>
+
+        <!-- Seller Success Card 3 -->
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative group overflow-hidden">
+            <div class="h-56 rounded-[1.5rem] overflow-hidden mb-8 bg-slate-50">
+                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            </div>
+            <div class="mb-6">
+                <h4 class="text-2xl font-black text-slate-800 mb-1 italic">Gold Jasmine Coop</h4>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    <span class="text-slate-400 font-bold ml-2">5.0/5</span>
+                </div>
+            </div>
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Total Items Sold:</span><span class="font-bold">25,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Revenue (6-Mo):</span><span class="font-black text-green-600">$180,000+</span></div>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Province:</span><span class="font-bold">Battambang</span></div>
+            </div>
+            <p class="text-slate-500 italic text-sm mb-8 leading-relaxed">"We scaled from 5 families to 50 families. Moutanak gave us national visibility and a reliable flow of orders every single day."</p>
+        </div>
+    </div>
+    <div class="mt-16 text-center">
+        <button onclick="openSellerModal()" class="px-12 py-5 bg-slate-900 text-white font-black rounded-full shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1">Start Your Story Today</button>
+    </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faq" class="max-w-7xl mx-auto px-[5vw] py-24">
+    <div class="flex flex-col md:flex-row gap-20">
+        <div class="md:w-1/3">
+            <h2 class="text-4xl font-black display text-slate-900 mb-6">Frequently Asked Questions</h2>
+            <p class="text-slate-500 text-lg leading-relaxed mb-10">Everything you need to know about becoming a successful seller on Moutanak.</p>
+            <div class="p-8 rounded-3xl bg-amber-50 border border-amber-100">
+                <p class="font-bold text-amber-900 mb-2">Still have questions?</p>
+                <p class="text-amber-800/70 text-sm mb-6">Our support team is here to help 24/7 in Khmer and English.</p>
+                <button class="flex items-center gap-2 text-amber-700 font-bold hover:gap-4 transition-all">Contact Support <i class="fa-solid fa-phone"></i></button>
+            </div>
+        </div>
+        <div class="flex-1 space-y-4">
+            <details class="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm open:shadow-md transition">
+                <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none list-none text-slate-800">
+                    What documents do I need to register?
+                    <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 border-t border-slate-50 pt-6">Valid Cambodian ID or Passport, business registration (if applicable), and bank account for automated payouts.</div>
+            </details>
+            <details class="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm open:shadow-md transition">
+                <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none list-none text-slate-800">
+                    How do I get paid?
+                    <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 border-t border-slate-50 pt-6">Payouts are sent weekly to your registered bank account for all orders fulfilled in the previous 7 days.</div>
+            </details>
+            <details class="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm open:shadow-md transition">
+                <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none list-none text-slate-800">
+                    Is delivery handled by Moutanak?
+                    <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 border-t border-slate-50 pt-6">Yes! We provide full logistics support, helping you deliver fresh from farm to door anywhere in the country.</div>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="max-w-7xl mx-auto px-[5vw] pb-24">
+    <div class="bg-slate-900 rounded-[3.5rem] p-16 md:p-32 text-center relative overflow-hidden text-white shadow-2xl">
+        <div class="relative z-10 max-w-2xl mx-auto">
+            <h2 class="text-5xl md:text-7xl font-black display mb-8">Ready to boost your profit?</h2>
+            <p class="text-white/60 text-lg mb-12">Join 1,500+ successful Cambodian sellers and start growing your brand with national pride.</p>
+            <button onclick="openSellerModal()" class="px-12 py-5 bg-green-600 text-white font-black text-xl rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all">Start Earning Today</button>
+        </div>
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute top-[-50%] left-[-20%] w-[150%] h-[150%] bg-green-500 blur-[200px] rounded-full"></div>
+            <div class="absolute bottom-[-50%] right-[-20%] w-[150%] h-[150%] bg-amber-500 blur-[200px] rounded-full"></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="bg-white border-t border-slate-100 px-[5vw] py-16">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+        <div class="flex flex-col gap-3 items-center md:items-start">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-leaf text-green-600 text-xl"></i>
+                <span class="font-black text-xl display">Moutanak</span>
+            </div>
+            <p class="text-slate-400 text-sm">© 2024 Moutanak Commerce. All Rights Reserved.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-8 font-bold text-slate-500">
+            <a href="#" class="hover:text-green-600 transition">About</a>
+            <a href="#" class="hover:text-green-600 transition">Terms</a>
+            <a href="#" class="hover:text-green-600 transition">Privacy</a>
+            <a href="#" class="hover:text-green-600 transition">Contact</a>
+        </div>
+        <div class="flex gap-4">
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition"><i class="fa-brands fa-facebook"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition"><i class="fa-brands fa-instagram"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition"><i class="fa-brands fa-tiktok"></i></div>
+        </div>
+    </div>
+</footer>
+
+<!-- SELLER MODAL (REGISTER) -->
+<div id="seller-modal" class="hidden fixed inset-0 z-[100] bg-charcoal/40 backdrop-blur-md items-center justify-center p-4 lg:p-6 overflow-y-auto">
+    <div class="bg-sand rounded-[3rem] w-full max-w-3xl overflow-hidden relative shadow-2xl flex flex-col fade-up">
+        <button onclick="closeSellerModal()" class="absolute top-6 right-6 text-2xl text-charcoal/30 hover:text-charcoal z-20 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        
+        <!-- Progress Steps -->
+        <div class="bg-white px-10 py-6 border-b border-sage flex items-center justify-between" id="prog">
+            <div class="flex flex-col items-center gap-1">
+                <div class="step-pill active" id="p1">1</div>
+                <span class="text-[9px] font-bold text-charcoal/40 uppercase tracking-wider">Account</span>
+            </div>
+            <div class="step-line idle" id="l1"></div>
+            <div class="flex flex-col items-center gap-1">
+                <div class="step-pill idle" id="p2">2</div>
+                <span class="text-[9px] font-bold text-charcoal/40 uppercase tracking-wider">Store</span>
+            </div>
+            <div class="step-line idle" id="l2"></div>
+            <div class="flex flex-col items-center gap-1">
+                <div class="step-pill idle" id="p3">3</div>
+                <span class="text-[9px] font-bold text-charcoal/40 uppercase tracking-wider">Identity</span>
+            </div>
+            <div class="step-line idle" id="l3"></div>
+            <div class="flex flex-col items-center gap-1">
+                <div class="step-pill idle" id="p4">4</div>
+                <span class="text-[9px] font-bold text-charcoal/40 uppercase tracking-wider">Payment</span>
+            </div>
+            <div class="step-line idle" id="l4"></div>
+            <div class="flex flex-col items-center gap-1">
+                <div class="step-pill idle" id="p5">5</div>
+                <span class="text-[9px] font-bold text-charcoal/40 uppercase tracking-wider">Confirm</span>
+            </div>
+        </div>
+
+        <div class="p-8 lg:p-12 overflow-y-auto max-h-[70vh] bg-white">
+            <!-- STEP 1 -->
+            <div class="form-section active fade-up" id="s1">
+                <h3 class="text-2xl font-extrabold text-charcoal mb-1 display">Personal Information</h3>
+                <p class="text-sm text-charcoal/50 mb-8">Create your legacy on Moutanak.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <p class="flabel">Full Name <span class="text-red-500">*</span></p>
+                        <input class="finput" type="text" placeholder="e.g. John Doe"/>
+                    </div>
+                    <div>
+                        <p class="flabel">Email Address <span class="text-red-500">*</span></p>
+                        <input class="finput" type="email" placeholder="john@example.com"/>
+                    </div>
+                    <div>
+                        <p class="flabel">Phone Number <span class="text-red-500">*</span></p>
+                        <input class="finput" type="tel" placeholder="+855 xx xxx xxxx"/>
+                    </div>
+                    <div>
+                        <p class="flabel">Password <span class="text-red-500">*</span></p>
+                        <input class="finput" type="password" placeholder="Min. 8 characters"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="form-section fade-up" id="s2">
+                <h3 class="text-2xl font-extrabold text-charcoal mb-1 display">Store Details</h3>
+                <p class="text-sm text-charcoal/50 mb-8">Tell us about your Khmer brand.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-2">
+                        <p class="flabel">Store Name <span class="text-red-500">*</span></p>
+                        <input class="finput" type="text" placeholder="e.g. Kampong Fresh"/>
+                    </div>
+                    <div>
+                        <p class="flabel">Primary Category <span class="text-red-500">*</span></p>
+                        <select class="finput">
+                            <option>Vegetables</option>
+                            <option>Fruits</option>
+                            <option>Artisan Crafts</option>
+                            <option>Grains & Spices</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="flabel">Province <span class="text-red-500">*</span></p>
+                        <select class="finput">
+                            <option>Phnom Penh</option>
+                            <option>Siem Reap</option>
+                            <option>Kampot</option>
+                            <option>Battambang</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="form-section fade-up" id="s3">
+                <h3 class="text-2xl font-extrabold text-charcoal mb-1 display">Verification</h3>
+                <p class="text-sm text-charcoal/50 mb-6">Building trust in the marketplace.</p>
+                <div class="tip-box mb-8">🔒 Documents are encrypted and used only for verification.</div>
+                
+                <div class="id-group">
+                    <p class="flabel mb-4">National ID Card <span class="text-red-500">*</span></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="ubox h-32 flex flex-col items-center justify-center" id="box-front" onclick="this.querySelector('input').click()">
+                            <i class="fa-solid fa-address-card text-2xl text-green mb-2"></i>
+                            <p class="text-[10px] font-bold text-charcoal/50 uppercase">Front Side</p>
+                            <p id="f3-front-label" class="text-xs text-green mt-1 font-bold hidden">✓ Uploaded</p>
+                            <input type="file" accept="image/*" class="hidden" onchange="markFileId(this,'f3-front-label','box-front')"/>
+                        </div>
+                        <div class="ubox h-32 flex flex-col items-center justify-center" id="box-back" onclick="this.querySelector('input').click()">
+                            <i class="fa-solid fa-id-card text-2xl text-green mb-2"></i>
+                            <p class="text-[10px] font-bold text-charcoal/50 uppercase">Back Side</p>
+                            <p id="f3-back-label" class="text-xs text-green mt-1 font-bold hidden">✓ Uploaded</p>
+                            <input type="file" accept="image/*" class="hidden" onchange="markFileId(this,'f3-back-label','box-back')"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="form-section fade-up" id="s4">
+                <h3 class="text-2xl font-extrabold text-charcoal mb-1 display">Payout Methods</h3>
+                <p class="text-sm text-charcoal/50 mb-7">How you want to receive your profits.</p>
+                <div class="space-y-4">
+                    <div class="pay-card group hover:border-green transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-lemon flex items-center justify-center text-charcoal"><i class="fa-solid fa-building-columns"></i></div>
+                            <div>
+                                <p class="font-bold text-sm">ABA Bank</p>
+                                <input type="text" placeholder="Account Number" class="mt-1 text-xs outline-none bg-transparent w-full border-b border-sage focus:border-green">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pay-card group hover:border-green transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-sky flex items-center justify-center text-charcoal"><i class="fa-solid fa-mobile-screen"></i></div>
+                            <div>
+                                <p class="font-bold text-sm">Wing Money</p>
+                                <input type="text" placeholder="Phone Number" class="mt-1 text-xs outline-none bg-transparent w-full border-b border-sage focus:border-green">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div class="form-section fade-up" id="s5">
+                <h3 class="text-2xl font-extrabold text-charcoal mb-1 display">Final Confirmation</h3>
+                <p class="text-sm text-charcoal/50 mb-8">Almost there! Review and submit.</p>
+                <div class="space-y-4">
+                    <div class="check-row">
+                        <input type="checkbox" id="chk-delivery">
+                        <label for="chk-delivery" class="text-xs font-bold text-charcoal leading-relaxed">I confirm that all provided information is accurate and I am the legal owner of this business.</label>
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="chk-terms">
+                        <label for="chk-terms" class="text-xs font-bold text-charcoal leading-relaxed">I agree to the Moutanak Seller Agreement and Privacy Policy.</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUCCESS -->
+            <div class="form-section fade-up text-center py-10" id="s6">
+                <div class="w-20 h-20 bg-green-pale rounded-full flex items-center justify-center mx-auto mb-6 border border-mint">
+                    <i class="fa-solid fa-check text-4xl text-green"></i>
+                </div>
+                <h3 class="text-3xl font-extrabold text-charcoal mb-3 display">Application Received!</h3>
+                <p class="text-charcoal/60 text-sm max-w-xs mx-auto leading-relaxed">Our experts are reviewing your store. You'll hear from us within 24 hours.</p>
+                <button onclick="closeSellerModal()" class="mt-8 px-8 py-3 bg-charcoal text-white rounded-full font-bold text-sm">Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Foot Navigation -->
+        <div class="bg-white border-t border-sage p-6 flex items-center justify-between" id="nav-bar">
+            <button id="prevBtn" onclick="go(-1)" class="btn-prev" style="visibility:hidden">
+                <i class="fa-solid fa-arrow-left"></i> Previous
+            </button>
+            <span class="text-[10px] font-black text-charcoal/30 uppercase tracking-widest" id="counter">Step 1 of 5</span>
+            <button id="nextBtn" onclick="go(1)" class="btn-next">
+                Next Step <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 px-8 py-4 rounded-full text-white font-bold shadow-2xl flex items-center gap-3 z-[110]">
+    <i class="fa-solid fa-circle-check text-green-400"></i>
+    <span id="toast-text">Application submitted!</span>
+</div>
+
+<script>
+    // MODALS
+    function openSellerModal() { 
+        document.getElementById('seller-modal').classList.remove('hidden');
+        document.getElementById('seller-modal').classList.add('flex');
+    }
+    function closeSellerModal() { 
+        document.getElementById('seller-modal').classList.add('hidden');
+        document.getElementById('seller-modal').classList.remove('flex');
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        const txt = document.getElementById('toast-text');
+        txt.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // MULTI-STEP LOGIC
+    let cur = 0;
+    const totalSteps = 5;
+
+    function go(dir) {
+        if (dir === 1 && cur === totalSteps - 1) {
+            const d = document.getElementById('chk-delivery');
+            const t = document.getElementById('chk-terms');
+            if (!d.checked || !t.checked) {
+                alert('Please confirm all required fields.');
+                return;
+            }
+            showStep(5); // Success step
+            document.getElementById('nav-bar').style.display = 'none';
+            document.getElementById('prog').style.display = 'none';
+            return;
+        }
+        const next = Math.max(0, Math.min(totalSteps - 1, cur + dir));
+        cur = next;
+        showStep(cur);
+    }
+
+    function showStep(n) {
+        document.querySelectorAll('.form-section').forEach((s, i) => {
+            s.classList.toggle('active', i === n);
+        });
+        for (let i = 1; i <= 5; i++) {
+            const p = document.getElementById('p' + i);
+            const l = document.getElementById('l' + i);
+            if (i < n + 1) {
+                p.className = 'step-pill done';
+                p.innerHTML = '<i class="fa-solid fa-check text-xs"></i>';
+            } else if (i === n + 1) {
+                p.className = 'step-pill active';
+                p.textContent = i;
+            } else {
+                p.className = 'step-pill idle';
+                p.textContent = i;
+            }
+            if (l) l.className = 'step-line ' + (i <= n ? 'done' : 'idle');
+        }
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        prevBtn.style.visibility = n === 0 ? 'hidden' : 'visible';
+        const isLast = n === totalSteps - 1;
+        nextBtn.className = isLast ? 'btn-next submit-btn' : 'btn-next';
+        nextBtn.innerHTML = isLast 
+            ? 'Submit Application <i class="fa-solid fa-rocket"></i>' 
+            : 'Next Step <i class="fa-solid fa-arrow-right"></i>';
+        document.getElementById('counter').textContent = 'Step ' + (n + 1) + ' of ' + totalSteps;
+    }
+
+    function markFileId(inp, labelId, boxId) {
+        const label = document.getElementById(labelId);
+        const box = document.getElementById(boxId);
+        if (inp.files && inp.files[0]) {
+            label.classList.remove('hidden');
+            box.classList.add('uploaded');
+        } else {
+            label.classList.add('hidden');
+            box.classList.remove('uploaded');
+        }
+    }
+
+    // SLIDESHOW
+    let currentSlide = 0;
+    function goToSlide(n) {
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        if(!slides.length) return;
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+    setInterval(() => goToSlide(currentSlide + 1), 6000);
+
+    function scrollToSuccess() { document.getElementById('success-stories').scrollIntoView({ behavior: 'smooth' }); }
+    
+    // Init
+    showStep(0);
+</script>
+</body>
+</html>
+
