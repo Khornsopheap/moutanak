@@ -504,7 +504,7 @@
                         <input id="signup-pwd" type="password" placeholder="Create a password" class="w-full border border-slate-200 rounded-xl py-2.5 px-4 pr-10 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition">
                         <i class="fa-solid fa-eye absolute right-4 top-9 text-slate-400 cursor-pointer" onclick="togglePwd('signup-pwd', this)"></i>
                     </div>
-                    <button class="w-full py-3 rounded-xl text-white font-bold text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+                    <button id="btn-signup" class="w-full py-3 rounded-xl text-white font-bold text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
                         Create Account
                     </button>
                 </div>
@@ -539,7 +539,7 @@
                 <i class="fa-solid fa-eye absolute right-4 top-9 text-slate-400 cursor-pointer" onclick="togglePwd('login-pwd', this)"></i>
                 <p class="text-right mt-1 text-xs font-semibold cursor-pointer hover:underline" style="color:var(--green)">Forgot password?</p>
             </div>
-            <button class="w-full py-3 rounded-xl text-white font-bold text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
+            <button id="btn-login" class="w-full py-3 rounded-xl text-white font-bold text-sm cursor-pointer transition" style="background:var(--green)" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">
                 Sign In
             </button>
             <button class="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition flex items-center justify-center gap-2">
@@ -565,6 +565,8 @@ const products = [
 
 let cart = {};
 let liked = new Set();
+let apiProducts = [];
+
 
 function badgeColor(b) {
     const colors = { Organic:'bg-green-100 text-green-700', Local:'bg-blue-100 text-blue-700', Sale:'bg-red-100 text-red-600', New:'bg-purple-100 text-purple-700', 'Best Seller':'bg-amber-100 text-amber-700' };
@@ -585,7 +587,7 @@ function renderProducts(list) {
     grid.innerHTML = list.map(p => `
     <div class="product-card bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 relative" data-cat="${p.cat}">
         ${p.badge ? `<span class="absolute top-3 left-3 z-10 text-xs font-bold px-2 py-0.5 rounded-full ${badgeColor(p.badge)}">${p.badge}</span>` : ''}
-        <button class="heart-btn absolute top-3 right-3 z-10 text-slate-300 ${liked.has(p.id)?'liked':''} cursor-pointer" onclick="toggleLike(${p.id}, this)">
+        <button class="heart-btn absolute top-3 right-3 z-10 text-slate-300 ${liked.has(p.id)?'liked':''} cursor-pointer" onclick="toggleLike('${p.id}', this)">
             <i class="fa-${liked.has(p.id)?'solid':'regular'} fa-heart text-xl"></i>
         </button>
         <div class="overflow-hidden h-44 bg-slate-50 flex items-center justify-center">
@@ -599,7 +601,7 @@ function renderProducts(list) {
             </p>
             <div class="flex items-center justify-between gap-2">
                 <p class="font-black text-lg text-slate-800">$${p.price.toFixed(2)}</p>
-                ${p.inStock ? `<button onclick="addToCart(${p.id})" class="add-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition" style="background:var(--green)">
+                ${p.inStock ? `<button onclick="addToCart('${p.id}')" class="add-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition" style="background:var(--green)">
                     <i class="fa-solid fa-plus"></i> Add
                 </button>` : `<button disabled class="px-3 py-2 rounded-xl text-slate-400 text-xs font-bold bg-slate-100 cursor-not-allowed">Unavailable</button>`}
             </div>
@@ -613,12 +615,11 @@ function toggleLike(id, el) {
 }
 
 function addToCart(id) {
-    const p = products.find(x=>x.id===id);
+    const p = apiProducts.find(x => x.id === id);
     if(!p) return;
     cart[id] = cart[id] ? { ...cart[id], qty: cart[id].qty+1 } : { ...p, qty:1 };
     updateCartUI();
     showToast(`🛒 ${p.name} added to cart!`);
-    // animate badge
     const badge = document.getElementById('cart-badge');
     badge.classList.add('badge-pulse');
     setTimeout(()=>badge.classList.remove('badge-pulse'),400);
@@ -661,14 +662,14 @@ function renderCartDrawer() {
             <p class="font-semibold text-sm text-slate-800 truncate">${i.name}</p>
             <p class="text-xs text-slate-500 mt-0.5">$${i.price.toFixed(2)} each</p>
             <div class="flex items-center gap-2 mt-2">
-                <button onclick="changeQty(${i.id},-1)" class="qty-btn border border-slate-200 text-slate-600"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                <button onclick="changeQty('${i.id}',-1)" class="qty-btn border border-slate-200 text-slate-600"><i class="fa-solid fa-minus text-[10px]"></i></button>
                 <span class="text-sm font-bold w-5 text-center">${i.qty}</span>
-                <button onclick="changeQty(${i.id},1)" class="qty-btn border border-slate-200 text-slate-600"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                <button onclick="changeQty('${i.id}',1)" class="qty-btn border border-slate-200 text-slate-600"><i class="fa-solid fa-plus text-[10px]"></i></button>
             </div>
         </div>
         <div class="text-right flex-shrink-0">
             <p class="font-black text-slate-800">$${(i.price*i.qty).toFixed(2)}</p>
-            <button onclick="removeFromCart(${i.id})" class="text-xs text-red-400 hover:text-red-600 mt-1 cursor-pointer transition">Remove</button>
+            <button onclick="removeFromCart('${i.id}')" class="text-xs text-red-400 hover:text-red-600 mt-1 cursor-pointer transition">Remove</button>
         </div>
     </div>`).join('<div class="border-t border-slate-100"></div>');
 }
@@ -706,7 +707,7 @@ function filterCat(cat, btn) {
     applyFilters();
 }
 function applyFilters() {
-    let list = products;
+    let list = apiProducts;
     if(currentCat!=='all') list = list.filter(p=>p.cat===currentCat);
     if(currentSearch) list = list.filter(p=>p.name.toLowerCase().includes(currentSearch));
     renderProducts(list);
@@ -789,9 +790,114 @@ function closeSellerPage() {
 // ===== SCROLL TO PRODUCTS =====
 function scrollToProducts() { document.getElementById('products-section').scrollIntoView({behavior:'smooth', block:'start'}); }
 
-// Init
-renderProducts(products);
+
+// ===== SIGNUP =====
+document.getElementById('btn-signup').addEventListener('click', async () => {
+  const inputs = document.querySelectorAll('#modal .w-full.lg\\:w-1\\/2 input');
+  const username = inputs[0].value.trim();
+  const email    = inputs[1].value.trim();
+  const phone    = inputs[2].value.trim();
+  const password = document.getElementById('signup-pwd').value;
+
+  if (!username || !email || !password) {
+    alert('Please fill in all required fields'); return;
+  }
+
+  const res  = await fetch('http://localhost:5000/api/auth/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, email, phone, password })
+  });
+  const data = await res.json();
+
+  if (!res.ok) { alert(data.message); return; }
+
+  localStorage.setItem('moutanak_token', data.token);
+  localStorage.setItem('moutanak_user', JSON.stringify(data.user));
+  closeModal();
+  showToast(`🌿 Welcome, ${data.user.username}!`);
+  updateNavUser(data.user);
+});
+
+// ===== LOGIN =====
+document.getElementById('btn-login').addEventListener('click', async () => {
+  const username = document.querySelector('#modallogin input[type="text"]').value.trim();
+  const password = document.getElementById('login-pwd').value;
+
+  if (!username || !password) {
+    alert('Please enter username and password'); return;
+  }
+
+  const res  = await fetch('http://localhost:5000/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+
+  if (!res.ok) { alert(data.message); return; }
+
+  localStorage.setItem('moutanak_token', data.token);
+  localStorage.setItem('moutanak_user', JSON.stringify(data.user));
+  closeModalLogin();
+  showToast(`👋 Welcome back, ${data.user.username}!`);
+  updateNavUser(data.user);
+});
+
+// ===== UPDATE NAV AFTER LOGIN =====
+function updateNavUser(user) {
+  // Hide Sign Up, show user name + logout
+  document.querySelector('button[onclick="openModal()"].hidden.lg\\:flex').style.display = 'none';
+  
+  // Create logout button if it doesn't exist
+  if (!document.getElementById('nav-user-btn')) {
+    const btn = document.createElement('button');
+    btn.id = 'nav-user-btn';
+    btn.className = 'hidden lg:flex items-center gap-2 border border-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-full text-sm cursor-pointer hover:bg-slate-50 transition';
+    btn.innerHTML = `<i class="fa-solid fa-circle-user"></i> ${user.username} <span class="text-xs text-red-400 ml-1" onclick="logoutUser(event)">Logout</span>`;
+    document.querySelector('.flex.items-center.gap-2').appendChild(btn);
+  }
+}
+
+function logoutUser(e) {
+  e.stopPropagation();
+  localStorage.removeItem('moutanak_token');
+  localStorage.removeItem('moutanak_user');
+  document.getElementById('nav-user-btn')?.remove();
+  document.querySelector('button[onclick="openModal()"].hidden.lg\\:flex').style.display = '';
+  showToast('👋 Logged out successfully');
+}
+
+// ===== RESTORE SESSION ON PAGE LOAD =====
+const savedUser = localStorage.getItem('moutanak_user');
+if (savedUser) {
+  updateNavUser(JSON.parse(savedUser));
+}
+
+
+
+fetch('http://localhost:5000/api/products')
+  .then(r => r.json())
+  .then(d => {
+    apiProducts = d.products.map(p => ({
+      id:      p._id,
+      name:    p.name,
+      price:   p.price,
+      img:     p.img,
+      cat:     p.category,
+      badge:   p.badge,
+      rating:  p.rating,
+      reviews: p.reviews,
+      inStock: p.inStock
+    }));
+    renderProducts(apiProducts);
+  })
+  .catch(() => {
+    apiProducts = products; // fallback to static
+    renderProducts(products);
+  });
 </script>
+
 
 <!-- SELLER PAGE -->
 <section id="seller-page" class="hidden fixed inset-0 z-[100] bg-slate-50 overflow-y-auto">
@@ -986,7 +1092,6 @@ renderProducts(products);
 
         </div>
     </div>
-
 </section>
 </body>
 </html>
