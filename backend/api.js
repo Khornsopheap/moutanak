@@ -1,7 +1,3 @@
-// ============================================================
-//  api.js  —  paste this at the TOP of your <script> block
-//  (or save as a separate file and import it)
-// ============================================================
 
 const API = 'http://localhost:5000/api';
 
@@ -31,9 +27,6 @@ async function apiFetch(path, options = {}) {
   }
 }
 
-// ============================================================
-//  AUTH
-// ============================================================
 
 async function signupUser(username, email, phone, password) {
   const data = await apiFetch('/auth/signup', {
@@ -79,10 +72,6 @@ function updateNavForUser(user) {
   if (userBtn)   { userBtn.classList.remove('hidden'); userBtn.textContent = user.username; }
 }
 
-// ============================================================
-//  PRODUCTS — load from backend
-// ============================================================
-
 async function fetchProducts(params = {}) {
   const qs = new URLSearchParams(params).toString();
   const data = await apiFetch(`/products${qs ? '?' + qs : ''}`);
@@ -117,9 +106,6 @@ async function filterCat(cat, btn) {
   renderProducts(list);
 }
 
-// ============================================================
-//  CART — server-side (requires auth) with local fallback
-// ============================================================
 
 async function loadServerCart() {
   if (!getToken()) return;
@@ -234,10 +220,6 @@ async function submitSellerApplication(fullName, shopName, phone, email, product
   return data;
 }
 
-// ============================================================
-//  BIND FORM EVENTS
-//  Call this once DOM is ready — replaces inline onclick handlers
-// ============================================================
 
 function bindForms() {
   document.getElementById('btn-signup')?.addEventListener('click', async () => {
@@ -273,7 +255,6 @@ let allProducts = [];
   renderProducts(allProducts);
   await loadServerCart();
   bindForms();
-  // Restore user session if token exists
   if (getToken()) {
     apiFetch('/auth/me').then(d => updateNavForUser(d.user)).catch(() => clearToken());
   }
