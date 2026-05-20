@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Moutanak · Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0F0D;
+  --bg2:#111815;
+  --surface:#161D1A;
+  --surface2:#1C2520;
+  --surface3:#222E28;
+  --border:#2C3C34;
+  --border2:#374840;
+  --green:#4ADE80;
+  --green2:#22C55E;
+  --green-dim:rgba(74,222,128,.12);
+  --green-glow:rgba(74,222,128,.06);
+  --cream:#F0EAD6;
+  --cream2:#E8DFC8;
+  --red:#FF6B6B;
+  --red-dim:rgba(255,107,107,.12);
+  --amber:#FFC34D;
+  --amber-dim:rgba(255,195,77,.12);
+  --sky:#67C8E8;
+  --sky-dim:rgba(103,200,232,.1);
+  --text:#E8F0EC;
+  --text2:rgba(232,240,236,.65);
+  --text3:rgba(232,240,236,.35);
+  --font-display:'Playfair Display',serif;
+  --font:'Outfit',sans-serif;
+  --r:14px;
+  --r2:20px;
+  --r3:28px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden}
+
+/* LAYOUT */
+.shell{display:flex;height:100vh;position:relative}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:230px;flex-shrink:0;background:var(--bg2);
+  border-right:1px solid var(--border);display:flex;
+  flex-direction:column;z-index:20;position:relative;
+  transition:width .3s cubic-bezier(.4,0,.2,1);
+}
+.sidebar.collapsed{width:64px}
+.sidebar-top{padding:22px 18px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden;white-space:nowrap}
+.sidebar-logo{width:34px;height:34px;border-radius:10px;background:var(--green-dim);border:1px solid rgba(74,222,128,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sidebar-logo i{color:var(--green);font-size:14px}
+.sidebar-brand-text{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--cream)}
+.sidebar-brand-text em{color:var(--green);font-style:normal}
+.sidebar-brand-sub{font-size:9px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+
+.nav-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);padding:18px 18px 6px;overflow:hidden;white-space:nowrap}
+.sidebar.collapsed .nav-section-label{opacity:0}
+
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10px 18px;
+  font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;
+  border-left:2px solid transparent;transition:all .15s;white-space:nowrap;overflow:hidden;
+  position:relative;
+}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--green);background:var(--green-dim);border-left-color:var(--green)}
+.nav-item .nav-icon{width:16px;text-align:center;flex-shrink:0;font-size:13px}
+.nav-item .nav-label{flex:1}
+.nav-badge{background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:99px;flex-shrink:0}
+.nav-badge.amber{background:var(--amber);color:#0B0F0D}
+
+.sidebar-footer{margin-top:auto;border-top:1px solid var(--border);padding:14px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:99px;overflow:hidden}
+.lang-btn{flex:1;padding:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;text-align:center;border:none;background:transparent;color:var(--text3)}
+.lang-btn.active{background:var(--green);color:#0B0F0D;border-radius:99px}
+.collapse-btn{width:100%;margin-top:10px;padding:7px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text3);font-size:12px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-weight:500}
+.collapse-btn:hover{color:var(--text);border-color:var(--border2)}
+.sidebar.collapsed .collapse-btn span{display:none}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+/* TOPBAR */
+.topbar{
+  display:flex;align-items:center;gap:14px;padding:14px 28px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;position:sticky;top:0;z-index:10;
+}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.topbar-breadcrumb strong{color:var(--text2);font-weight:600}
+.topbar-spacer{flex:1}
+.topbar-search{position:relative}
+.topbar-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px}
+.topbar-search input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 12px 7px 30px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;width:200px;transition:.2s}
+.topbar-search input:focus{border-color:var(--green);width:240px}
+.topbar-search input::placeholder{color:var(--text3)}
+
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:.15s;position:relative;flex-shrink:0}
+.icon-btn:hover{color:var(--text);border-color:var(--border2)}
+.icon-btn .badge-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2)}
+.admin-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;transition:.15s}
+.admin-chip:hover{border-color:var(--border2)}
+.admin-av{width:26px;height:26px;border-radius:8px;background:var(--green-dim);border:1px solid rgba(74,222,128,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green)}
+.admin-name{font-size:12px;font-weight:600;color:var(--text2)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:26px 28px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* PAGES */
+.page{display:none;animation:fadeUp .3s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px}
+.page-title{font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--cream);line-height:1}
+.page-sub{font-size:12px;color:var(--text3);margin-top:4px;font-weight:400}
+.header-actions{display:flex;gap:8px}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);
+  padding:18px;cursor:default;transition:all .2s;position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;inset:0;background:var(--glow,transparent);opacity:.5;pointer-events:none}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stat-card .s-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:14px}
+.stat-card .s-num{font-family:var(--font-display);font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-card .s-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+.stat-card .s-change{font-size:11px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
+
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
+.chart-title{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.chart-title span{font-size:11px;font-weight:500;color:var(--text3);margin-left:auto}
+
+/* ACTIVITY + QUICK TABLE */
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* TABLE SHARED */
+.data-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-header h3{font-size:13px;font-weight:700;color:var(--cream)}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+.data-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table tbody tr{transition:.12s;cursor:pointer}
+.data-table tbody tr:hover{background:var(--surface2)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.badge-green{background:var(--green-dim);color:var(--green)}
+.badge-red{background:var(--red-dim);color:var(--red)}
+.badge-amber{background:var(--amber-dim);color:var(--amber)}
+.badge-sky{background:var(--sky-dim);color:var(--sky)}
+
+/* SELLER CELL */
+.seller-cell{display:flex;align-items:center;gap:10px}
+.seller-av{width:32px;height:32px;border-radius:9px;background:var(--green-dim);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--green);flex-shrink:0}
+.seller-name{font-weight:600;font-size:13px;color:var(--text)}
+.seller-meta{font-size:11px;color:var(--text3)}
+
+/* ACTION BUTTONS */
+.act-btn{padding:5px 11px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.15s;font-family:var(--font)}
+.act-approve{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,.2)}
+.act-approve:hover{background:var(--green);color:#0B0F0D}
+.act-reject{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,107,107,.2)}
+.act-reject:hover{background:var(--red);color:#fff}
+.act-view{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+.act-view:hover{border-color:var(--border2);color:var(--text)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.ftab{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text3);transition:.15s;font-family:var(--font)}
+.ftab:hover{color:var(--text2);border-color:var(--border2)}
+.ftab.active{background:var(--green);border-color:var(--green);color:#0B0F0D}
+.fsearch{margin-left:auto;position:relative}
+.fsearch i{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text3)}
+.fsearch input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 11px 7px 28px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;width:200px;transition:.2s}
+.fsearch input:focus{border-color:var(--green)}
+.fsearch input::placeholder{color:var(--text3)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border)}
+.pg-info{font-size:11px;color:var(--text3)}
+.pg-btns{display:flex;gap:5px}
+.pg-btn{width:28px;height:28px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.pg-btn:hover{border-color:var(--green);color:var(--green)}
+.pg-btn.active-pg{background:var(--green);border-color:var(--green);color:#0B0F0D;font-weight:700}
+
+/* ─── DRAWER ─── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.open{opacity:1;pointer-events:all}
+.drawer{
+  position:fixed;right:0;top:0;bottom:0;width:520px;max-width:95vw;z-index:91;
+  background:var(--surface);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-top{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.drawer-top-info{flex:1;min-width:0}
+.drawer-top-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-top-id{font-size:10px;color:var(--text3);margin-top:2px}
+.close-btn{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.close-btn:hover{border-color:var(--red);color:var(--red)}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 22px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.drawer-body::-webkit-scrollbar{width:3px}
+.drawer-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* Drawer Sections */
+.dsec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dinfo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.dinfo-item{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 13px}
+.dinfo-key{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:3px}
+.dinfo-val{font-size:13px;font-weight:600;color:var(--text);word-break:break-all}
+.dinfo-val a{color:var(--sky)}
+
+/* Docs */
+.docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.doc-card{background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:.15s}
+.doc-card:hover{border-color:var(--green)}
+.doc-thumb{width:100%;height:80px;object-fit:cover;display:block;background:var(--bg)}
+.doc-thumb-ph{width:100%;height:80px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text3);font-size:24px}
+.doc-footer{padding:7px 10px;display:flex;align-items:center;justify-content:space-between}
+.doc-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text2)}
+.doc-open{font-size:10px;color:var(--sky)}
+
+/* Review Panel */
+.review-panel{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px}
+.review-panel textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:13px;resize:vertical;min-height:70px;outline:none;margin-bottom:12px;transition:.2s}
+.review-panel textarea:focus{border-color:var(--green)}
+.review-panel textarea::placeholder{color:var(--text3)}
+.review-row{display:flex;gap:8px}
+.btn-approve{flex:1;padding:10px;border-radius:10px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--green);color:#0B0F0D;transition:.15s}
+.btn-approve:hover{opacity:.85}
+.btn-approve:disabled{opacity:.3;cursor:not-allowed}
+.btn-reject{flex:1;padding:10px;border-radius:10px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--red);color:#fff;transition:.15s}
+.btn-reject:hover{opacity:.85}
+.btn-reject:disabled{opacity:.3;cursor:not-allowed}
+
+/* NOTIFICATION PANEL */
+.notif-panel{
+  position:fixed;top:60px;right:18px;width:340px;z-index:80;
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  box-shadow:0 24px 60px -8px rgba(0,0,0,.7);display:none;overflow:hidden;
+}
+.notif-panel.open{display:block;animation:fadeUp .2s ease}
+.np-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.np-head h4{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--cream)}
+.np-mark{font-size:11px;color:var(--green);cursor:pointer;font-weight:600}
+.np-list{max-height:340px;overflow-y:auto;scrollbar-width:none}
+.np-item{padding:12px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s;display:flex;gap:10px}
+.np-item:last-child{border-bottom:none}
+.np-item:hover{background:var(--surface2)}
+.np-item.unread{background:rgba(74,222,128,.03)}
+.np-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.npi-new{background:var(--amber-dim)}
+.npi-ok{background:var(--green-dim)}
+.npi-no{background:var(--red-dim)}
+.np-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.np-msg{font-size:11px;color:var(--text3);line-height:1.4}
+.np-time{font-size:10px;color:var(--text3);margin-top:2px}
+.np-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:88vw;max-height:88vh;border-radius:10px;object-fit:contain}
+.lb-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);opacity:0;
+  background:var(--surface2);border:1px solid var(--border);padding:10px 18px;
+  border-radius:99px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;
+  box-shadow:0 12px 40px -8px rgba(0,0,0,.6);z-index:300;transition:all .3s cubic-bezier(.4,0,.2,1);
+  white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* SPINNER */
+.spin{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:rot .7s linear infinite;margin:36px auto}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* MINI SPARKLINE */
+.spark-row{display:flex;align-items:center;gap:8px;padding:6px 0}
+.spark-bar{height:6px;border-radius:4px;background:var(--green);transition:width .5s ease}
+
+/* ACTIVITY FEED */
+.activity-item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.act-av{width:30px;height:30px;border-radius:8px;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.act-text{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
+.act-text strong{color:var(--text);font-weight:600}
+.act-time{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* USERS PAGE */
+.users-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;transition:.2s;cursor:pointer}
+.user-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.user-av-lg{width:44px;height:44px;border-radius:12px;background:var(--green-dim);border:1px solid rgba(74,222,128,.2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--green);margin-bottom:12px}
+.user-name{font-weight:700;font-size:15px;color:var(--cream);margin-bottom:3px}
+.user-role{font-size:11px;color:var(--text3);margin-bottom:10px}
+.user-meta{display:flex;gap:8px;flex-wrap:wrap}
+
+/* PRODUCTS PAGE */
+.prod-controls{display:flex;gap:8px;align-items:center;margin-bottom:16px}
+.btn-add{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--green);color:#0B0F0D;border:none;border-radius:10px;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-add:hover{opacity:.85}
+
+/* ORDERS PAGE */
+.order-status-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.os-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.os-num{font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:2px}
+.os-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
+.settings-card h3{font-size:14px;font-weight:700;color:var(--cream);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.form-field{margin-bottom:12px}
+.form-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:5px;display:block}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;transition:.2s}
+.form-input:focus{border-color:var(--green)}
+.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;transition:.2s;appearance:none}
+.btn-save{padding:9px 20px;background:var(--green);color:#0B0F0D;border:none;border-radius:9px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-save:hover{opacity:.85}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:13px;color:var(--text2);font-weight:500}
+.toggle{width:38px;height:20px;border-radius:99px;background:var(--surface3);border:1px solid var(--border);position:relative;cursor:pointer;transition:.2s}
+.toggle.on{background:var(--green);border-color:var(--green)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle.on::after{left:20px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-top">
+    <div class="sidebar-logo"><i class="fa-solid fa-leaf"></i></div>
+    <div>
+      <div class="sidebar-brand-text">Moutanak<em>.</em></div>
+      <div class="sidebar-brand-sub">Admin Console</div>
+    </div>
+  </div>
+
+  <p class="nav-section-label">Overview</p>
+  <div class="nav-item active" onclick="showPage('dashboard',this)"><i class="nav-icon fa-solid fa-chart-tree-map"></i><span class="nav-label">Dashboard</span></div>
+
+  <p class="nav-section-label">Commerce</p>
+  <div class="nav-item" onclick="showPage('sellers',this)"><i class="nav-icon fa-solid fa-store"></i><span class="nav-label">Seller Requests</span><span class="nav-badge" id="pending-badge">3</span></div>
+  <div class="nav-item" onclick="showPage('products',this)"><i class="nav-icon fa-solid fa-boxes-stacked"></i><span class="nav-label">Products</span></div>
+  <div class="nav-item" onclick="showPage('orders',this)"><i class="nav-icon fa-solid fa-receipt"></i><span class="nav-label">Orders</span><span class="nav-badge amber">12</span></div>
+
+  <p class="nav-section-label">People</p>
+  <div class="nav-item" onclick="showPage('users',this)"><i class="nav-icon fa-solid fa-users"></i><span class="nav-label">Users</span></div>
+
+  <p class="nav-section-label">System</p>
+  <div class="nav-item" onclick="showPage('settings',this)"><i class="nav-icon fa-solid fa-sliders"></i><span class="nav-label">Settings</span></div>
+
+  <div class="sidebar-footer">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('kh',this)">ខ្មែរ</button>
+    </div>
+    <button class="collapse-btn" onclick="toggleSidebar()"><i class="fa-solid fa-angles-left" id="collapse-icon"></i><span>Collapse</span></button>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><i class="fa-solid fa-house" style="font-size:10px"></i> <strong id="breadcrumb-text">Dashboard</strong></div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search anything…" id="global-search" oninput="globalSearch(this.value)"/></div>
+    <div class="icon-btn" id="notif-toggle" onclick="toggleNotif()">
+      <i class="fa-solid fa-bell" style="font-size:13px"></i>
+      <div class="badge-dot" id="notif-dot"></div>
+    </div>
+    <div class="icon-btn"><i class="fa-solid fa-moon" style="font-size:13px" onclick="showToast('Theme toggle coming soon')"></i></div>
+    <div class="admin-chip">
+      <div class="admin-av">A</div>
+      <span class="admin-name" data-i18n="admin_name">Admin</span>
+      <i class="fa-solid fa-chevron-down" style="font-size:9px;color:var(--text3)"></i>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ══════ DASHBOARD PAGE ══════ -->
+    <section id="dashboard" class="page active">
+      <div class="page-header">
+        <div>
+          <div class="page-title" data-i18n="dashboard_title">Dashboard</div>
+          <div class="page-sub" data-i18n="dashboard_sub">Welcome back, Admin · Wednesday, 20 May 2026</div>
+        </div>
+        <div class="header-actions">
+          <button class="act-btn act-view" onclick="showToast('Report exported')"><i class="fa-solid fa-download" style="margin-right:5px"></i>Export</button>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card" style="--glow:radial-gradient(circle at 0% 0%,rgba(74,222,128,.08),transparent)">
+          <div class="s-icon" style="background:var(--green-dim)"><i class="fa-solid fa-store" style="color:var(--green)"></i></div>
+          <div class="s-num" style="color:var(--green)">1,580</div>
+          <div class="s-label" data-i18n="stat_sellers">Active Sellers</div>
+          <div class="s-change" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+8% this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon" style="background:var(--amber-dim)"><i class="fa-solid fa-hourglass-half" style="color:var(--amber)"></i></div>
+          <div class="s-num" style="color:var(--amber)" id="dash-pending">3</div>
+          <div class="s-label" data-i18n="stat_pending">Pending Review</div>
+          <div class="s-change" style="color:var(--amber)"><i class="fa-solid fa-circle-exclamation"></i>Needs action</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon" style="background:var(--sky-dim)"><i class="fa-solid fa-cart-shopping" style="color:var(--sky)"></i></div>
+          <div class="s-num" style="color:var(--sky)">44K</div>
+          <div class="s-label" data-i18n="stat_orders">Total Orders</div>
+          <div class="s-change" style="color:var(--sky)"><i class="fa-solid fa-arrow-trend-up"></i>+12% vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon" style="background:rgba(240,234,214,.08)"><i class="fa-solid fa-sack-dollar" style="color:var(--cream)"></i></div>
+          <div class="s-num" style="color:var(--cream)">$8.2M</div>
+          <div class="s-label" data-i18n="stat_revenue">Total Payouts</div>
+          <div class="s-change" style="color:var(--text3)"><i class="fa-solid fa-arrow-trend-up" style="color:var(--green)"></i><span style="color:var(--green)">+12%</span> this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-icon" style="background:rgba(103,200,232,.08)"><i class="fa-solid fa-users" style="color:var(--sky)"></i></div>
+          <div class="s-num" style="color:var(--text)">520K</div>
+          <div class="s-label" data-i18n="stat_visitors">Monthly Visitors</div>
+          <div class="s-change" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>All-time high</div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title"><i class="fa-solid fa-chart-line" style="color:var(--green)"></i>Revenue & Orders<span>Last 6 months</span></div>
+          <canvas id="lineChart" height="100"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="fa-solid fa-chart-pie" style="color:var(--amber)"></i>Category Split<span>By revenue</span></div>
+          <canvas id="donutChart" height="140"></canvas>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW -->
+      <div class="bottom-row">
+        <!-- Recent Seller Requests -->
+        <div class="data-table-wrap">
+          <div class="table-header">
+            <h3>⏳ Pending Seller Requests</h3>
+            <button class="act-btn act-view" onclick="showPage('sellers', document.querySelector('.nav-item:nth-child(7)'))">View All</button>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Seller</th><th>Province</th><th>TIN</th><th>Action</th></tr></thead>
+            <tbody id="dash-seller-preview"></tbody>
+          </table>
+        </div>
+        <!-- Activity Feed -->
+        <div class="data-table-wrap">
+          <div class="table-header"><h3>📋 Recent Activity</h3></div>
+          <div style="padding:4px 16px 12px" id="activity-feed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ SELLERS PAGE ══════ -->
+    <section id="sellers" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-title" data-i18n="sellers_title">Seller Requests</div>
+          <div class="page-sub">Review, approve or reject store applications</div>
+        </div>
+        <div class="header-actions">
+          <button class="act-btn act-view" onclick="exportSellers()"><i class="fa-solid fa-file-csv" style="margin-right:4px"></i>Export CSV</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <button class="ftab active" onclick="filterSellers('',this)">All <span id="ft-all"></span></button>
+        <button class="ftab" onclick="filterSellers('pending',this)">⏳ Pending</button>
+        <button class="ftab" onclick="filterSellers('approved',this)">✅ Approved</button>
+        <button class="ftab" onclick="filterSellers('rejected',this)">❌ Rejected</button>
+        <div class="fsearch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Name, store, TIN…" oninput="searchSellers(this.value)"/></div>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Seller</th><th>Store</th><th>Category</th><th>Province</th><th>TIN</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="sellers-tbody"></tbody>
+        </table>
+        <div class="pagination">
+          <span class="pg-info" id="sellers-pg-info">—</span>
+          <div class="pg-btns" id="sellers-pg-btns"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ PRODUCTS PAGE ══════ -->
+    <section id="products" class="page">
+      <div class="page-header">
+        <div><div class="page-title">Products</div><div class="page-sub">Manage all listed products</div></div>
+        <div class="header-actions"><button class="btn-add" onclick="showToast('Add product modal — connect to API')"><i class="fa-solid fa-plus"></i>Add Product</button></div>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Product</th><th>Seller</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(103,200,232,.1);color:var(--sky)">IP</div><div><div class="seller-name">Kampot Pepper 500g</div><div class="seller-meta">SKU-00121</div></div></div></td><td style="color:var(--text2)">Vanna's Farm</td><td><span class="badge badge-sky">Spices</span></td><td style="font-weight:700;color:var(--cream)">$12.50</td><td><div class="spark-row"><div class="spark-bar" style="width:70%;background:var(--green)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">420</span></div></td><td><span class="badge badge-green">Active</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
+            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(255,195,77,.1);color:var(--amber)">KS</div><div><div class="seller-name">Khmer Silk Scarf</div><div class="seller-meta">SKU-00088</div></div></div></td><td style="color:var(--text2)">The Khmer Weaver</td><td><span class="badge badge-amber">Crafts</span></td><td style="font-weight:700;color:var(--cream)">$38.00</td><td><div class="spark-row"><div class="spark-bar" style="width:30%;background:var(--amber)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">85</span></div></td><td><span class="badge badge-green">Active</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
+            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(74,222,128,.1);color:var(--green)">JR</div><div><div class="seller-name">Jasmine Rice 5kg</div><div class="seller-meta">SKU-00204</div></div></div></td><td style="color:var(--text2)">Gold Jasmine Coop</td><td><span class="badge badge-green">Grains</span></td><td style="font-weight:700;color:var(--cream)">$9.80</td><td><div class="spark-row"><div class="spark-bar" style="width:90%;background:var(--green)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">1,200</span></div></td><td><span class="badge badge-green">Active</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
+            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(255,107,107,.1);color:var(--red)">DM</div><div><div class="seller-name">Dried Mango 250g</div><div class="seller-meta">SKU-00302</div></div></div></td><td style="color:var(--text2)">Kampong Fresh</td><td><span class="badge badge-amber">Fruits</span></td><td style="font-weight:700;color:var(--cream)">$6.50</td><td><div class="spark-row"><div class="spark-bar" style="width:10%;background:var(--red)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">18</span></div></td><td><span class="badge badge-red">Low Stock</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════ ORDERS PAGE ══════ -->
+    <section id="orders" class="page">
+      <div class="page-header">
+        <div><div class="page-title">Orders</div><div class="page-sub">Monitor and manage all customer orders</div></div>
+      </div>
+      <div class="order-status-row">
+        <div class="os-card"><div class="os-num" style="color:var(--sky)">44,128</div><div class="os-label">Total Orders</div></div>
+        <div class="os-card"><div class="os-num" style="color:var(--amber)">12</div><div class="os-label">Pending</div></div>
+        <div class="os-card"><div class="os-num" style="color:var(--green)">43,841</div><div class="os-label">Completed</div></div>
+        <div class="os-card"><div class="os-num" style="color:var(--red)">275</div><div class="os-label">Cancelled</div></div>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Seller</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--font-display);color:var(--green)">#10041</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">LH</div><div><div class="seller-name">Lay Horn</div><div class="seller-meta">Phnom Penh</div></div></div></td><td style="color:var(--text2)">3 items</td><td style="font-weight:700;color:var(--cream)">$250.00</td><td style="color:var(--text2)">Vanna's Farm</td><td style="color:var(--text3);font-size:12px">19 May 2026</td><td><span class="badge badge-green">Completed</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
+            <tr><td style="font-family:var(--font-display);color:var(--green)">#10042</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">SD</div><div><div class="seller-name">Sok Dara</div><div class="seller-meta">Siem Reap</div></div></div></td><td style="color:var(--text2)">1 item</td><td style="font-weight:700;color:var(--cream)">$120.00</td><td style="color:var(--text2)">Khmer Weaver</td><td style="color:var(--text3);font-size:12px">20 May 2026</td><td><span class="badge badge-amber">Pending</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
+            <tr><td style="font-family:var(--font-display);color:var(--green)">#10043</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">CV</div><div><div class="seller-name">Chan Vira</div><div class="seller-meta">Battambang</div></div></div></td><td style="color:var(--text2)">5 items</td><td style="font-weight:700;color:var(--cream)">$980.00</td><td style="color:var(--text2)">Gold Jasmine</td><td style="color:var(--text3);font-size:12px">20 May 2026</td><td><span class="badge badge-red">Cancelled</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
+            <tr><td style="font-family:var(--font-display);color:var(--green)">#10044</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">RP</div><div><div class="seller-name">Rith Panha</div><div class="seller-meta">Kampot</div></div></div></td><td style="color:var(--text2)">2 items</td><td style="font-weight:700;color:var(--cream)">$74.00</td><td style="color:var(--text2)">Vanna's Farm</td><td style="color:var(--text3);font-size:12px">20 May 2026</td><td><span class="badge badge-sky">Shipped</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════ USERS PAGE ══════ -->
+    <section id="users" class="page">
+      <div class="page-header">
+        <div><div class="page-title">Users</div><div class="page-sub">Manage admin and platform user accounts</div></div>
+        <div class="header-actions"><button class="btn-add" onclick="showToast('Invite user — connect to API')"><i class="fa-solid fa-user-plus"></i>Invite User</button></div>
+      </div>
+      <div class="users-grid">
+        <div class="user-card"><div class="user-av-lg">LH</div><div class="user-name">Lay Horn</div><div class="user-role">Super Admin</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-sky">Admin</span></div></div>
+        <div class="user-card"><div class="user-av-lg" style="background:var(--amber-dim);color:var(--amber)">SD</div><div class="user-name">Sok Dara</div><div class="user-role">Reviewer</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-amber">Reviewer</span></div></div>
+        <div class="user-card"><div class="user-av-lg" style="background:var(--sky-dim);color:var(--sky)">CV</div><div class="user-name">Chan Vira</div><div class="user-role">Manager</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-sky">Manager</span></div></div>
+        <div class="user-card"><div class="user-av-lg" style="background:var(--red-dim);color:var(--red)">MK</div><div class="user-name">Mony Keo</div><div class="user-role">Support</div><div class="user-meta"><span class="badge badge-amber">Away</span><span class="badge badge-sky">Support</span></div></div>
+        <div class="user-card"><div class="user-av-lg" style="background:rgba(240,234,214,.08);color:var(--cream)">PN</div><div class="user-name">Piseth Nov</div><div class="user-role">Finance</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-sky">Finance</span></div></div>
+        <div class="user-card" style="border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px" onclick="showToast('Invite new user')"><i class="fa-solid fa-plus" style="color:var(--text3);font-size:20px;margin-bottom:8px"></i><span style="font-size:12px;color:var(--text3);font-weight:600">Add User</span></div>
+      </div>
+    </section>
+
+    <!-- ══════ SETTINGS PAGE ══════ -->
+    <section id="settings" class="page">
+      <div class="page-header"><div><div class="page-title">Settings</div><div class="page-sub">Platform configuration and preferences</div></div></div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3><i class="fa-solid fa-building" style="color:var(--green)"></i>Platform Info</h3>
+          <div class="form-field"><label class="form-label">Platform Name</label><input class="form-input" value="Moutanak Commerce"/></div>
+          <div class="form-field"><label class="form-label">Admin Email</label><input class="form-input" value="admin@moutanak.kh"/></div>
+          <div class="form-field"><label class="form-label">Support Phone</label><input class="form-input" value="+855 23 000 000"/></div>
+          <div class="form-field"><label class="form-label">Default Language</label><select class="form-select"><option>English</option><option>ខ្មែរ (Khmer)</option></select></div>
+          <button class="btn-save">Save Changes</button>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fa-solid fa-bell" style="color:var(--amber)"></i>Notifications</h3>
+          <div class="toggle-row"><span class="toggle-label">New seller application</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Application approved</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">New order placed</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Low stock alert</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Daily summary email</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fa-solid fa-percent" style="color:var(--sky)"></i>Commission Rates</h3>
+          <div class="form-field"><label class="form-label">Base Commission (%)</label><input class="form-input" value="2"/></div>
+          <div class="form-field"><label class="form-label">Verified Business (%)</label><input class="form-input" value="1.5"/></div>
+          <div class="form-field"><label class="form-label">Premium Seller (%)</label><input class="form-input" value="1"/></div>
+          <button class="btn-save">Update Rates</button>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fa-solid fa-shield-halved" style="color:var(--red)"></i>Verification Rules</h3>
+          <div class="toggle-row"><span class="toggle-label">Require TIN for all sellers</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Require selfie with ID</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Require address proof</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Auto-approve after 48hrs</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Require biz registration</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ═══ NOTIFICATION PANEL ═══ -->
+<div class="notif-panel" id="notif-panel">
+  <div class="np-head"><h4>Notifications</h4><span class="np-mark" onclick="markAllRead()">Mark all read</span></div>
+  <div class="np-list" id="np-list"></div>
+</div>
+
+<!-- ═══ DETAIL DRAWER ═══ -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-top">
+    <div class="drawer-top-info">
+      <div class="drawer-top-title" id="drawer-title">Application Detail</div>
+      <div class="drawer-top-id" id="drawer-id"></div>
+    </div>
+    <button class="close-btn" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body" id="drawer-body"><div class="spin"></div></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLB()">
+  <button class="lb-close"><i class="fa-solid fa-xmark"></i></button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i><span id="toast-msg"></span></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const SELLERS = [
+  { id:'S001', full_name:'Vanna Sok', email:'vanna@farm.kh', phone:'012345678', dob:'1988-04-12', store_name:"Vanna's Spicy Farm", category:'Vegetables & Herbs', province:'Kampot', tin:'K000-123456', biz_reg:'', stock:'200–500 kg', aba_account:'0001234', aba_name:'Vanna Sok', wing_phone:'', description:'Family-run organic spice farm in Kampot, specialising in pepper and chilli.', facebook:'https://facebook.com/vannasfarm', status:'pending', submitted:'2026-05-18T08:22:00Z',
+    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'selfie',src:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400'},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400'},{type:'farm_photo',src:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{type:'product_photo',src:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'}]},
+  { id:'S002', full_name:'Dara Chhan', email:'dara@weave.kh', phone:'098765432', dob:'1992-07-30', store_name:'The Khmer Weaver', category:'Artisan Crafts', province:'Takeo', tin:'K000-654321', biz_reg:'00-001234-MOC', stock:'50–200 kg', aba_account:'', aba_name:'', wing_phone:'098765432', description:'Traditional Khmer silk weaving cooperative, 3rd generation artisans.', facebook:'', status:'pending', submitted:'2026-05-18T11:10:00Z',
+    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1614023342667-6f060e9d1e04?w=400'},{type:'id_back',src:null},{type:'selfie',src:'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400'},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400'},{type:'farm_photo',src:null},{type:'product_photo',src:'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400'}]},
+  { id:'S003', full_name:'Lyna Pech', email:'lyna@jasmine.kh', phone:'077111222', dob:'1985-01-15', store_name:'Gold Jasmine Coop', category:'Grains & Spices', province:'Battambang', tin:'K000-777888', biz_reg:'00-009876-MOC', stock:'More than 1 tonne', aba_account:'0007770', aba_name:'Lyna Pech', wing_phone:'', description:'Rice cooperative supplying premium jasmine rice to Phnom Penh and Siem Reap.', facebook:'https://facebook.com/goldjasmine', status:'pending', submitted:'2026-05-17T09:00:00Z',
+    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'selfie',src:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'},{type:'tin_cert',src:null},{type:'biz_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{type:'farm_photo',src:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'},{type:'product_photo',src:'https://images.unsplash.com/photo-1536304993881-ff86e0c9e9b7?w=400'}]},
+  { id:'S004', full_name:'Rith Panha', email:'rith@kampong.kh', phone:'012999888', dob:'1995-11-05', store_name:'Kampong Fresh', category:'Fruits', province:'Kampong Cham', tin:'K000-001122', biz_reg:'', stock:'50–200 kg', aba_account:'', aba_name:'', wing_phone:'012999888', description:'Fresh tropical fruits harvested daily from family orchards in Kampong Cham.', facebook:'', status:'approved', submitted:'2026-05-16T08:00:00Z', reviewed:'2026-05-16T12:00:00Z', note:'All documents verified. Welcome to Moutanak!',
+    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'selfie',src:'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400'},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=400'},{type:'farm_photo',src:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'}]},
+  { id:'S005', full_name:'Mony Keo', email:'mony@sea.kh', phone:'099334455', dob:'1990-03-22', store_name:'Coastal Catch Co.', category:'Seafood & Fish', province:'Sihanoukville', tin:'K000-998877', biz_reg:'', stock:'500 kg – 1 tonne', aba_account:'0009988', aba_name:'Mony Keo', wing_phone:'', description:'Daily fresh seafood from local Sihanoukville fishermen.', facebook:'', status:'rejected', submitted:'2026-05-15T07:00:00Z', reviewed:'2026-05-15T14:00:00Z', note:'TIN certificate image too blurry to verify. Please resubmit a clear scan.',
+    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:null},{type:'selfie',src:null},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:null},{type:'farm_photo',src:null}]},
+];
+
+const NOTIFS = [
+  { id:'n1', type:'new', icon:'fa-store', title:'New Application: Vanna\'s Spicy Farm', msg:'Vanna Sok applied — Kampot, Vegetables.', time:'8 min ago', read:false, appId:'S001' },
+  { id:'n2', type:'new', icon:'fa-store', title:'New Application: The Khmer Weaver', msg:'Dara Chhan applied — Takeo, Crafts.', time:'2 hrs ago', read:false, appId:'S002' },
+  { id:'n3', type:'ok', icon:'fa-check', title:'Kampong Fresh approved', msg:'Rith Panha\'s store is now live.', time:'Yesterday', read:true, appId:'S004' },
+  { id:'n4', type:'no', icon:'fa-xmark', title:'Coastal Catch rejected', msg:'Mony Keo — TIN certificate issue.', time:'2 days ago', read:true, appId:'S005' },
+  { id:'n5', type:'new', icon:'fa-boxes-stacked', title:'Low stock: Dried Mango 250g', msg:'Only 18 units remaining.', time:'3 hrs ago', read:false, appId:null },
+];
+
+const ACTIVITY = [
+  { icon:'✅', html:'<strong>Kampong Fresh</strong> approved by Admin', time:'Yesterday 12:00' },
+  { icon:'❌', html:'<strong>Coastal Catch Co.</strong> rejected — TIN issue', time:'2 days ago 14:00' },
+  { icon:'🆕', html:'<strong>Gold Jasmine Coop</strong> submitted application', time:'3 days ago 09:00' },
+  { icon:'📦', html:'Order <strong>#10043</strong> cancelled by customer', time:'3 days ago 11:30' },
+  { icon:'💰', html:'Payout processed for <strong>34 sellers</strong> · $28,400', time:'1 week ago' },
+];
+
+// ═══════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════
+const LANG = {
+  en: { dashboard_title:'Dashboard', dashboard_sub:'Welcome back, Admin · Wednesday, 20 May 2026', stat_sellers:'Active Sellers', stat_pending:'Pending Review', stat_orders:'Total Orders', stat_revenue:'Total Payouts', stat_visitors:'Monthly Visitors', sellers_title:'Seller Requests', admin_name:'Admin' },
+  kh: { dashboard_title:'ផ្ទាំងគ្រប់គ្រង', dashboard_sub:'សូមស្វាគមន៍ Admin 👋', stat_sellers:'អ្នកលក់សកម្ម', stat_pending:'កំពុងរង់ចាំ', stat_orders:'ការបញ្ជាទិញសរុប', stat_revenue:'ការបង់ប្រាក់', stat_visitors:'អ្នកចូលមើលប្រចាំខែ', sellers_title:'សំណើអ្នកលក់', admin_name:'អ្នកគ្រប់គ្រង' }
+};
+let currentLang = 'en';
+
+function setLang(l, btn) {
+  currentLang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const t = LANG[l];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n];
+  });
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'Dashboard', sellers:'Seller Requests', products:'Products', orders:'Orders', users:'Users', settings:'Settings' };
+  document.getElementById('breadcrumb-text').textContent = titles[id] || id;
+  if (id === 'sellers') renderSellersTable();
+}
+
+function toggleSidebar() {
+  const s = document.getElementById('sidebar');
+  s.classList.toggle('collapsed');
+  const icon = document.getElementById('collapse-icon');
+  icon.className = s.classList.contains('collapsed') ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left';
+}
+
+// ═══════════════════════════════════════════════
+// SELLERS TABLE
+// ═══════════════════════════════════════════════
+let sellerFilter = '', sellerSearch = '', sellerPage = 1;
+const PER_PAGE = 6;
+
+function getFilteredSellers() {
+  return SELLERS.filter(s => {
+    const matchStatus = !sellerFilter || s.status === sellerFilter;
+    const q = sellerSearch.toLowerCase();
+    const matchSearch = !q || s.full_name.toLowerCase().includes(q) || s.store_name.toLowerCase().includes(q) || s.tin.toLowerCase().includes(q) || s.email.toLowerCase().includes(q);
+    return matchStatus && matchSearch;
+  });
+}
+
+function renderSellersTable() {
+  const data = getFilteredSellers();
+  const start = (sellerPage - 1) * PER_PAGE;
+  const page = data.slice(start, start + PER_PAGE);
+  const tbody = document.getElementById('sellers-tbody');
+  tbody.innerHTML = page.length ? page.map(s => `
+    <tr onclick="openDrawer('${s.id}')">
+      <td><div class="seller-cell"><div class="seller-av">${s.full_name[0]}</div><div><div class="seller-name">${esc(s.full_name)}</div><div class="seller-meta">${esc(s.email)}</div></div></div></td>
+      <td><span style="font-weight:600;color:var(--text)">${esc(s.store_name)}</span></td>
+      <td><span class="badge badge-sky" style="font-size:9px">${esc(s.category)}</span></td>
+      <td style="color:var(--text2);font-size:12px">${esc(s.province)}</td>
+      <td style="font-size:11px;color:var(--sky);font-weight:600">${esc(s.tin)}</td>
+      <td style="font-size:11px;color:var(--text3)">${fmtDate(s.submitted)}</td>
+      <td><span class="badge badge-${s.status === 'approved' ? 'green' : s.status === 'rejected' ? 'red' : 'amber'}">${s.status === 'approved' ? '✅' : s.status === 'rejected' ? '❌' : '⏳'} ${s.status}</span></td>
+      <td onclick="event.stopPropagation()" style="display:flex;gap:5px;align-items:center">
+        <button class="act-btn act-view" onclick="openDrawer('${s.id}')">View</button>
+        ${s.status === 'pending' ? `<button class="act-btn act-approve" onclick="quickDecide('${s.id}','approved')"><i class="fa-solid fa-check"></i></button><button class="act-btn act-reject" onclick="quickDecide('${s.id}','rejected')"><i class="fa-solid fa-xmark"></i></button>` : ''}
+      </td>
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3);font-size:13px"><i class="fa-solid fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>No applications found</td></tr>';
+
+  // Pagination
+  const totalPages = Math.ceil(data.length / PER_PAGE);
+  document.getElementById('sellers-pg-info').textContent = `Showing ${Math.min(start + PER_PAGE, data.length)} of ${data.length}`;
+  const pgWrap = document.getElementById('sellers-pg-btns');
+  pgWrap.innerHTML = Array.from({length: totalPages}, (_,i) =>
+    `<button class="pg-btn ${sellerPage === i+1 ? 'active-pg' : ''}" onclick="goPage(${i+1})">${i+1}</button>`
+  ).join('') + `<button class="pg-btn" onclick="goPage(${Math.min(sellerPage+1,totalPages)})"><i class="fa-solid fa-chevron-right"></i></button>`;
+}
+
+function goPage(n) { sellerPage = n; renderSellersTable(); }
+function filterSellers(status, btn) { sellerFilter = status; sellerPage = 1; document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderSellersTable(); }
+function searchSellers(v) { sellerSearch = v; sellerPage = 1; renderSellersTable(); }
+
+function quickDecide(id, status) {
+  if (status === 'rejected') {
+    const note = prompt('Enter rejection reason (required):');
+    if (!note) return;
+    decide(id, status, note);
+  } else {
+    decide(id, status, 'Verified by admin.');
+  }
+}
+
+function decide(id, status, note) {
+  const s = SELLERS.find(x => x.id === id);
+  if (!s) return;
+  s.status = status;
+  s.note = note;
+  s.reviewed = new Date().toISOString();
+  updatePendingCount();
+  renderSellersTable();
+  renderDashPreview();
+  renderActivity();
+  const notif = { id:'n'+Date.now(), type: status === 'approved' ? 'ok' : 'no', icon: status === 'approved' ? 'fa-check' : 'fa-xmark', title: status === 'approved' ? `✅ ${s.store_name} approved` : `❌ ${s.store_name} rejected`, msg: note, time:'Just now', read:false, appId:id };
+  NOTIFS.unshift(notif);
+  renderNotifs();
+  updateNotifDot();
+  showToast(status === 'approved' ? `✅ ${s.store_name} approved!` : `❌ ${s.store_name} rejected`);
+  closeDrawer();
+}
+
+function updatePendingCount() {
+  const n = SELLERS.filter(s => s.status === 'pending').length;
+  const badge = document.getElementById('pending-badge');
+  badge.textContent = n;
+  badge.style.display = n ? '' : 'none';
+  document.getElementById('dash-pending').textContent = n;
+}
+
+function exportSellers() {
+  const rows = [['ID','Name','Email','Store','Category','Province','TIN','Status','Submitted']];
+  SELLERS.forEach(s => rows.push([s.id,s.full_name,s.email,s.store_name,s.category,s.province,s.tin,s.status,s.submitted]));
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'seller_applications.csv';
+  a.click();
+  showToast('CSV exported!');
+}
+
+// ═══════════════════════════════════════════════
+// DRAWER
+// ═══════════════════════════════════════════════
+function openDrawer(id) {
+  const s = SELLERS.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('drawer-title').textContent = s.store_name;
+  document.getElementById('drawer-id').textContent = 'ID: ' + id + ' · submitted ' + fmtDate(s.submitted);
+  document.getElementById('drawer-body').innerHTML = buildDrawerHTML(s);
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+const DOC_LABELS = { id_front:'ID Front', id_back:'ID Back', selfie:'Selfie + ID', tin_cert:'TIN Cert', biz_cert:'Biz Reg', address_proof:'Address', store_photo:'Store', farm_photo:'Farm', product_photo:'Product' };
+
+function buildDrawerHTML(s) {
+  const docCards = s.docs.map(d => `
+    <div class="doc-card" ${d.src ? `onclick="openLB('${d.src}')"` : ''} style="${!d.src ? 'opacity:.4;cursor:default' : ''}">
+      ${d.src ? `<img class="doc-thumb" src="${d.src}" onerror="this.style.display='none'"/>` : `<div class="doc-thumb-ph"><i class="fa-solid fa-file-slash"></i></div>`}
+      <div class="doc-footer">
+        <span class="doc-name">${DOC_LABELS[d.type] || d.type}</span>
+        ${d.src ? `<span class="doc-open"><i class="fa-solid fa-expand" style="font-size:10px"></i></span>` : `<span style="font-size:9px;color:var(--red)">Missing</span>`}
+      </div>
+    </div>`).join('');
+
+  const payoutStr = [s.aba_account ? `ABA: ${s.aba_account}` : '', s.wing_phone ? `Wing: ${s.wing_phone}` : ''].filter(Boolean).join(' · ') || '<span style="color:var(--red)">None on file</span>';
+
+  return `
+    <div class="dsec-title"><i class="fa-solid fa-circle-user"></i>Personal & Store</div>
+    <div class="dinfo-grid">
+      <div class="dinfo-item"><div class="dinfo-key">Full Name</div><div class="dinfo-val">${esc(s.full_name)}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">Date of Birth</div><div class="dinfo-val">${s.dob}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">Email</div><div class="dinfo-val">${esc(s.email)}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">Phone</div><div class="dinfo-val">+855 ${s.phone}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">Store</div><div class="dinfo-val">${esc(s.store_name)}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">Category</div><div class="dinfo-val">${s.category}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">Province</div><div class="dinfo-val">${s.province}</div></div>
+      <div class="dinfo-item"><div class="dinfo-key">TIN Number</div><div class="dinfo-val" style="color:var(--sky)">${s.tin}</div></div>
+      ${s.biz_reg ? `<div class="dinfo-item"><div class="dinfo-key">Business Reg</div><div class="dinfo-val">${s.biz_reg}</div></div>` : ''}
+      <div class="dinfo-item"><div class="dinfo-key">Stock Volume</div><div class="dinfo-val">${s.stock}</div></div>
+      <div class="dinfo-item" style="grid-column:1/-1"><div class="dinfo-key">Payout Methods</div><div class="dinfo-val">${payoutStr}</div></div>
+    </div>
+    ${s.description ? `<div class="dsec-title" style="margin-top:4px"><i class="fa-solid fa-align-left"></i>Description</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px">${esc(s.description)}</div>` : ''}
+    ${s.facebook ? `<div style="margin-bottom:16px"><a href="${s.facebook}" target="_blank" style="font-size:12px;color:var(--sky);font-weight:600"><i class="fa-brands fa-facebook" style="margin-right:5px"></i>${s.facebook}</a></div>` : ''}
+    <div class="dsec-title" style="margin-top:4px"><i class="fa-solid fa-file-shield"></i>Documents (${s.docs.length})</div>
+    <div class="docs-grid" style="margin-bottom:18px">${docCards}</div>
+    ${s.status !== 'pending' ? `
+    <div class="dsec-title"><i class="fa-solid fa-clipboard-check"></i>Decision</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin-bottom:14px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <span class="badge badge-${s.status === 'approved' ? 'green' : 'red'}">${s.status === 'approved' ? '✅ Approved' : '❌ Rejected'}</span>
+        <span style="font-size:10px;color:var(--text3)">${s.reviewed ? fmtDate(s.reviewed) : ''}</span>
+      </div>
+      ${s.note ? `<p style="font-size:12px;color:var(--text2)">${esc(s.note)}</p>` : ''}
+    </div>` : ''}
+    ${s.status === 'pending' ? `
+    <div class="dsec-title"><i class="fa-solid fa-pen-to-square"></i>Your Decision</div>
+    <div class="review-panel">
+      <textarea id="review-note" placeholder="Add note or rejection reason (required for rejection)…"></textarea>
+      <div class="review-row">
+        <button class="btn-approve" onclick="submitDecision('${s.id}','approved')"><i class="fa-solid fa-check" style="margin-right:5px"></i>Approve Seller</button>
+        <button class="btn-reject"  onclick="submitDecision('${s.id}','rejected')"><i class="fa-solid fa-xmark" style="margin-right:5px"></i>Reject</button>
+      </div>
+    </div>` : ''}
+  `;
+}
+
+function submitDecision(id, status) {
+  const note = document.getElementById('review-note')?.value.trim() || '';
+  if (status === 'rejected' && !note) {
+    document.getElementById('review-note').style.borderColor = 'var(--red)';
+    showToast('Please enter a rejection reason.', true);
+    return;
+  }
+  decide(id, status, note || 'Verified by admin.');
+  renderSellersTable();
+}
+
+// ═══════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════
+function renderNotifs() {
+  const list = document.getElementById('np-list');
+  const iMap = { new:'npi-new', ok:'npi-ok', no:'npi-no' };
+  list.innerHTML = NOTIFS.map(n => `
+    <div class="np-item ${n.read ? '' : 'unread'}" onclick="notifClick('${n.id}','${n.appId||''}')">
+      <div class="np-icon ${iMap[n.type]}"><i class="fa-solid ${n.icon}" style="color:${n.type==='new'?'var(--amber)':n.type==='ok'?'var(--green)':'var(--red)'}"></i></div>
+      <div style="flex:1;min-width:0"><div class="np-title">${esc(n.title)}</div><div class="np-msg">${esc(n.msg)}</div><div class="np-time">${n.time}</div></div>
+      ${!n.read ? '<div class="np-dot"></div>' : ''}
+    </div>`).join('');
+}
+
+function toggleNotif() {
+  const p = document.getElementById('notif-panel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) { renderNotifs(); }
+}
+
+function markAllRead() { NOTIFS.forEach(n => n.read = true); updateNotifDot(); renderNotifs(); }
+function updateNotifDot() {
+  const unread = NOTIFS.filter(n => !n.read).length;
+  document.getElementById('notif-dot').style.display = unread ? 'block' : 'none';
+}
+
+function notifClick(id, appId) {
+  const n = NOTIFS.find(x => x.id === id);
+  if (n) n.read = true;
+  updateNotifDot();
+  document.getElementById('notif-panel').classList.remove('open');
+  if (appId) openDrawer(appId);
+  renderNotifs();
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#notif-panel') && !e.target.closest('#notif-toggle'))
+    document.getElementById('notif-panel').classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════
+// DASHBOARD PREVIEW
+// ═══════════════════════════════════════════════
+function renderDashPreview() {
+  const pending = SELLERS.filter(s => s.status === 'pending').slice(0, 3);
+  document.getElementById('dash-seller-preview').innerHTML = pending.length
+    ? pending.map(s => `
+      <tr onclick="openDrawer('${s.id}')">
+        <td><div class="seller-cell"><div class="seller-av">${s.full_name[0]}</div><div><div class="seller-name" style="font-size:12px">${esc(s.full_name)}</div><div class="seller-meta">${esc(s.store_name)}</div></div></div></td>
+        <td style="font-size:12px;color:var(--text2)">${s.province}</td>
+        <td style="font-size:11px;color:var(--sky)">${s.tin}</td>
+        <td onclick="event.stopPropagation()" style="display:flex;gap:4px">
+          <button class="act-btn act-approve" style="padding:4px 8px;font-size:10px" onclick="quickDecide('${s.id}','approved')">✓</button>
+          <button class="act-btn act-reject" style="padding:4px 8px;font-size:10px" onclick="quickDecide('${s.id}','rejected')">✗</button>
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);font-size:12px">No pending requests 🎉</td></tr>';
+}
+
+function renderActivity() {
+  document.getElementById('activity-feed').innerHTML = ACTIVITY.slice(0, 5).map(a => `
+    <div class="activity-item">
+      <div class="act-av">${a.icon}</div>
+      <div><div class="act-text">${a.html}</div><div class="act-time">${a.time}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// GLOBAL SEARCH
+// ═══════════════════════════════════════════════
+function globalSearch(v) {
+  if (!v) return;
+  const q = v.toLowerCase();
+  const hits = SELLERS.filter(s =>
+    s.full_name.toLowerCase().includes(q) ||
+    s.store_name.toLowerCase().includes(q) ||
+    s.email.toLowerCase().includes(q)
+  );
+  if (hits.length) {
+    sellerSearch = v;
+    showPage('sellers', document.querySelector('.nav-item[onclick*="sellers"]'));
+    renderSellersTable();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// LIGHTBOX
+// ═══════════════════════════════════════════════
+function openLB(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLB() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function showToast(msg, isErr) {
+  const t = document.getElementById('toast');
+  const icon = t.querySelector('i');
+  icon.style.color = isErr ? 'var(--red)' : 'var(--green)';
+  icon.className = 'fa-solid ' + (isErr ? 'fa-circle-xmark' : 'fa-circle-check');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+// ═══════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════
+const chartDefaults = {
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { color: 'rgba(44,60,52,.5)' }, ticks: { color: 'rgba(232,240,236,.3)', font: { family: 'Outfit', size: 11 } } },
+    y: { grid: { color: 'rgba(44,60,52,.5)' }, ticks: { color: 'rgba(232,240,236,.3)', font: { family: 'Outfit', size: 11 } } }
+  }
+};
+
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: ['Dec','Jan','Feb','Mar','Apr','May'],
+    datasets: [
+      { label:'Revenue', data:[42,68,54,80,72,95], borderColor:'#4ADE80', backgroundColor:'rgba(74,222,128,.08)', fill:true, tension:0.45, pointBackgroundColor:'#4ADE80', pointRadius:4 },
+      { label:'Orders', data:[1800,2400,2100,3100,2900,3800], borderColor:'#67C8E8', backgroundColor:'rgba(103,200,232,.04)', fill:true, tension:0.45, yAxisID:'y2', pointBackgroundColor:'#67C8E8', pointRadius:4 }
+    ]
+  },
+  options: { responsive:true, plugins:{ legend:{ display:true, labels:{ color:'rgba(232,240,236,.5)', font:{family:'Outfit',size:11}, boxWidth:12, padding:16 } } }, scales: { x:chartDefaults.scales.x, y:{ ...chartDefaults.scales.y, position:'left' }, y2:{ ...chartDefaults.scales.y, position:'right', grid:{display:false} } } }
+});
+
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Vegetables','Crafts','Grains','Fruits','Seafood','Other'],
+    datasets: [{ data:[28,22,20,14,10,6], backgroundColor:['#4ADE80','#FFC34D','#67C8E8','#FF6B6B','#A78BFA','#6B7280'], borderWidth:0, hoverOffset:6 }]
+  },
+  options: { responsive:true, cutout:'72%', plugins:{ legend:{ display:true, position:'bottom', labels:{ color:'rgba(232,240,236,.45)', font:{family:'Outfit',size:11}, boxWidth:10, padding:12 } } } }
+});
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+renderDashPreview();
+renderActivity();
+updateNotifDot();
+renderNotifs();
+updatePendingCount();
+</script>
+</body>
+</html>

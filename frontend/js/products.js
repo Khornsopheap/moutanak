@@ -102,25 +102,37 @@ function applyFilters() {
 }
 
 // ---------- Bootstrap: fetch from API or fall back ----------
-function loadProducts() {
-    fetch('http://localhost:5000/api/products')
-        .then(r => r.json())
-        .then(d => {
-            apiProducts = d.products.map(p => ({
-                id:      p._id,
-                name:    p.name,
-                price:   p.price,
-                img:     p.img,
-                cat:     p.category,
-                badge:   p.badge,
-                rating:  p.rating,
-                reviews: p.reviews,
-                inStock: p.inStock,
-            }));
-            renderProducts(apiProducts);
-        })
-        .catch(() => {
-            apiProducts = PRODUCTS_FALLBACK;
-            renderProducts(PRODUCTS_FALLBACK);
-        });
+async function loadProducts() {
+
+    try {
+
+        const response = await fetch('http://localhost:5000/api/products');
+
+        const data = await response.json();
+
+        console.log("API DATA:", data);
+
+        // IMPORTANT
+        apiProducts = data.products.map(product => ({
+            id: product._id,
+            name: product.name,
+            price: Number(product.price),
+            img: product.img,
+            cat: product.category,
+            badge: product.badge,
+            rating: product.rating,
+            reviews: product.reviews,
+            inStock: product.inStock
+        }));
+
+        renderProducts(apiProducts);
+
+    } catch (error) {
+
+        console.error("LOAD PRODUCTS ERROR:", error);
+
+        apiProducts = PRODUCTS_FALLBACK;
+
+        renderProducts(PRODUCTS_FALLBACK);
+    }
 }
