@@ -915,9 +915,14 @@ function updateStep() {
 function go(dir) {
     if (dir === 1) {
         if (!validateStep(cur)) return;
-        if (cur === STEPS.length - 1) { submitApp(); return; }
+        // LAST STEP
+        if (cur === STEPS.length - 1) {
+            submitSellerForm();
+            return;
+        }
         cur++;
     } else {
+
         cur = Math.max(0, cur - 1);
     }
     // Populate review on last step
@@ -1125,6 +1130,47 @@ function submitApp() {
     document.getElementById('modal-title').textContent = 'Application Complete';
     document.getElementById('modal-sub').textContent = 'Awaiting review';
     showToast('Application submitted successfully!');
+}
+
+function submitSellerForm() {
+
+    const user = JSON.parse(localStorage.getItem("moutanak_user"));
+
+    const request = {
+        id: Date.now(),
+
+        sellerName: document.getElementById('f-fullname').value,
+        email: document.getElementById('f-email').value,
+        phone: document.getElementById('f-phone').value,
+
+        storeName: document.getElementById('f-storename').value,
+        category: document.getElementById('f-cat').value,
+        province: document.getElementById('f-province').value,
+
+        tin: document.getElementById('f-tin').value,
+
+        status: "pending",
+
+        submittedAt: new Date().toLocaleDateString(),
+
+        userId: user?.id || user?.username
+    };
+
+    // GET OLD REQUESTS
+    let requests = JSON.parse(localStorage.getItem("seller_requests")) || [];
+
+    // ADD NEW REQUEST
+    requests.push(request);
+
+    // SAVE BACK
+    localStorage.setItem(
+        "seller_requests",
+        JSON.stringify(requests)
+    );
+
+    alert("Application submitted!");
+
+    window.location.href = "admin.html";
 }
 
 // ===== TOAST =====

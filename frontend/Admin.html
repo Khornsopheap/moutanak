@@ -4,1049 +4,968 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Moutanak · Admin Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0B0F0D;
-  --bg2:#111815;
-  --surface:#161D1A;
-  --surface2:#1C2520;
-  --surface3:#222E28;
-  --border:#2C3C34;
-  --border2:#374840;
-  --green:#4ADE80;
-  --green2:#22C55E;
-  --green-dim:rgba(74,222,128,.12);
-  --green-glow:rgba(74,222,128,.06);
-  --cream:#F0EAD6;
-  --cream2:#E8DFC8;
-  --red:#FF6B6B;
-  --red-dim:rgba(255,107,107,.12);
-  --amber:#FFC34D;
-  --amber-dim:rgba(255,195,77,.12);
-  --sky:#67C8E8;
-  --sky-dim:rgba(103,200,232,.1);
-  --text:#E8F0EC;
-  --text2:rgba(232,240,236,.65);
-  --text3:rgba(232,240,236,.35);
-  --font-display:'Playfair Display',serif;
-  --font:'Outfit',sans-serif;
-  --r:14px;
-  --r2:20px;
-  --r3:28px;
+  --bg:#F0F9F0;--bg2:#FFFFFF;--surface:#FFFFFF;--surface2:#F5FAF5;--surface3:#E8F5E8;
+  --border:#C8E6C8;--border2:#A8D5A8;
+  --green:#22C55E;--gd:#16A34A;--g2:#15803D;--gdim:rgba(34,197,94,.10);
+  --orange:#F97316;--odim:rgba(249,115,22,.10);--od:#EA6C0A;
+  --red:#EF4444;--rdim:rgba(239,68,68,.10);
+  --amber:#F59E0B;--adim:rgba(245,158,11,.10);
+  --sky:#0EA5E9;--sdim:rgba(14,165,233,.10);
+  --text:#0C2B18;--t2:#2A4A35;--t3:#6B9878;
+  --sh:0 1px 3px rgba(12,43,24,.05),0 4px 16px rgba(12,43,24,.05);
+  --shm:0 4px 24px rgba(12,43,24,.09);
+  --shl:0 8px 48px rgba(12,43,24,.13);
+  --fd:'Fraunces',serif;--fn:'DM Sans',sans-serif;
+  --r:12px;--r2:18px;--r3:24px;
+  --sb-w:236px;
 }
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden}
-
-/* LAYOUT */
+html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--text);overflow:hidden}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:15;backdrop-filter:blur(2px)}
+.overlay.open{display:block}
 .shell{display:flex;height:100vh;position:relative}
-
-/* ─── SIDEBAR ─── */
 .sidebar{
-  width:230px;flex-shrink:0;background:var(--bg2);
-  border-right:1px solid var(--border);display:flex;
-  flex-direction:column;z-index:20;position:relative;
-  transition:width .3s cubic-bezier(.4,0,.2,1);
+  width:var(--sb-w);flex-shrink:0;background:var(--bg2);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  z-index:20;transition:width .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)
 }
-.sidebar.collapsed{width:64px}
-.sidebar-top{padding:22px 18px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden;white-space:nowrap}
-.sidebar-logo{width:34px;height:34px;border-radius:10px;background:var(--green-dim);border:1px solid rgba(74,222,128,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.sidebar-logo i{color:var(--green);font-size:14px}
-.sidebar-brand-text{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--cream)}
-.sidebar-brand-text em{color:var(--green);font-style:normal}
-.sidebar-brand-sub{font-size:9px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
-
-.nav-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);padding:18px 18px 6px;overflow:hidden;white-space:nowrap}
-.sidebar.collapsed .nav-section-label{opacity:0}
-
-.nav-item{
-  display:flex;align-items:center;gap:11px;padding:10px 18px;
-  font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;
-  border-left:2px solid transparent;transition:all .15s;white-space:nowrap;overflow:hidden;
-  position:relative;
+.sidebar.col{width:64px}
+@media(max-width:767px){
+  .sidebar{position:fixed;top:0;left:0;height:100%;width:var(--sb-w) !important;transform:translateX(-100%);box-shadow:var(--shl)}
+  .sidebar.mob-open{transform:translateX(0)}
 }
-.nav-item:hover{color:var(--text);background:var(--surface2)}
-.nav-item.active{color:var(--green);background:var(--green-dim);border-left-color:var(--green)}
-.nav-item .nav-icon{width:16px;text-align:center;flex-shrink:0;font-size:13px}
-.nav-item .nav-label{flex:1}
-.nav-badge{background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:99px;flex-shrink:0}
-.nav-badge.amber{background:var(--amber);color:#0B0F0D}
-
-.sidebar-footer{margin-top:auto;border-top:1px solid var(--border);padding:14px}
-.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:99px;overflow:hidden}
-.lang-btn{flex:1;padding:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;text-align:center;border:none;background:transparent;color:var(--text3)}
-.lang-btn.active{background:var(--green);color:#0B0F0D;border-radius:99px}
-.collapse-btn{width:100%;margin-top:10px;padding:7px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text3);font-size:12px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-weight:500}
-.collapse-btn:hover{color:var(--text);border-color:var(--border2)}
-.sidebar.collapsed .collapse-btn span{display:none}
-
-/* ─── MAIN ─── */
+.sb-top{padding:18px 14px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden;white-space:nowrap}
+.sb-logo{width:34px;height:34px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.3)}
+.sb-logo i{color:#fff;font-size:13px}
+.sb-brand{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--text)}
+.sb-brand em{color:var(--green);font-style:normal}
+.sb-sub{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.1em}
+.sb-close{display:none;margin-left:auto;width:28px;height:28px;border-radius:8px;background:var(--surface3);border:1px solid var(--border);align-items:center;justify-content:center;cursor:pointer;color:var(--t3);flex-shrink:0}
+@media(max-width:767px){.sb-close{display:flex}}
+.nsl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);padding:14px 18px 4px;overflow:hidden;white-space:nowrap}
+.sidebar.col .nsl{opacity:0}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border-radius:var(--r);transition:all .15s;white-space:nowrap;overflow:hidden;margin:1px 8px}
+.ni:hover{color:var(--text);background:var(--surface3)}
+.ni.active{color:var(--gd);background:var(--gdim);font-weight:600}
+.ni.active .nic{color:var(--green)}
+.nic{width:16px;text-align:center;flex-shrink:0;font-size:13px;color:var(--t3)}
+.nil{flex:1}
+.nbadge{background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:1px 7px;border-radius:99px;flex-shrink:0}
+.nbadge.amb{background:var(--amber)}
+.sidebar.col .nil,.sidebar.col .nbadge{display:none}
+.sb-foot{margin-top:auto;border-top:1px solid var(--border);padding:10px}
+.lang-tog{display:flex;background:var(--surface3);border:1px solid var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.lb{flex:1;padding:5px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;text-align:center;border:none;background:transparent;color:var(--t3)}
+.lb.active{background:var(--green);color:#fff;border-radius:99px}
+.col-btn{width:100%;padding:7px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--t3);font-size:12px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--fn);font-weight:500}
+.col-btn:hover{color:var(--text);border-color:var(--border2)}
+.sidebar.col .col-btn span{display:none}
+@media(max-width:767px){.col-btn{display:none}}
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-
-/* TOPBAR */
-.topbar{
-  display:flex;align-items:center;gap:14px;padding:14px 28px;
-  background:var(--bg2);border-bottom:1px solid var(--border);
-  flex-shrink:0;position:sticky;top:0;z-index:10;
-}
-.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
-.topbar-breadcrumb strong{color:var(--text2);font-weight:600}
-.topbar-spacer{flex:1}
-.topbar-search{position:relative}
-.topbar-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px}
-.topbar-search input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 12px 7px 30px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;width:200px;transition:.2s}
-.topbar-search input:focus{border-color:var(--green);width:240px}
-.topbar-search input::placeholder{color:var(--text3)}
-
-.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:.15s;position:relative;flex-shrink:0}
-.icon-btn:hover{color:var(--text);border-color:var(--border2)}
-.icon-btn .badge-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2)}
-.admin-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;transition:.15s}
-.admin-chip:hover{border-color:var(--border2)}
-.admin-av{width:26px;height:26px;border-radius:8px;background:var(--green-dim);border:1px solid rgba(74,222,128,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green)}
-.admin-name{font-size:12px;font-weight:600;color:var(--text2)}
-
-/* CONTENT */
-.content{flex:1;overflow-y:auto;padding:26px 28px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 18px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
+.mob-menu{display:none;width:34px;height:34px;border-radius:9px;background:var(--surface3);border:1px solid var(--border);align-items:center;justify-content:center;cursor:pointer;color:var(--t3);flex-shrink:0}
+@media(max-width:767px){.mob-menu{display:flex}}
+.tbc{font-size:12px;color:var(--t3);display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;white-space:nowrap}
+.tbc strong{color:var(--t2);font-weight:600}
+@media(max-width:479px){.tbc #bcd{display:none}}
+.sp{flex:1}
+.ts{position:relative}
+.ts i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:11px}
+.ts input{background:var(--surface3);border:1px solid var(--border);border-radius:99px;padding:7px 12px 7px 28px;font-size:12px;color:var(--text);font-family:var(--fn);outline:none;width:180px;transition:.2s}
+.ts input:focus{border-color:var(--green);background:#fff;width:210px}
+.ts input::placeholder{color:var(--t3)}
+@media(max-width:479px){.ts{display:none}}
+.ib{width:34px;height:34px;border-radius:9px;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);transition:.15s;position:relative;flex-shrink:0}
+.ib:hover{color:var(--text);border-color:var(--border2);background:#fff}
+.ib .dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--orange);border:1.5px solid var(--bg2)}
+.ac{display:flex;align-items:center;gap:7px;background:var(--surface3);border:1px solid var(--border);border-radius:99px;padding:4px 10px 4px 4px;cursor:pointer;transition:.15s}
+.ac:hover{border-color:var(--border2);background:#fff}
+.aav{width:24px;height:24px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.an{font-size:12px;font-weight:600;color:var(--t2)}
+@media(max-width:359px){.an,.ac i{display:none}}
+.content{flex:1;overflow-y:auto;padding:20px 20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .content::-webkit-scrollbar{width:4px}
 .content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-
-/* PAGES */
-.page{display:none;animation:fadeUp .3s ease}
+@media(max-width:479px){.content{padding:14px 12px}}
+.page{display:none;animation:fu .3s ease}
 .page.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-/* PAGE HEADER */
-.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px}
-.page-title{font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--cream);line-height:1}
-.page-sub{font-size:12px;color:var(--text3);margin-top:4px;font-weight:400}
-.header-actions{display:flex;gap:8px}
-
-/* STAT CARDS */
-.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
-.stat-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);
-  padding:18px;cursor:default;transition:all .2s;position:relative;overflow:hidden;
-}
-.stat-card::before{content:'';position:absolute;inset:0;background:var(--glow,transparent);opacity:.5;pointer-events:none}
-.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.stat-card .s-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:14px}
-.stat-card .s-num{font-family:var(--font-display);font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
-.stat-card .s-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
-.stat-card .s-change{font-size:11px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
-
-/* CHARTS ROW */
-.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
-.chart-title{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.chart-title span{font-size:11px;font-weight:500;color:var(--text3);margin-left:auto}
-
-/* ACTIVITY + QUICK TABLE */
-.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-
-/* TABLE SHARED */
-.data-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
-.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.table-header h3{font-size:13px;font-weight:700;color:var(--cream)}
-.data-table{width:100%;border-collapse:collapse}
-.data-table th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
-.data-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
-.data-table tbody tr:last-child td{border-bottom:none}
-.data-table tbody tr{transition:.12s;cursor:pointer}
-.data-table tbody tr:hover{background:var(--surface2)}
-
-/* BADGES */
-.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
-.badge-green{background:var(--green-dim);color:var(--green)}
-.badge-red{background:var(--red-dim);color:var(--red)}
-.badge-amber{background:var(--amber-dim);color:var(--amber)}
-.badge-sky{background:var(--sky-dim);color:var(--sky)}
-
-/* SELLER CELL */
-.seller-cell{display:flex;align-items:center;gap:10px}
-.seller-av{width:32px;height:32px;border-radius:9px;background:var(--green-dim);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--green);flex-shrink:0}
-.seller-name{font-weight:600;font-size:13px;color:var(--text)}
-.seller-meta{font-size:11px;color:var(--text3)}
-
-/* ACTION BUTTONS */
-.act-btn{padding:5px 11px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.15s;font-family:var(--font)}
-.act-approve{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,.2)}
-.act-approve:hover{background:var(--green);color:#0B0F0D}
-.act-reject{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,107,107,.2)}
-.act-reject:hover{background:var(--red);color:#fff}
-.act-view{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
-.act-view:hover{border-color:var(--border2);color:var(--text)}
-
-/* FILTER BAR */
-.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.ftab{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text3);transition:.15s;font-family:var(--font)}
-.ftab:hover{color:var(--text2);border-color:var(--border2)}
-.ftab.active{background:var(--green);border-color:var(--green);color:#0B0F0D}
-.fsearch{margin-left:auto;position:relative}
-.fsearch i{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text3)}
-.fsearch input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 11px 7px 28px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;width:200px;transition:.2s}
-.fsearch input:focus{border-color:var(--green)}
-.fsearch input::placeholder{color:var(--text3)}
-
-/* PAGINATION */
-.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border)}
-.pg-info{font-size:11px;color:var(--text3)}
-.pg-btns{display:flex;gap:5px}
-.pg-btn{width:28px;height:28px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
-.pg-btn:hover{border-color:var(--green);color:var(--green)}
-.pg-btn.active-pg{background:var(--green);border-color:var(--green);color:#0B0F0D;font-weight:700}
-
-/* ─── DRAWER ─── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
-.overlay.open{opacity:1;pointer-events:all}
-.drawer{
-  position:fixed;right:0;top:0;bottom:0;width:520px;max-width:95vw;z-index:91;
-  background:var(--surface);border-left:1px solid var(--border);
-  display:flex;flex-direction:column;
-  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  overflow:hidden;
-}
-.drawer.open{transform:translateX(0)}
-.drawer-top{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
-.drawer-top-info{flex:1;min-width:0}
-.drawer-top-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.drawer-top-id{font-size:10px;color:var(--text3);margin-top:2px}
-.close-btn{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
-.close-btn:hover{border-color:var(--red);color:var(--red)}
-.drawer-body{flex:1;overflow-y:auto;padding:20px 22px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
-.drawer-body::-webkit-scrollbar{width:3px}
-.drawer-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-
-/* Drawer Sections */
-.dsec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.dinfo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
-.dinfo-item{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 13px}
-.dinfo-key{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:3px}
-.dinfo-val{font-size:13px;font-weight:600;color:var(--text);word-break:break-all}
-.dinfo-val a{color:var(--sky)}
-
-/* Docs */
-.docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
-.doc-card{background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:.15s}
-.doc-card:hover{border-color:var(--green)}
-.doc-thumb{width:100%;height:80px;object-fit:cover;display:block;background:var(--bg)}
-.doc-thumb-ph{width:100%;height:80px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text3);font-size:24px}
-.doc-footer{padding:7px 10px;display:flex;align-items:center;justify-content:space-between}
-.doc-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text2)}
-.doc-open{font-size:10px;color:var(--sky)}
-
-/* Review Panel */
-.review-panel{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px}
-.review-panel textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:13px;resize:vertical;min-height:70px;outline:none;margin-bottom:12px;transition:.2s}
-.review-panel textarea:focus{border-color:var(--green)}
-.review-panel textarea::placeholder{color:var(--text3)}
-.review-row{display:flex;gap:8px}
-.btn-approve{flex:1;padding:10px;border-radius:10px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--green);color:#0B0F0D;transition:.15s}
-.btn-approve:hover{opacity:.85}
-.btn-approve:disabled{opacity:.3;cursor:not-allowed}
-.btn-reject{flex:1;padding:10px;border-radius:10px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--red);color:#fff;transition:.15s}
-.btn-reject:hover{opacity:.85}
-.btn-reject:disabled{opacity:.3;cursor:not-allowed}
-
-/* NOTIFICATION PANEL */
-.notif-panel{
-  position:fixed;top:60px;right:18px;width:340px;z-index:80;
-  background:var(--surface);border:1px solid var(--border);border-radius:18px;
-  box-shadow:0 24px 60px -8px rgba(0,0,0,.7);display:none;overflow:hidden;
-}
-.notif-panel.open{display:block;animation:fadeUp .2s ease}
-.np-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.np-head h4{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--cream)}
-.np-mark{font-size:11px;color:var(--green);cursor:pointer;font-weight:600}
-.np-list{max-height:340px;overflow-y:auto;scrollbar-width:none}
-.np-item{padding:12px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s;display:flex;gap:10px}
-.np-item:last-child{border-bottom:none}
-.np-item:hover{background:var(--surface2)}
-.np-item.unread{background:rgba(74,222,128,.03)}
-.np-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.npi-new{background:var(--amber-dim)}
-.npi-ok{background:var(--green-dim)}
-.npi-no{background:var(--red-dim)}
-.np-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
-.np-msg{font-size:11px;color:var(--text3);line-height:1.4}
-.np-time{font-size:10px;color:var(--text3);margin-top:2px}
-.np-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px}
-
-/* LIGHTBOX */
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-.lightbox.open{display:flex}
-.lightbox img{max-width:88vw;max-height:88vh;border-radius:10px;object-fit:contain}
-.lb-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-
-/* TOAST */
-.toast{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);opacity:0;
-  background:var(--surface2);border:1px solid var(--border);padding:10px 18px;
-  border-radius:99px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;
-  box-shadow:0 12px 40px -8px rgba(0,0,0,.6);z-index:300;transition:all .3s cubic-bezier(.4,0,.2,1);
-  white-space:nowrap;
-}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap}
+.pt{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--text);line-height:1}
+.ps{font-size:12px;color:var(--t3);margin-top:4px}
+@media(max-width:479px){.pt{font-size:22px}}
+.ha{display:flex;gap:8px;flex-shrink:0}
+.sg{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:1199px){.sg{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:767px){.sg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:359px){.sg{grid-template-columns:1fr}}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;transition:all .2s;box-shadow:var(--sh)}
+.sc:hover{box-shadow:var(--shm);transform:translateY(-2px);border-color:var(--border2)}
+.sc .si{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px}
+.sc .sn{font-family:var(--fd);font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.sc .sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.sc .schange{font-size:11px;font-weight:600;margin-top:5px;display:flex;align-items:center;gap:3px}
+.cr{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:899px){.cr{grid-template-columns:1fr}}
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;box-shadow:var(--sh)}
+.ct{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ct span{font-size:11px;font-weight:500;color:var(--t3);margin-left:auto}
+.chart-wrap{position:relative;width:100%;height:220px}
+.donut-wrap{height:260px}
+@media(max-width:899px){.donut-wrap{height:300px}}
+@media(max-width:479px){.chart-wrap{height:180px}.donut-wrap{height:260px}}
+.br{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:767px){.br{grid-template-columns:1fr}}
+.tw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh)}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.th2{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.th2 h3{font-size:13px;font-weight:700;color:var(--text)}
+.dt{width:100%;border-collapse:collapse;min-width:580px}
+.dt th{padding:8px 13px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap}
+.dt td{padding:10px 13px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+.dt tbody tr:last-child td{border-bottom:none}
+.dt tbody tr{transition:.12s;cursor:pointer}
+.dt tbody tr:hover{background:var(--surface2)}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.bg{background:var(--gdim);color:var(--gd)}
+.br2{background:var(--rdim);color:var(--red)}
+.ba{background:var(--adim);color:#92400E}
+.bs{background:var(--sdim);color:var(--sky)}
+.bo{background:var(--odim);color:var(--od)}
+.cell{display:flex;align-items:center;gap:9px}
+.av{width:32px;height:32px;border-radius:9px;background:var(--gdim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--gd);flex-shrink:0}
+.cn{font-weight:600;font-size:13px;color:var(--text)}
+.cm{font-size:11px;color:var(--t3)}
+.ab{padding:5px 11px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.15s;font-family:var(--fn)}
+.aap{background:var(--gdim);color:var(--gd);border:1px solid rgba(34,197,94,.2)}
+.aap:hover{background:var(--green);color:#fff}
+.arj{background:var(--rdim);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.arj:hover{background:var(--red);color:#fff}
+.av2{background:var(--surface3);color:var(--t2);border:1px solid var(--border)}
+.av2:hover{border-color:var(--border2);color:var(--text);background:#fff}
+.btn-add{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--green);color:#fff;border:none;border-radius:99px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;transition:.15s;box-shadow:0 2px 8px rgba(34,197,94,.25);white-space:nowrap}
+.btn-add:hover{background:var(--gd)}
+.btn-save{padding:8px 20px;background:var(--green);color:#fff;border:none;border-radius:9px;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-save:hover{background:var(--gd)}
+.fb{display:flex;align-items:center;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.ftab{padding:5px 13px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--t3);transition:.15s;font-family:var(--fn)}
+.ftab:hover{color:var(--t2);border-color:var(--border2)}
+.ftab.active{background:var(--green);border-color:var(--green);color:#fff}
+.fs{margin-left:auto;position:relative}
+.fs i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--t3)}
+.fs input{background:#fff;border:1px solid var(--border);border-radius:99px;padding:6px 11px 6px 26px;font-size:12px;color:var(--text);font-family:var(--fn);outline:none;width:180px;transition:.2s}
+.fs input:focus{border-color:var(--green)}
+.fs input::placeholder{color:var(--t3)}
+@media(max-width:479px){.fs{margin-left:0;width:100%}.fs input{width:100%}}
+.pg{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;gap:8px}
+.pgi{font-size:11px;color:var(--t3)}
+.pgb{display:flex;gap:4px;flex-wrap:wrap}
+.pb{width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid var(--border);color:var(--t3);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.pb:hover{border-color:var(--green);color:var(--green)}
+.pb.ap{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.back-btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;background:#fff;border:1px solid var(--border);border-radius:99px;font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;transition:.15s;margin-bottom:18px}
+.back-btn:hover{border-color:var(--green);color:var(--gd)}
+.dhero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:22px;margin-bottom:16px;box-shadow:var(--sh);display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.dav{width:62px;height:62px;border-radius:18px;background:var(--gdim);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:24px;font-weight:700;color:var(--gd);flex-shrink:0}
+.dhi{flex:1;min-width:180px}
+.dsn{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--text);margin-bottom:3px}
+.dss{font-size:13px;color:var(--t3);margin-bottom:10px}
+.dtags{display:flex;gap:5px;flex-wrap:wrap}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:767px){.dgrid{grid-template-columns:1fr}}
+.dc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;box-shadow:var(--sh)}
+.dc h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ii{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 11px}
+.ik{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:2px}
+.iv{font-size:13px;font-weight:600;color:var(--text);word-break:break-all}
+.docsw{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+@media(max-width:479px){.docsw{grid-template-columns:repeat(2,1fr)}}
+.dcard{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.15s}
+.dcard:hover{border-color:var(--green);box-shadow:0 4px 14px rgba(34,197,94,.12)}
+.dthumb{width:100%;height:72px;object-fit:cover;display:block}
+.dph{width:100%;height:72px;display:flex;align-items:center;justify-content:center;background:var(--surface3);color:var(--t3);font-size:22px}
+.dfoot{padding:6px 8px;display:flex;align-items:center;justify-content:space-between;background:#fff}
+.dname{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--t2)}
+.rp{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;box-shadow:var(--sh)}
+.rp h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rp textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);font-family:var(--fn);font-size:13px;resize:vertical;min-height:72px;outline:none;margin-bottom:10px;transition:.2s}
+.rp textarea:focus{border-color:var(--green);background:#fff}
+.rp textarea::placeholder{color:var(--t3)}
+.rrow{display:flex;gap:9px}
+.bap{flex:1;padding:10px;border-radius:10px;font-family:var(--fn);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--green);color:#fff;transition:.15s;box-shadow:0 2px 8px rgba(34,197,94,.28)}
+.bap:hover{background:var(--gd)}
+.brj{flex:1;padding:10px;border-radius:10px;font-family:var(--fn);font-weight:700;font-size:13px;cursor:pointer;background:var(--surface3);color:var(--red);border:1.5px solid rgba(239,68,68,.2);transition:.15s}
+.brj:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.deccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;box-shadow:var(--sh)}
+.deccard h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.np{position:fixed;top:54px;right:10px;width:320px;z-index:80;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shl);display:none;overflow:hidden}
+@media(max-width:479px){.np{right:0;left:0;width:auto;border-radius:0 0 16px 16px;top:54px}}
+.np.open{display:block;animation:fu .2s ease}
+.nph{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface2)}
+.nph h4{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--text)}
+.npm{font-size:11px;color:var(--green);cursor:pointer;font-weight:700}
+.npl{max-height:320px;overflow-y:auto;scrollbar-width:none}
+.npi{padding:11px 13px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s;display:flex;gap:9px}
+.npi:last-child{border-bottom:none}
+.npi:hover{background:var(--surface2)}
+.npi.ur{background:rgba(34,197,94,.02)}
+.npic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.npi-n{background:var(--odim)}.npi-ok{background:var(--gdim)}.npi-no{background:var(--rdim)}
+.nptit{font-size:12px;font-weight:700;color:var(--text);margin-bottom:1px}
+.npmsg{font-size:11px;color:var(--t3);line-height:1.4}
+.nptm{font-size:10px;color:var(--t3);margin-top:2px}
+.npdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px}
+.lb2{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.lb2.open{display:flex}
+.lb2 img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.lbx{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lbx:hover{background:rgba(255,255,255,.25)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(60px);opacity:0;background:#fff;border:1px solid var(--border);padding:9px 16px;border-radius:99px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shl);z-index:300;transition:all .3s cubic-bezier(.4,0,.2,1);white-space:nowrap;color:var(--text);max-width:90vw}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-/* SPINNER */
 .spin{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:rot .7s linear infinite;margin:36px auto}
 @keyframes rot{to{transform:rotate(360deg)}}
-
-/* MINI SPARKLINE */
-.spark-row{display:flex;align-items:center;gap:8px;padding:6px 0}
-.spark-bar{height:6px;border-radius:4px;background:var(--green);transition:width .5s ease}
-
-/* ACTIVITY FEED */
-.activity-item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
-.activity-item:last-child{border-bottom:none}
-.act-av{width:30px;height:30px;border-radius:8px;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
-.act-text{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
-.act-text strong{color:var(--text);font-weight:600}
-.act-time{font-size:10px;color:var(--text3);margin-top:2px}
-
-/* USERS PAGE */
-.users-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;transition:.2s;cursor:pointer}
-.user-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.user-av-lg{width:44px;height:44px;border-radius:12px;background:var(--green-dim);border:1px solid rgba(74,222,128,.2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--green);margin-bottom:12px}
-.user-name{font-weight:700;font-size:15px;color:var(--cream);margin-bottom:3px}
-.user-role{font-size:11px;color:var(--text3);margin-bottom:10px}
-.user-meta{display:flex;gap:8px;flex-wrap:wrap}
-
-/* PRODUCTS PAGE */
-.prod-controls{display:flex;gap:8px;align-items:center;margin-bottom:16px}
-.btn-add{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--green);color:#0B0F0D;border:none;border-radius:10px;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
-.btn-add:hover{opacity:.85}
-
-/* ORDERS PAGE */
-.order-status-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.os-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
-.os-num{font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:2px}
-.os-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)}
-
-/* SETTINGS */
-.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
-.settings-card h3{font-size:14px;font-weight:700;color:var(--cream);margin-bottom:16px;display:flex;align-items:center;gap:7px}
-.form-field{margin-bottom:12px}
-.form-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:5px;display:block}
-.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;transition:.2s}
-.form-input:focus{border-color:var(--green)}
-.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;transition:.2s;appearance:none}
-.btn-save{padding:9px 20px;background:var(--green);color:#0B0F0D;border:none;border-radius:9px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-.btn-save:hover{opacity:.85}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.toggle-row:last-child{border-bottom:none}
-.toggle-label{font-size:13px;color:var(--text2);font-weight:500}
-.toggle{width:38px;height:20px;border-radius:99px;background:var(--surface3);border:1px solid var(--border);position:relative;cursor:pointer;transition:.2s}
-.toggle.on{background:var(--green);border-color:var(--green)}
-.toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.toggle.on::after{left:20px}
+.aitem{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
+.aitem:last-child{border-bottom:none}
+.aav2{width:28px;height:28px;border-radius:8px;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.atxt{font-size:12px;color:var(--t2);line-height:1.5;flex:1}
+.atxt strong{color:var(--text);font-weight:600}
+.atm{font-size:10px;color:var(--t3);margin-top:1px}
+.ug{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:899px){.ug{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:479px){.ug{grid-template-columns:1fr}}
+.ucard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px;transition:.2s;cursor:pointer;box-shadow:var(--sh)}
+.ucard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shm)}
+.uavlg{width:42px;height:42px;border-radius:12px;background:var(--gdim);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--gd);margin-bottom:10px}
+.uname{font-weight:700;font-size:14px;color:var(--text);margin-bottom:2px}
+.urole{font-size:11px;color:var(--t3);margin-bottom:8px}
+.umeta{display:flex;gap:7px;flex-wrap:wrap}
+.osr{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:767px){.osr{grid-template-columns:repeat(2,1fr)}}
+.osc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--sh)}
+.osn{font-family:var(--fd);font-size:22px;font-weight:700;margin-bottom:2px}
+.osl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.setgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:767px){.setgrid{grid-template-columns:1fr}}
+.setcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px;box-shadow:var(--sh)}
+.setcard h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.fl{margin-bottom:10px}
+.flab{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px;display:block}
+.fi,.fse{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:13px;color:var(--text);font-family:var(--fn);outline:none;transition:.2s;appearance:none}
+.fi:focus,.fse:focus{border-color:var(--green);background:#fff}
+.trow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.trow:last-child{border-bottom:none}
+.tlab{font-size:13px;color:var(--t2);font-weight:500}
+.tog{width:38px;height:20px;border-radius:99px;background:var(--surface3);border:1px solid var(--border);position:relative;cursor:pointer;transition:.2s;flex-shrink:0}
+.tog.on{background:var(--green);border-color:var(--green)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on::after{left:20px}
+.spkrow{display:flex;align-items:center;gap:6px}
+.spkbar{height:5px;border-radius:4px;background:var(--green)}
+@media(max-width:767px){.dt.products-table .col-stock{display:none}}
+@media(max-width:479px){.dt.products-table .col-cat,.dt.products-table .col-price{display:none}}
+.ls-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700;background:rgba(14,165,233,.08);color:var(--sky);border:1px solid rgba(14,165,233,.2);margin-left:4px;vertical-align:middle}
+/* product photos strip */
+.prod-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.prod-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer;transition:.15s}
+.prod-thumb:hover{border-color:var(--green);transform:scale(1.05)}
 </style>
 </head>
 <body>
 <div class="shell">
 
-<!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-top">
-    <div class="sidebar-logo"><i class="fa-solid fa-leaf"></i></div>
-    <div>
-      <div class="sidebar-brand-text">Moutanak<em>.</em></div>
-      <div class="sidebar-brand-sub">Admin Console</div>
-    </div>
+<div class="overlay" id="overlay" onclick="closeMobSB()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sb">
+  <div class="sb-top">
+    <div class="sb-logo"><i class="fa-solid fa-leaf"></i></div>
+    <div style="flex:1;min-width:0"><div class="sb-brand">Moutanak<em>.</em></div><div class="sb-sub">Admin Console</div></div>
+    <div class="sb-close" onclick="closeMobSB()"><i class="fa-solid fa-xmark" style="font-size:12px"></i></div>
   </div>
-
-  <p class="nav-section-label">Overview</p>
-  <div class="nav-item active" onclick="showPage('dashboard',this)"><i class="nav-icon fa-solid fa-chart-tree-map"></i><span class="nav-label">Dashboard</span></div>
-
-  <p class="nav-section-label">Commerce</p>
-  <div class="nav-item" onclick="showPage('sellers',this)"><i class="nav-icon fa-solid fa-store"></i><span class="nav-label">Seller Requests</span><span class="nav-badge" id="pending-badge">3</span></div>
-  <div class="nav-item" onclick="showPage('products',this)"><i class="nav-icon fa-solid fa-boxes-stacked"></i><span class="nav-label">Products</span></div>
-  <div class="nav-item" onclick="showPage('orders',this)"><i class="nav-icon fa-solid fa-receipt"></i><span class="nav-label">Orders</span><span class="nav-badge amber">12</span></div>
-
-  <p class="nav-section-label">People</p>
-  <div class="nav-item" onclick="showPage('users',this)"><i class="nav-icon fa-solid fa-users"></i><span class="nav-label">Users</span></div>
-
-  <p class="nav-section-label">System</p>
-  <div class="nav-item" onclick="showPage('settings',this)"><i class="nav-icon fa-solid fa-sliders"></i><span class="nav-label">Settings</span></div>
-
-  <div class="sidebar-footer">
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
-      <button class="lang-btn" onclick="setLang('kh',this)">ខ្មែរ</button>
+  <p class="nsl">Overview</p>
+  <div class="ni active" onclick="showPage('dashboard',this)"><i class="nic fa-solid fa-chart-tree-map"></i><span class="nil">Dashboard</span></div>
+  <p class="nsl">Commerce</p>
+  <div class="ni" onclick="showPage('sellers',this)"><i class="nic fa-solid fa-store"></i><span class="nil">Seller Requests</span><span class="nbadge" id="pbadge">3</span></div>
+  <div class="ni" onclick="showPage('products',this)"><i class="nic fa-solid fa-boxes-stacked"></i><span class="nil">Products</span></div>
+  <div class="ni" onclick="showPage('orders',this)"><i class="nic fa-solid fa-receipt"></i><span class="nil">Orders</span><span class="nbadge amb">12</span></div>
+  <p class="nsl">People</p>
+  <div class="ni" onclick="showPage('users',this)"><i class="nic fa-solid fa-users"></i><span class="nil">Users</span></div>
+  <p class="nsl">System</p>
+  <div class="ni" onclick="showPage('settings',this)"><i class="nic fa-solid fa-sliders"></i><span class="nil">Settings</span></div>
+  <div class="sb-foot">
+    <div class="lang-tog">
+      <button class="lb active" onclick="this.closest('.lang-tog').querySelectorAll('.lb').forEach(b=>b.classList.remove('active'));this.classList.add('active')">EN</button>
+      <button class="lb" onclick="this.closest('.lang-tog').querySelectorAll('.lb').forEach(b=>b.classList.remove('active'));this.classList.add('active')">ខ្មែរ</button>
     </div>
-    <button class="collapse-btn" onclick="toggleSidebar()"><i class="fa-solid fa-angles-left" id="collapse-icon"></i><span>Collapse</span></button>
+    <button class="col-btn" onclick="toggleSB()"><i class="fa-solid fa-angles-left" id="coli"></i><span>Collapse</span></button>
   </div>
 </aside>
 
-<!-- ═══ MAIN ═══ -->
+<!-- MAIN -->
 <div class="main">
-
-  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-breadcrumb"><i class="fa-solid fa-house" style="font-size:10px"></i> <strong id="breadcrumb-text">Dashboard</strong></div>
-    <div class="topbar-spacer"></div>
-    <div class="topbar-search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search anything…" id="global-search" oninput="globalSearch(this.value)"/></div>
-    <div class="icon-btn" id="notif-toggle" onclick="toggleNotif()">
-      <i class="fa-solid fa-bell" style="font-size:13px"></i>
-      <div class="badge-dot" id="notif-dot"></div>
-    </div>
-    <div class="icon-btn"><i class="fa-solid fa-moon" style="font-size:13px" onclick="showToast('Theme toggle coming soon')"></i></div>
-    <div class="admin-chip">
-      <div class="admin-av">A</div>
-      <span class="admin-name" data-i18n="admin_name">Admin</span>
-      <i class="fa-solid fa-chevron-down" style="font-size:9px;color:var(--text3)"></i>
-    </div>
+    <div class="mob-menu" onclick="openMobSB()" aria-label="Open menu"><i class="fa-solid fa-bars" style="font-size:13px"></i></div>
+    <div class="tbc"><i class="fa-solid fa-house" style="font-size:10px"></i> <strong id="bct">Dashboard</strong><span id="bcd"></span></div>
+    <div class="sp"></div>
+    <div class="ts"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search anything…" oninput="gSearch(this.value)"/></div>
+    <div class="ib" id="ntog" onclick="toggleNotif()"><i class="fa-solid fa-bell" style="font-size:12px"></i><div class="dot" id="ndot"></div></div>
+    <div class="ac"><div class="aav">A</div><span class="an">Admin</span><i class="fa-solid fa-chevron-down" style="font-size:9px;color:var(--t3);margin-left:2px"></i></div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- ══════ DASHBOARD PAGE ══════ -->
+    <!-- DASHBOARD -->
     <section id="dashboard" class="page active">
-      <div class="page-header">
-        <div>
-          <div class="page-title" data-i18n="dashboard_title">Dashboard</div>
-          <div class="page-sub" data-i18n="dashboard_sub">Welcome back, Admin · Wednesday, 20 May 2026</div>
-        </div>
-        <div class="header-actions">
-          <button class="act-btn act-view" onclick="showToast('Report exported')"><i class="fa-solid fa-download" style="margin-right:5px"></i>Export</button>
-        </div>
+      <div class="ph">
+        <div><div class="pt">Dashboard</div><div class="ps">Welcome back, Admin &middot; Saturday, 23 May 2026</div></div>
+        <div class="ha"><button class="ab av2" onclick="showToast('Exported!')"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export</button></div>
       </div>
-
-      <!-- STATS -->
-      <div class="stats-grid">
-        <div class="stat-card" style="--glow:radial-gradient(circle at 0% 0%,rgba(74,222,128,.08),transparent)">
-          <div class="s-icon" style="background:var(--green-dim)"><i class="fa-solid fa-store" style="color:var(--green)"></i></div>
-          <div class="s-num" style="color:var(--green)">1,580</div>
-          <div class="s-label" data-i18n="stat_sellers">Active Sellers</div>
-          <div class="s-change" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+8% this week</div>
-        </div>
-        <div class="stat-card">
-          <div class="s-icon" style="background:var(--amber-dim)"><i class="fa-solid fa-hourglass-half" style="color:var(--amber)"></i></div>
-          <div class="s-num" style="color:var(--amber)" id="dash-pending">3</div>
-          <div class="s-label" data-i18n="stat_pending">Pending Review</div>
-          <div class="s-change" style="color:var(--amber)"><i class="fa-solid fa-circle-exclamation"></i>Needs action</div>
-        </div>
-        <div class="stat-card">
-          <div class="s-icon" style="background:var(--sky-dim)"><i class="fa-solid fa-cart-shopping" style="color:var(--sky)"></i></div>
-          <div class="s-num" style="color:var(--sky)">44K</div>
-          <div class="s-label" data-i18n="stat_orders">Total Orders</div>
-          <div class="s-change" style="color:var(--sky)"><i class="fa-solid fa-arrow-trend-up"></i>+12% vs last month</div>
-        </div>
-        <div class="stat-card">
-          <div class="s-icon" style="background:rgba(240,234,214,.08)"><i class="fa-solid fa-sack-dollar" style="color:var(--cream)"></i></div>
-          <div class="s-num" style="color:var(--cream)">$8.2M</div>
-          <div class="s-label" data-i18n="stat_revenue">Total Payouts</div>
-          <div class="s-change" style="color:var(--text3)"><i class="fa-solid fa-arrow-trend-up" style="color:var(--green)"></i><span style="color:var(--green)">+12%</span> this month</div>
-        </div>
-        <div class="stat-card">
-          <div class="s-icon" style="background:rgba(103,200,232,.08)"><i class="fa-solid fa-users" style="color:var(--sky)"></i></div>
-          <div class="s-num" style="color:var(--text)">520K</div>
-          <div class="s-label" data-i18n="stat_visitors">Monthly Visitors</div>
-          <div class="s-change" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>All-time high</div>
-        </div>
+      <div class="sg">
+        <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-store" style="color:var(--green)"></i></div><div class="sn" style="color:var(--gd)">1,580</div><div class="sl">Active Sellers</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+8% this week</div></div>
+        <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-hourglass-half" style="color:var(--orange)"></i></div><div class="sn" style="color:var(--orange)" id="dpend">3</div><div class="sl">Pending Review</div><div class="schange" style="color:var(--orange)"><i class="fa-solid fa-circle-exclamation"></i>Needs action</div></div>
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-cart-shopping" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">44K</div><div class="sl">Total Orders</div><div class="schange" style="color:var(--sky)"><i class="fa-solid fa-arrow-trend-up"></i>+12% vs last month</div></div>
+        <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-sack-dollar" style="color:var(--gd)"></i></div><div class="sn">$8.2M</div><div class="sl">Total Payouts</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+12% this month</div></div>
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-users" style="color:var(--sky)"></i></div><div class="sn">520K</div><div class="sl">Monthly Visitors</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>All-time high</div></div>
       </div>
-
-      <!-- CHARTS -->
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-title"><i class="fa-solid fa-chart-line" style="color:var(--green)"></i>Revenue & Orders<span>Last 6 months</span></div>
-          <canvas id="lineChart" height="100"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title"><i class="fa-solid fa-chart-pie" style="color:var(--amber)"></i>Category Split<span>By revenue</span></div>
-          <canvas id="donutChart" height="140"></canvas>
-        </div>
+      <div class="cr">
+        <div class="cc"><div class="ct"><i class="fa-solid fa-chart-line" style="color:var(--green)"></i>Revenue &amp; Orders<span>Last 6 months</span></div><div class="chart-wrap"><canvas id="lc"></canvas></div></div>
+        <div class="cc cc-donut"><div class="ct"><i class="fa-solid fa-chart-pie" style="color:var(--orange)"></i>Category Split<span>By revenue</span></div><div class="chart-wrap donut-wrap"><canvas id="dc2"></canvas></div></div>
       </div>
-
-      <!-- BOTTOM ROW -->
-      <div class="bottom-row">
-        <!-- Recent Seller Requests -->
-        <div class="data-table-wrap">
-          <div class="table-header">
-            <h3>⏳ Pending Seller Requests</h3>
-            <button class="act-btn act-view" onclick="showPage('sellers', document.querySelector('.nav-item:nth-child(7)'))">View All</button>
-          </div>
-          <table class="data-table">
-            <thead><tr><th>Seller</th><th>Province</th><th>TIN</th><th>Action</th></tr></thead>
-            <tbody id="dash-seller-preview"></tbody>
-          </table>
+      <div class="br">
+        <div class="tw">
+          <div class="th2"><h3>⏳ Pending Requests</h3><button class="ab av2" onclick="showPage('sellers',document.querySelector('.ni[onclick*=sellers]'))">View All</button></div>
+          <div class="tscroll"><table class="dt"><thead><tr><th>Seller</th><th>Province</th><th>TIN</th><th>Action</th></tr></thead><tbody id="dpreview"></tbody></table></div>
         </div>
-        <!-- Activity Feed -->
-        <div class="data-table-wrap">
-          <div class="table-header"><h3>📋 Recent Activity</h3></div>
-          <div style="padding:4px 16px 12px" id="activity-feed"></div>
+        <div class="tw">
+          <div class="th2"><h3>📋 Recent Activity</h3></div>
+          <div style="padding:4px 14px 10px" id="afeed"></div>
         </div>
       </div>
     </section>
 
-    <!-- ══════ SELLERS PAGE ══════ -->
+    <!-- SELLERS LIST -->
     <section id="sellers" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-title" data-i18n="sellers_title">Seller Requests</div>
-          <div class="page-sub">Review, approve or reject store applications</div>
-        </div>
-        <div class="header-actions">
-          <button class="act-btn act-view" onclick="exportSellers()"><i class="fa-solid fa-file-csv" style="margin-right:4px"></i>Export CSV</button>
-        </div>
+      <div class="ph">
+        <div><div class="pt">Seller Requests</div><div class="ps">Review, approve or reject store applications</div></div>
+        <div class="ha"><button class="ab av2" onclick="exportCSV()"><i class="fa-solid fa-file-csv" style="margin-right:4px"></i>Export CSV</button></div>
       </div>
-      <div class="filter-bar">
-        <button class="ftab active" onclick="filterSellers('',this)">All <span id="ft-all"></span></button>
-        <button class="ftab" onclick="filterSellers('pending',this)">⏳ Pending</button>
-        <button class="ftab" onclick="filterSellers('approved',this)">✅ Approved</button>
-        <button class="ftab" onclick="filterSellers('rejected',this)">❌ Rejected</button>
-        <div class="fsearch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Name, store, TIN…" oninput="searchSellers(this.value)"/></div>
+      <div class="fb">
+        <button class="ftab active" onclick="filterS('',this)">All</button>
+        <button class="ftab" onclick="filterS('pending',this)">⏳ Pending</button>
+        <button class="ftab" onclick="filterS('approved',this)">✅ Approved</button>
+        <button class="ftab" onclick="filterS('rejected',this)">❌ Rejected</button>
+        <div class="fs"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Name, store, TIN…" oninput="searchS(this.value)"/></div>
       </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Seller</th><th>Store</th><th>Category</th><th>Province</th><th>TIN</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="sellers-tbody"></tbody>
-        </table>
-        <div class="pagination">
-          <span class="pg-info" id="sellers-pg-info">—</span>
-          <div class="pg-btns" id="sellers-pg-btns"></div>
-        </div>
+      <div class="tw">
+        <div class="tscroll"><table class="dt"><thead><tr><th>Seller</th><th>Store</th><th>Category</th><th>Province</th><th>TIN</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead><tbody id="stbody"></tbody></table></div>
+        <div class="pg"><span class="pgi" id="spgi">—</span><div class="pgb" id="spgb"></div></div>
       </div>
     </section>
 
-    <!-- ══════ PRODUCTS PAGE ══════ -->
+    <!-- SELLER DETAIL PAGE -->
+    <section id="seller-detail" class="page">
+      <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Back to Seller Requests</button>
+      <div id="sdc"><div class="spin"></div></div>
+    </section>
+
+    <!-- PRODUCTS -->
     <section id="products" class="page">
-      <div class="page-header">
-        <div><div class="page-title">Products</div><div class="page-sub">Manage all listed products</div></div>
-        <div class="header-actions"><button class="btn-add" onclick="showToast('Add product modal — connect to API')"><i class="fa-solid fa-plus"></i>Add Product</button></div>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Product</th><th>Seller</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(103,200,232,.1);color:var(--sky)">IP</div><div><div class="seller-name">Kampot Pepper 500g</div><div class="seller-meta">SKU-00121</div></div></div></td><td style="color:var(--text2)">Vanna's Farm</td><td><span class="badge badge-sky">Spices</span></td><td style="font-weight:700;color:var(--cream)">$12.50</td><td><div class="spark-row"><div class="spark-bar" style="width:70%;background:var(--green)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">420</span></div></td><td><span class="badge badge-green">Active</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
-            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(255,195,77,.1);color:var(--amber)">KS</div><div><div class="seller-name">Khmer Silk Scarf</div><div class="seller-meta">SKU-00088</div></div></div></td><td style="color:var(--text2)">The Khmer Weaver</td><td><span class="badge badge-amber">Crafts</span></td><td style="font-weight:700;color:var(--cream)">$38.00</td><td><div class="spark-row"><div class="spark-bar" style="width:30%;background:var(--amber)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">85</span></div></td><td><span class="badge badge-green">Active</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
-            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(74,222,128,.1);color:var(--green)">JR</div><div><div class="seller-name">Jasmine Rice 5kg</div><div class="seller-meta">SKU-00204</div></div></div></td><td style="color:var(--text2)">Gold Jasmine Coop</td><td><span class="badge badge-green">Grains</span></td><td style="font-weight:700;color:var(--cream)">$9.80</td><td><div class="spark-row"><div class="spark-bar" style="width:90%;background:var(--green)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">1,200</span></div></td><td><span class="badge badge-green">Active</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
-            <tr><td><div class="seller-cell"><div class="seller-av" style="background:rgba(255,107,107,.1);color:var(--red)">DM</div><div><div class="seller-name">Dried Mango 250g</div><div class="seller-meta">SKU-00302</div></div></div></td><td style="color:var(--text2)">Kampong Fresh</td><td><span class="badge badge-amber">Fruits</span></td><td style="font-weight:700;color:var(--cream)">$6.50</td><td><div class="spark-row"><div class="spark-bar" style="width:10%;background:var(--red)"></div><span style="font-size:11px;color:var(--text3);margin-left:4px">18</span></div></td><td><span class="badge badge-red">Low Stock</span></td><td><button class="act-btn act-view">Edit</button></td></tr>
-          </tbody>
-        </table>
+      <div class="ph"><div><div class="pt">Products</div><div class="ps">Manage all listed products</div></div><div class="ha"><button class="btn-add" onclick="showToast('Add product — connect to API')"><i class="fa-solid fa-plus"></i>Add Product</button></div></div>
+      <div class="tw">
+        <div class="tscroll"><table class="dt products-table"><thead><tr><th>Product</th><th>Seller</th><th class="col-cat">Category</th><th class="col-price">Price</th><th class="col-stock">Stock</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><div class="cell"><div class="av" style="background:var(--sdim);color:var(--sky)">KP</div><div><div class="cn">Kampot Pepper 500g</div><div class="cm">SKU-00121</div></div></div></td><td style="color:var(--t2)">Vanna's Farm</td><td class="col-cat"><span class="badge bs">Spices</span></td><td class="col-price" style="font-weight:700">$12.50</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:70%"></div><span style="font-size:11px;color:var(--t3)">420</span></div></td><td><span class="badge bg">Active</span></td><td><button class="ab av2">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--adim);color:var(--amber)">KS</div><div><div class="cn">Khmer Silk Scarf</div><div class="cm">SKU-00088</div></div></div></td><td style="color:var(--t2)">Khmer Weaver</td><td class="col-cat"><span class="badge ba">Crafts</span></td><td class="col-price" style="font-weight:700">$38.00</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:30%;background:var(--amber)"></div><span style="font-size:11px;color:var(--t3)">85</span></div></td><td><span class="badge bg">Active</span></td><td><button class="ab av2">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av">JR</div><div><div class="cn">Jasmine Rice 5kg</div><div class="cm">SKU-00204</div></div></div></td><td style="color:var(--t2)">Gold Jasmine Coop</td><td class="col-cat"><span class="badge bg">Grains</span></td><td class="col-price" style="font-weight:700">$9.80</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:90%"></div><span style="font-size:11px;color:var(--t3)">1,200</span></div></td><td><span class="badge bg">Active</span></td><td><button class="ab av2">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--rdim);color:var(--red)">DM</div><div><div class="cn">Dried Mango 250g</div><div class="cm">SKU-00302</div></div></div></td><td style="color:var(--t2)">Kampong Fresh</td><td class="col-cat"><span class="badge bo">Fruits</span></td><td class="col-price" style="font-weight:700">$6.50</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:10%;background:var(--red)"></div><span style="font-size:11px;color:var(--t3)">18</span></div></td><td><span class="badge br2">Low Stock</span></td><td><button class="ab av2">Edit</button></td></tr>
+        </tbody></table></div>
       </div>
     </section>
 
-    <!-- ══════ ORDERS PAGE ══════ -->
+    <!-- ORDERS -->
     <section id="orders" class="page">
-      <div class="page-header">
-        <div><div class="page-title">Orders</div><div class="page-sub">Monitor and manage all customer orders</div></div>
+      <div class="ph"><div><div class="pt">Orders</div><div class="ps">Monitor and manage all customer orders</div></div></div>
+      <div class="osr">
+        <div class="osc"><div class="osn" style="color:var(--sky)">44,128</div><div class="osl">Total Orders</div></div>
+        <div class="osc"><div class="osn" style="color:var(--orange)">12</div><div class="osl">Pending</div></div>
+        <div class="osc"><div class="osn" style="color:var(--green)">43,841</div><div class="osl">Completed</div></div>
+        <div class="osc"><div class="osn" style="color:var(--red)">275</div><div class="osl">Cancelled</div></div>
       </div>
-      <div class="order-status-row">
-        <div class="os-card"><div class="os-num" style="color:var(--sky)">44,128</div><div class="os-label">Total Orders</div></div>
-        <div class="os-card"><div class="os-num" style="color:var(--amber)">12</div><div class="os-label">Pending</div></div>
-        <div class="os-card"><div class="os-num" style="color:var(--green)">43,841</div><div class="os-label">Completed</div></div>
-        <div class="os-card"><div class="os-num" style="color:var(--red)">275</div><div class="os-label">Cancelled</div></div>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Seller</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td style="font-family:var(--font-display);color:var(--green)">#10041</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">LH</div><div><div class="seller-name">Lay Horn</div><div class="seller-meta">Phnom Penh</div></div></div></td><td style="color:var(--text2)">3 items</td><td style="font-weight:700;color:var(--cream)">$250.00</td><td style="color:var(--text2)">Vanna's Farm</td><td style="color:var(--text3);font-size:12px">19 May 2026</td><td><span class="badge badge-green">Completed</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
-            <tr><td style="font-family:var(--font-display);color:var(--green)">#10042</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">SD</div><div><div class="seller-name">Sok Dara</div><div class="seller-meta">Siem Reap</div></div></div></td><td style="color:var(--text2)">1 item</td><td style="font-weight:700;color:var(--cream)">$120.00</td><td style="color:var(--text2)">Khmer Weaver</td><td style="color:var(--text3);font-size:12px">20 May 2026</td><td><span class="badge badge-amber">Pending</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
-            <tr><td style="font-family:var(--font-display);color:var(--green)">#10043</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">CV</div><div><div class="seller-name">Chan Vira</div><div class="seller-meta">Battambang</div></div></div></td><td style="color:var(--text2)">5 items</td><td style="font-weight:700;color:var(--cream)">$980.00</td><td style="color:var(--text2)">Gold Jasmine</td><td style="color:var(--text3);font-size:12px">20 May 2026</td><td><span class="badge badge-red">Cancelled</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
-            <tr><td style="font-family:var(--font-display);color:var(--green)">#10044</td><td><div class="seller-cell"><div class="seller-av" style="font-size:10px">RP</div><div><div class="seller-name">Rith Panha</div><div class="seller-meta">Kampot</div></div></div></td><td style="color:var(--text2)">2 items</td><td style="font-weight:700;color:var(--cream)">$74.00</td><td style="color:var(--text2)">Vanna's Farm</td><td style="color:var(--text3);font-size:12px">20 May 2026</td><td><span class="badge badge-sky">Shipped</span></td><td><button class="act-btn act-view">Detail</button></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="tw"><div class="tscroll"><table class="dt"><thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Seller</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10041</td><td><div class="cell"><div class="av" style="font-size:10px">LH</div><div><div class="cn">Lay Horn</div><div class="cm">Phnom Penh</div></div></div></td><td>3 items</td><td style="font-weight:700">$250.00</td><td style="color:var(--t2)">Vanna's Farm</td><td style="color:var(--t3);font-size:12px">19 May 2026</td><td><span class="badge bg">Completed</span></td><td><button class="ab av2">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10042</td><td><div class="cell"><div class="av" style="font-size:10px">SD</div><div><div class="cn">Sok Dara</div><div class="cm">Siem Reap</div></div></div></td><td>1 item</td><td style="font-weight:700">$120.00</td><td style="color:var(--t2)">Khmer Weaver</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge bo">Pending</span></td><td><button class="ab av2">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10043</td><td><div class="cell"><div class="av" style="font-size:10px">CV</div><div><div class="cn">Chan Vira</div><div class="cm">Battambang</div></div></div></td><td>5 items</td><td style="font-weight:700">$980.00</td><td style="color:var(--t2)">Gold Jasmine</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge br2">Cancelled</span></td><td><button class="ab av2">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10044</td><td><div class="cell"><div class="av" style="font-size:10px">RP</div><div><div class="cn">Rith Panha</div><div class="cm">Kampot</div></div></div></td><td>2 items</td><td style="font-weight:700">$74.00</td><td style="color:var(--t2)">Vanna's Farm</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge bs">Shipped</span></td><td><button class="ab av2">Detail</button></td></tr>
+        </tbody></table></div></div>
     </section>
 
-    <!-- ══════ USERS PAGE ══════ -->
+    <!-- USERS -->
     <section id="users" class="page">
-      <div class="page-header">
-        <div><div class="page-title">Users</div><div class="page-sub">Manage admin and platform user accounts</div></div>
-        <div class="header-actions"><button class="btn-add" onclick="showToast('Invite user — connect to API')"><i class="fa-solid fa-user-plus"></i>Invite User</button></div>
-      </div>
-      <div class="users-grid">
-        <div class="user-card"><div class="user-av-lg">LH</div><div class="user-name">Lay Horn</div><div class="user-role">Super Admin</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-sky">Admin</span></div></div>
-        <div class="user-card"><div class="user-av-lg" style="background:var(--amber-dim);color:var(--amber)">SD</div><div class="user-name">Sok Dara</div><div class="user-role">Reviewer</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-amber">Reviewer</span></div></div>
-        <div class="user-card"><div class="user-av-lg" style="background:var(--sky-dim);color:var(--sky)">CV</div><div class="user-name">Chan Vira</div><div class="user-role">Manager</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-sky">Manager</span></div></div>
-        <div class="user-card"><div class="user-av-lg" style="background:var(--red-dim);color:var(--red)">MK</div><div class="user-name">Mony Keo</div><div class="user-role">Support</div><div class="user-meta"><span class="badge badge-amber">Away</span><span class="badge badge-sky">Support</span></div></div>
-        <div class="user-card"><div class="user-av-lg" style="background:rgba(240,234,214,.08);color:var(--cream)">PN</div><div class="user-name">Piseth Nov</div><div class="user-role">Finance</div><div class="user-meta"><span class="badge badge-green">Active</span><span class="badge badge-sky">Finance</span></div></div>
-        <div class="user-card" style="border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px" onclick="showToast('Invite new user')"><i class="fa-solid fa-plus" style="color:var(--text3);font-size:20px;margin-bottom:8px"></i><span style="font-size:12px;color:var(--text3);font-weight:600">Add User</span></div>
+      <div class="ph"><div><div class="pt">Users</div><div class="ps">Manage admin and platform accounts</div></div><div class="ha"><button class="btn-add" onclick="showToast('Invite user — connect to API')"><i class="fa-solid fa-user-plus"></i>Invite User</button></div></div>
+      <div class="ug">
+        <div class="ucard"><div class="uavlg">LH</div><div class="uname">Lay Horn</div><div class="urole">Super Admin</div><div class="umeta"><span class="badge bg">Active</span><span class="badge bs">Admin</span></div></div>
+        <div class="ucard"><div class="uavlg" style="background:var(--adim);color:#92400E">SD</div><div class="uname">Sok Dara</div><div class="urole">Reviewer</div><div class="umeta"><span class="badge bg">Active</span><span class="badge ba">Reviewer</span></div></div>
+        <div class="ucard"><div class="uavlg" style="background:var(--sdim);color:var(--sky)">CV</div><div class="uname">Chan Vira</div><div class="urole">Manager</div><div class="umeta"><span class="badge bg">Active</span><span class="badge bs">Manager</span></div></div>
+        <div class="ucard"><div class="uavlg" style="background:var(--rdim);color:var(--red)">MK</div><div class="uname">Mony Keo</div><div class="urole">Support</div><div class="umeta"><span class="badge ba">Away</span><span class="badge bs">Support</span></div></div>
+        <div class="ucard"><div class="uavlg" style="background:var(--odim);color:var(--od)">PN</div><div class="uname">Piseth Nov</div><div class="urole">Finance</div><div class="umeta"><span class="badge bg">Active</span><span class="badge bs">Finance</span></div></div>
+        <div class="ucard" style="border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:110px;box-shadow:none" onclick="showToast('Invite new user')"><i class="fa-solid fa-plus" style="color:var(--t3);font-size:18px;margin-bottom:7px"></i><span style="font-size:12px;color:var(--t3);font-weight:600">Add User</span></div>
       </div>
     </section>
 
-    <!-- ══════ SETTINGS PAGE ══════ -->
+    <!-- SETTINGS -->
     <section id="settings" class="page">
-      <div class="page-header"><div><div class="page-title">Settings</div><div class="page-sub">Platform configuration and preferences</div></div></div>
-      <div class="settings-grid">
-        <div class="settings-card">
-          <h3><i class="fa-solid fa-building" style="color:var(--green)"></i>Platform Info</h3>
-          <div class="form-field"><label class="form-label">Platform Name</label><input class="form-input" value="Moutanak Commerce"/></div>
-          <div class="form-field"><label class="form-label">Admin Email</label><input class="form-input" value="admin@moutanak.kh"/></div>
-          <div class="form-field"><label class="form-label">Support Phone</label><input class="form-input" value="+855 23 000 000"/></div>
-          <div class="form-field"><label class="form-label">Default Language</label><select class="form-select"><option>English</option><option>ខ្មែរ (Khmer)</option></select></div>
-          <button class="btn-save">Save Changes</button>
+      <div class="ph"><div><div class="pt">Settings</div><div class="ps">Platform configuration and preferences</div></div></div>
+      <div class="setgrid">
+        <div class="setcard"><h3><i class="fa-solid fa-building" style="color:var(--green)"></i>Platform Info</h3>
+          <div class="fl"><label class="flab">Platform Name</label><input class="fi" value="Moutanak Commerce"/></div>
+          <div class="fl"><label class="flab">Admin Email</label><input class="fi" value="admin@moutanak.kh"/></div>
+          <div class="fl"><label class="flab">Support Phone</label><input class="fi" value="+855 23 000 000"/></div>
+          <div class="fl"><label class="flab">Default Language</label><select class="fse"><option>English</option><option>Khmer</option></select></div>
+          <button class="btn-save" onclick="showToast('Settings saved!')">Save Changes</button>
         </div>
-        <div class="settings-card">
-          <h3><i class="fa-solid fa-bell" style="color:var(--amber)"></i>Notifications</h3>
-          <div class="toggle-row"><span class="toggle-label">New seller application</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Application approved</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">New order placed</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Low stock alert</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Daily summary email</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setcard"><h3><i class="fa-solid fa-bell" style="color:var(--orange)"></i>Notifications</h3>
+          <div class="trow"><span class="tlab">New seller application</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Application approved</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">New order placed</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Low stock alert</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Daily summary email</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
         </div>
-        <div class="settings-card">
-          <h3><i class="fa-solid fa-percent" style="color:var(--sky)"></i>Commission Rates</h3>
-          <div class="form-field"><label class="form-label">Base Commission (%)</label><input class="form-input" value="2"/></div>
-          <div class="form-field"><label class="form-label">Verified Business (%)</label><input class="form-input" value="1.5"/></div>
-          <div class="form-field"><label class="form-label">Premium Seller (%)</label><input class="form-input" value="1"/></div>
-          <button class="btn-save">Update Rates</button>
+        <div class="setcard"><h3><i class="fa-solid fa-percent" style="color:var(--sky)"></i>Commission Rates</h3>
+          <div class="fl"><label class="flab">Base Commission (%)</label><input class="fi" value="2"/></div>
+          <div class="fl"><label class="flab">Verified Business (%)</label><input class="fi" value="1.5"/></div>
+          <div class="fl"><label class="flab">Premium Seller (%)</label><input class="fi" value="1"/></div>
+          <button class="btn-save" onclick="showToast('Rates updated!')">Update Rates</button>
         </div>
-        <div class="settings-card">
-          <h3><i class="fa-solid fa-shield-halved" style="color:var(--red)"></i>Verification Rules</h3>
-          <div class="toggle-row"><span class="toggle-label">Require TIN for all sellers</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Require selfie with ID</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Require address proof</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Auto-approve after 48hrs</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
-          <div class="toggle-row"><span class="toggle-label">Require biz registration</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="setcard"><h3><i class="fa-solid fa-shield-halved" style="color:var(--red)"></i>Verification Rules</h3>
+          <div class="trow"><span class="tlab">Require TIN for all sellers</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Require selfie with ID</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Require address proof</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Auto-approve after 48hrs</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">Require biz registration</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
         </div>
       </div>
     </section>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /shell -->
-
-<!-- ═══ NOTIFICATION PANEL ═══ -->
-<div class="notif-panel" id="notif-panel">
-  <div class="np-head"><h4>Notifications</h4><span class="np-mark" onclick="markAllRead()">Mark all read</span></div>
-  <div class="np-list" id="np-list"></div>
+  </div>
+</div>
 </div>
 
-<!-- ═══ DETAIL DRAWER ═══ -->
-<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-top">
-    <div class="drawer-top-info">
-      <div class="drawer-top-title" id="drawer-title">Application Detail</div>
-      <div class="drawer-top-id" id="drawer-id"></div>
-    </div>
-    <button class="close-btn" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
-  </div>
-  <div class="drawer-body" id="drawer-body"><div class="spin"></div></div>
+<!-- NOTIF PANEL -->
+<div class="np" id="npanel">
+  <div class="nph"><h4>Notifications</h4><span class="npm" onclick="markRead()">Mark all read</span></div>
+  <div class="npl" id="npl"></div>
 </div>
 
 <!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLB()">
-  <button class="lb-close"><i class="fa-solid fa-xmark"></i></button>
-  <img id="lb-img" src="" alt=""/>
+<div class="lb2" id="lb" onclick="closeLB()">
+  <button class="lbx" onclick="event.stopPropagation();closeLB()"><i class="fa-solid fa-xmark"></i></button>
+  <img id="lbimg" src="" alt="" onclick="event.stopPropagation()"/>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i><span id="toast-msg"></span></div>
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i><span id="tmsg"></span></div>
 
 <script>
-// ═══════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════
-const SELLERS = [
-  { id:'S001', full_name:'Vanna Sok', email:'vanna@farm.kh', phone:'012345678', dob:'1988-04-12', store_name:"Vanna's Spicy Farm", category:'Vegetables & Herbs', province:'Kampot', tin:'K000-123456', biz_reg:'', stock:'200–500 kg', aba_account:'0001234', aba_name:'Vanna Sok', wing_phone:'', description:'Family-run organic spice farm in Kampot, specialising in pepper and chilli.', facebook:'https://facebook.com/vannasfarm', status:'pending', submitted:'2026-05-18T08:22:00Z',
-    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'selfie',src:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400'},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400'},{type:'farm_photo',src:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{type:'product_photo',src:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'}]},
-  { id:'S002', full_name:'Dara Chhan', email:'dara@weave.kh', phone:'098765432', dob:'1992-07-30', store_name:'The Khmer Weaver', category:'Artisan Crafts', province:'Takeo', tin:'K000-654321', biz_reg:'00-001234-MOC', stock:'50–200 kg', aba_account:'', aba_name:'', wing_phone:'098765432', description:'Traditional Khmer silk weaving cooperative, 3rd generation artisans.', facebook:'', status:'pending', submitted:'2026-05-18T11:10:00Z',
-    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1614023342667-6f060e9d1e04?w=400'},{type:'id_back',src:null},{type:'selfie',src:'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400'},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400'},{type:'farm_photo',src:null},{type:'product_photo',src:'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400'}]},
-  { id:'S003', full_name:'Lyna Pech', email:'lyna@jasmine.kh', phone:'077111222', dob:'1985-01-15', store_name:'Gold Jasmine Coop', category:'Grains & Spices', province:'Battambang', tin:'K000-777888', biz_reg:'00-009876-MOC', stock:'More than 1 tonne', aba_account:'0007770', aba_name:'Lyna Pech', wing_phone:'', description:'Rice cooperative supplying premium jasmine rice to Phnom Penh and Siem Reap.', facebook:'https://facebook.com/goldjasmine', status:'pending', submitted:'2026-05-17T09:00:00Z',
-    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'selfie',src:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'},{type:'tin_cert',src:null},{type:'biz_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{type:'farm_photo',src:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'},{type:'product_photo',src:'https://images.unsplash.com/photo-1536304993881-ff86e0c9e9b7?w=400'}]},
-  { id:'S004', full_name:'Rith Panha', email:'rith@kampong.kh', phone:'012999888', dob:'1995-11-05', store_name:'Kampong Fresh', category:'Fruits', province:'Kampong Cham', tin:'K000-001122', biz_reg:'', stock:'50–200 kg', aba_account:'', aba_name:'', wing_phone:'012999888', description:'Fresh tropical fruits harvested daily from family orchards in Kampong Cham.', facebook:'', status:'approved', submitted:'2026-05-16T08:00:00Z', reviewed:'2026-05-16T12:00:00Z', note:'All documents verified. Welcome to Moutanak!',
-    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'selfie',src:'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400'},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:'https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=400'},{type:'farm_photo',src:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'}]},
-  { id:'S005', full_name:'Mony Keo', email:'mony@sea.kh', phone:'099334455', dob:'1990-03-22', store_name:'Coastal Catch Co.', category:'Seafood & Fish', province:'Sihanoukville', tin:'K000-998877', biz_reg:'', stock:'500 kg – 1 tonne', aba_account:'0009988', aba_name:'Mony Keo', wing_phone:'', description:'Daily fresh seafood from local Sihanoukville fishermen.', facebook:'', status:'rejected', submitted:'2026-05-15T07:00:00Z', reviewed:'2026-05-15T14:00:00Z', note:'TIN certificate image too blurry to verify. Please resubmit a clear scan.',
-    docs:[{type:'id_front',src:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{type:'id_back',src:null},{type:'selfie',src:null},{type:'tin_cert',src:null},{type:'address_proof',src:null},{type:'store_photo',src:null},{type:'farm_photo',src:null}]},
+// ─────────────────────────────────────────────
+//  STATIC SEED DATA (demo entries with Unsplash images)
+// ─────────────────────────────────────────────
+const SEED = [
+  {id:'S001',fn:'Vanna Sok',em:'vanna@farm.kh',ph:'012345678',dob:'1988-04-12',sn:"Vanna's Spicy Farm",cat:'Vegetables & Herbs',prov:'Kampot',tin:'K000-123456',breg:'',stk:'200–500 kg',aba:'0001234',abn:'Vanna Sok',wing:'',desc:'Family-run organic spice farm in Kampot, specialising in pepper and chilli.',fb:'https://facebook.com/vannasfarm',st:'pending',sub:'2026-05-18T08:22:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{t:'product_photo',s:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'}],_src:'seed'},
+  {id:'S002',fn:'Dara Chhan',em:'dara@weave.kh',ph:'098765432',dob:'1992-07-30',sn:'The Khmer Weaver',cat:'Artisan Crafts',prov:'Takeo',tin:'K000-654321',breg:'00-001234-MOC',stk:'50–200 kg',aba:'',abn:'',wing:'098765432',desc:'Traditional Khmer silk weaving cooperative, 3rd generation artisans.',fb:'',st:'pending',sub:'2026-05-18T11:10:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1614023342667-6f060e9d1e04?w=400'},{t:'id_back',s:null},{t:'selfie',s:'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400'},{t:'farm_photo',s:null},{t:'product_photo',s:'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400'}],_src:'seed'},
+  {id:'S003',fn:'Lyna Pech',em:'lyna@jasmine.kh',ph:'077111222',dob:'1985-01-15',sn:'Gold Jasmine Coop',cat:'Grains & Spices',prov:'Battambang',tin:'K000-777888',breg:'00-009876-MOC',stk:'More than 1 tonne',aba:'0007770',abn:'Lyna Pech',wing:'',desc:'Rice cooperative supplying premium jasmine rice to Phnom Penh and Siem Reap.',fb:'https://facebook.com/goldjasmine',st:'pending',sub:'2026-05-17T09:00:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'},{t:'tin_cert',s:null},{t:'biz_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'},{t:'product_photo',s:'https://images.unsplash.com/photo-1536304993881-ff86e0c9e9b7?w=400'}],_src:'seed'},
+  {id:'S004',fn:'Rith Panha',em:'rith@kampong.kh',ph:'012999888',dob:'1995-11-05',sn:'Kampong Fresh',cat:'Fruits',prov:'Kampong Cham',tin:'K000-001122',breg:'',stk:'50–200 kg',aba:'',abn:'',wing:'012999888',desc:'Fresh tropical fruits harvested daily from family orchards in Kampong Cham.',fb:'',st:'approved',sub:'2026-05-16T08:00:00Z',rev:'2026-05-16T12:00:00Z',note:'All documents verified. Welcome to Moutanak!',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'}],_src:'seed'},
+  {id:'S005',fn:'Mony Keo',em:'mony@sea.kh',ph:'099334455',dob:'1990-03-22',sn:'Coastal Catch Co.',cat:'Seafood & Fish',prov:'Sihanoukville',tin:'K000-998877',breg:'',stk:'500kg–1tonne',aba:'0009988',abn:'Mony Keo',wing:'',desc:'Daily fresh seafood from local Sihanoukville fishermen.',fb:'',st:'rejected',sub:'2026-05-15T07:00:00Z',rev:'2026-05-15T14:00:00Z',note:'TIN certificate image too blurry to verify. Please resubmit a clear scan.',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:null},{t:'selfie',s:null},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:null},{t:'farm_photo',s:null}],_src:'seed'},
 ];
 
+// ─────────────────────────────────────────────
+//  MAP localStorage seller_requests → internal format
+//  The registration form now saves doc_* base64 fields.
+//  We map them into the docs[] array so buildDetail can render them.
+// ─────────────────────────────────────────────
+function lsToSD(req) {
+  const fn = req.sellerName || req.username || req.name || (req.email ? req.email.split('@')[0] : 'Unknown');
+  const sn = req.storeName || 'Unnamed Store';
+  const id = 'LS-' + (req.id || req.userId || Math.random().toString(36).slice(2,7));
+  const st = (req.status || 'pending').toLowerCase();
+
+  let sub = req.submittedAt || req.createdAt || req.sub || new Date().toISOString();
+  if (!/T/.test(sub)) {
+    const parsed = Date.parse(sub);
+    sub = parsed ? new Date(parsed).toISOString() : new Date().toISOString();
+  }
+
+  // ── Build docs array from doc_* fields saved by the registration form ──
+  // Each entry: { t: doc_type_key, s: base64_data_url_or_null }
+  const docMap = [
+    { t: 'id_front',      key: 'doc_id_front' },
+    { t: 'id_back',       key: 'doc_id_back' },
+    { t: 'selfie',        key: 'doc_selfie' },
+    { t: 'tin_cert',      key: 'doc_tin_cert' },
+    { t: 'biz_cert',      key: 'doc_biz_cert' },
+    { t: 'address_proof', key: 'doc_address_proof' },
+    { t: 'store_photo',   key: 'doc_store_photo' },
+    { t: 'farm_photo',    key: 'doc_farm_photo' },
+  ];
+  const docs = docMap.map(({ t, key }) => ({ t, s: req[key] || null }));
+
+  // Product photos come as an array; add each as a separate doc entry
+  if (Array.isArray(req.doc_product_photos)) {
+    req.doc_product_photos.forEach((b64, i) => {
+      docs.push({ t: 'product_photo', s: b64 || null });
+    });
+  }
+
+  return {
+    id,
+    fn,
+    em:   req.email || '—',
+    ph:   req.phone || req.phoneNumber || '',
+    dob:  req.dob || '—',
+    sn,
+    cat:  req.category || req.productCategory || '—',
+    prov: req.province || req.address || req.city || '—',
+    tin:  req.tin || req.tinNumber || '—',
+    breg: req.businessReg || req.breg || '',
+    stk:  req.stockVolume || req.stock || '—',
+    aba:  req.abaAccount || req.aba || '',
+    abn:  req.abaName || req.abn || '',
+    acl:  req.aclAccount || '',
+    acln: req.aclName || '',
+    wing: req.wingAccount || req.wing || '',
+    desc: req.description || req.desc || '',
+    fb:   req.facebook || req.fb || '',
+    st,
+    sub,
+    rev:  req.rev || req.reviewedAt || '',
+    note: req.note || req.adminNote || '',
+    docs,
+    _src:    'ls',
+    _lsId:   req.id,
+    _userId: req.userId,
+  };
+}
+
+// ─────────────────────────────────────────────
+//  MERGED DATA
+// ─────────────────────────────────────────────
+function loadSD() {
+  const ls = JSON.parse(localStorage.getItem('seller_requests') || '[]');
+  return [...ls.map(lsToSD), ...SEED];
+}
+
+let SD = loadSD();
+
+function syncToLS(entry, newStatus, note) {
+  if (entry._src !== 'ls') return;
+  const ls = JSON.parse(localStorage.getItem('seller_requests') || '[]');
+  const updated = ls.map(r => {
+    if (r.id === entry._lsId) {
+      r.status = newStatus;
+      if (note) r.note = note;
+      if (entry._userId) localStorage.setItem('seller_' + entry._userId, newStatus);
+    }
+    return r;
+  });
+  localStorage.setItem('seller_requests', JSON.stringify(updated));
+}
+
+// ─────────────────────────────────────────────
+//  NOTIFICATIONS
+// ─────────────────────────────────────────────
 const NOTIFS = [
-  { id:'n1', type:'new', icon:'fa-store', title:'New Application: Vanna\'s Spicy Farm', msg:'Vanna Sok applied — Kampot, Vegetables.', time:'8 min ago', read:false, appId:'S001' },
-  { id:'n2', type:'new', icon:'fa-store', title:'New Application: The Khmer Weaver', msg:'Dara Chhan applied — Takeo, Crafts.', time:'2 hrs ago', read:false, appId:'S002' },
-  { id:'n3', type:'ok', icon:'fa-check', title:'Kampong Fresh approved', msg:'Rith Panha\'s store is now live.', time:'Yesterday', read:true, appId:'S004' },
-  { id:'n4', type:'no', icon:'fa-xmark', title:'Coastal Catch rejected', msg:'Mony Keo — TIN certificate issue.', time:'2 days ago', read:true, appId:'S005' },
-  { id:'n5', type:'new', icon:'fa-boxes-stacked', title:'Low stock: Dried Mango 250g', msg:'Only 18 units remaining.', time:'3 hrs ago', read:false, appId:null },
+  {id:'n1',tp:'n',ic:'fa-store',title:"New: Vanna's Spicy Farm",msg:'Vanna Sok — Kampot, Vegetables',time:'8 min ago',read:false,aid:'S001'},
+  {id:'n2',tp:'n',ic:'fa-store',title:'New: The Khmer Weaver',msg:'Dara Chhan — Takeo, Crafts',time:'2 hrs ago',read:false,aid:'S002'},
+  {id:'n3',tp:'ok',ic:'fa-check',title:'Kampong Fresh approved',msg:"Rith Panha's store is now live.",time:'Yesterday',read:true,aid:'S004'},
+  {id:'n4',tp:'no',ic:'fa-xmark',title:'Coastal Catch rejected',msg:'Mony Keo — TIN certificate issue.',time:'2 days ago',read:true,aid:'S005'},
+  {id:'n5',tp:'n',ic:'fa-boxes-stacked',title:'Low stock: Dried Mango 250g',msg:'Only 18 units remaining.',time:'3 hrs ago',read:false,aid:null},
 ];
 
-const ACTIVITY = [
-  { icon:'✅', html:'<strong>Kampong Fresh</strong> approved by Admin', time:'Yesterday 12:00' },
-  { icon:'❌', html:'<strong>Coastal Catch Co.</strong> rejected — TIN issue', time:'2 days ago 14:00' },
-  { icon:'🆕', html:'<strong>Gold Jasmine Coop</strong> submitted application', time:'3 days ago 09:00' },
-  { icon:'📦', html:'Order <strong>#10043</strong> cancelled by customer', time:'3 days ago 11:30' },
-  { icon:'💰', html:'Payout processed for <strong>34 sellers</strong> · $28,400', time:'1 week ago' },
+const ACT = [
+  {ic:'✅',h:'<strong>Kampong Fresh</strong> approved by Admin',t:'Yesterday 12:00'},
+  {ic:'❌',h:'<strong>Coastal Catch Co.</strong> rejected — TIN issue',t:'2 days ago 14:00'},
+  {ic:'🆕',h:'<strong>Gold Jasmine Coop</strong> submitted application',t:'3 days ago 09:00'},
+  {ic:'📦',h:'Order <strong>#10043</strong> cancelled by customer',t:'3 days ago 11:30'},
+  {ic:'💰',h:'Payout processed for <strong>34 sellers</strong> · $28,400',t:'1 week ago'},
 ];
 
-// ═══════════════════════════════════════════════
-// LANGUAGE
-// ═══════════════════════════════════════════════
-const LANG = {
-  en: { dashboard_title:'Dashboard', dashboard_sub:'Welcome back, Admin · Wednesday, 20 May 2026', stat_sellers:'Active Sellers', stat_pending:'Pending Review', stat_orders:'Total Orders', stat_revenue:'Total Payouts', stat_visitors:'Monthly Visitors', sellers_title:'Seller Requests', admin_name:'Admin' },
-  kh: { dashboard_title:'ផ្ទាំងគ្រប់គ្រង', dashboard_sub:'សូមស្វាគមន៍ Admin 👋', stat_sellers:'អ្នកលក់សកម្ម', stat_pending:'កំពុងរង់ចាំ', stat_orders:'ការបញ្ជាទិញសរុប', stat_revenue:'ការបង់ប្រាក់', stat_visitors:'អ្នកចូលមើលប្រចាំខែ', sellers_title:'សំណើអ្នកលក់', admin_name:'អ្នកគ្រប់គ្រង' }
+// Human-readable labels for document types
+const DL = {
+  id_front:'ID Front', id_back:'ID Back', selfie:'Selfie+ID',
+  tin_cert:'TIN Cert', biz_cert:'Biz Reg', address_proof:'Address',
+  store_photo:'Store', farm_photo:'Farm', product_photo:'Product'
 };
-let currentLang = 'en';
 
-function setLang(l, btn) {
-  currentLang = l;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const t = LANG[l];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    if (t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n];
-  });
-}
+// ─────────────────────────────────────────────
+//  SIDEBAR / NAV
+// ─────────────────────────────────────────────
+function openMobSB(){document.getElementById('sb').classList.add('mob-open');document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeMobSB(){document.getElementById('sb').classList.remove('mob-open');document.getElementById('overlay').classList.remove('open');document.body.style.overflow='';}
+function toggleSB(){const s=document.getElementById('sb');s.classList.toggle('col');document.getElementById('coli').className=s.classList.contains('col')?'fa-solid fa-angles-right':'fa-solid fa-angles-left';}
 
-// ═══════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════
+let prevPage = 'sellers';
 function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const T = {dashboard:'Dashboard',sellers:'Seller Requests','seller-detail':'Seller Detail',products:'Products',orders:'Orders',users:'Users',settings:'Settings'};
+  document.getElementById('bct').textContent = T[id] || id;
+  document.getElementById('bcd').textContent = '';
   if (el) el.classList.add('active');
-  const titles = { dashboard:'Dashboard', sellers:'Seller Requests', products:'Products', orders:'Orders', users:'Users', settings:'Settings' };
-  document.getElementById('breadcrumb-text').textContent = titles[id] || id;
-  if (id === 'sellers') renderSellersTable();
+  if (id === 'sellers') { SD = loadSD(); renderS(); }
+  document.querySelector('.content').scrollTop = 0;
+  closeMobSB();
 }
 
-function toggleSidebar() {
-  const s = document.getElementById('sidebar');
-  s.classList.toggle('collapsed');
-  const icon = document.getElementById('collapse-icon');
-  icon.className = s.classList.contains('collapsed') ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left';
+function openDetail(id) {
+  prevPage = document.querySelector('.page.active')?.id || 'sellers';
+  const s = SD.find(e => e.id === id);
+  if (!s) return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('seller-detail').classList.add('active');
+  document.querySelector('.ni[onclick*="sellers"]').classList.add('active');
+  document.getElementById('bct').textContent = 'Seller Requests';
+  document.getElementById('bcd').innerHTML = ' <span style="color:var(--t3)">›</span> <strong style="color:var(--t2)">' + x(s.sn) + '</strong>';
+  document.getElementById('sdc').innerHTML = buildDetail(s);
+  document.querySelector('.content').scrollTop = 0;
 }
 
-// ═══════════════════════════════════════════════
-// SELLERS TABLE
-// ═══════════════════════════════════════════════
-let sellerFilter = '', sellerSearch = '', sellerPage = 1;
-const PER_PAGE = 6;
+function goBack() { showPage(prevPage, document.querySelector('.ni[onclick*="' + prevPage + '"]')); }
 
-function getFilteredSellers() {
-  return SELLERS.filter(s => {
-    const matchStatus = !sellerFilter || s.status === sellerFilter;
-    const q = sellerSearch.toLowerCase();
-    const matchSearch = !q || s.full_name.toLowerCase().includes(q) || s.store_name.toLowerCase().includes(q) || s.tin.toLowerCase().includes(q) || s.email.toLowerCase().includes(q);
-    return matchStatus && matchSearch;
+// ─────────────────────────────────────────────
+//  SELLERS TABLE
+// ─────────────────────────────────────────────
+let sf = '', ss = '', sp = 1;
+const PP = 8;
+
+function getF() {
+  return SD.filter(s => {
+    const ms = !sf || s.st === sf;
+    const q = ss.toLowerCase();
+    const mq = !q || s.fn.toLowerCase().includes(q) || s.sn.toLowerCase().includes(q) || s.tin.toLowerCase().includes(q) || s.em.toLowerCase().includes(q);
+    return ms && mq;
   });
 }
 
-function renderSellersTable() {
-  const data = getFilteredSellers();
-  const start = (sellerPage - 1) * PER_PAGE;
-  const page = data.slice(start, start + PER_PAGE);
-  const tbody = document.getElementById('sellers-tbody');
-  tbody.innerHTML = page.length ? page.map(s => `
-    <tr onclick="openDrawer('${s.id}')">
-      <td><div class="seller-cell"><div class="seller-av">${s.full_name[0]}</div><div><div class="seller-name">${esc(s.full_name)}</div><div class="seller-meta">${esc(s.email)}</div></div></div></td>
-      <td><span style="font-weight:600;color:var(--text)">${esc(s.store_name)}</span></td>
-      <td><span class="badge badge-sky" style="font-size:9px">${esc(s.category)}</span></td>
-      <td style="color:var(--text2);font-size:12px">${esc(s.province)}</td>
-      <td style="font-size:11px;color:var(--sky);font-weight:600">${esc(s.tin)}</td>
-      <td style="font-size:11px;color:var(--text3)">${fmtDate(s.submitted)}</td>
-      <td><span class="badge badge-${s.status === 'approved' ? 'green' : s.status === 'rejected' ? 'red' : 'amber'}">${s.status === 'approved' ? '✅' : s.status === 'rejected' ? '❌' : '⏳'} ${s.status}</span></td>
-      <td onclick="event.stopPropagation()" style="display:flex;gap:5px;align-items:center">
-        <button class="act-btn act-view" onclick="openDrawer('${s.id}')">View</button>
-        ${s.status === 'pending' ? `<button class="act-btn act-approve" onclick="quickDecide('${s.id}','approved')"><i class="fa-solid fa-check"></i></button><button class="act-btn act-reject" onclick="quickDecide('${s.id}','rejected')"><i class="fa-solid fa-xmark"></i></button>` : ''}
+function renderS() {
+  const data = getF();
+  const start = (sp - 1) * PP;
+  const page = data.slice(start, start + PP);
+  document.getElementById('stbody').innerHTML = page.length ? page.map(s => `
+    <tr onclick="openDetail('${s.id}')">
+      <td><div class="cell">
+        <div class="av">${(s.fn||'?')[0].toUpperCase()}</div>
+        <div>
+          <div class="cn">${x(s.fn)}${s._src==='ls'?'<span class="ls-badge"><i class="fa-solid fa-wifi" style="font-size:8px"></i> Live</span>':''}</div>
+          <div class="cm">${x(s.em)}</div>
+        </div>
+      </div></td>
+      <td><span style="font-weight:600">${x(s.sn)}</span></td>
+      <td><span class="badge bs" style="font-size:9px">${x(s.cat)}</span></td>
+      <td style="color:var(--t2);font-size:12px">${x(s.prov)}</td>
+      <td style="font-size:11px;color:var(--sky);font-weight:600">${x(s.tin)}</td>
+      <td style="font-size:11px;color:var(--t3)">${fd(s.sub)}</td>
+      <td><span class="badge ${s.st==='approved'?'bg':s.st==='rejected'?'br2':'ba'}">${s.st==='approved'?'Approved':s.st==='rejected'?'Rejected':'Pending'}</span></td>
+      <td onclick="event.stopPropagation()" style="display:flex;gap:4px;align-items:center">
+        <button class="ab av2" onclick="openDetail('${s.id}')">View</button>
+        ${s.st==='pending'?`<button class="ab aap" onclick="qd('${s.id}','approved')"><i class="fa-solid fa-check"></i></button><button class="ab arj" onclick="qd('${s.id}','rejected')"><i class="fa-solid fa-xmark"></i></button>`:''}
       </td>
-    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3);font-size:13px"><i class="fa-solid fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>No applications found</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--t3);font-size:13px"><i class="fa-solid fa-inbox" style="font-size:26px;display:block;margin-bottom:10px;opacity:.3"></i>No applications found</td></tr>';
 
-  // Pagination
-  const totalPages = Math.ceil(data.length / PER_PAGE);
-  document.getElementById('sellers-pg-info').textContent = `Showing ${Math.min(start + PER_PAGE, data.length)} of ${data.length}`;
-  const pgWrap = document.getElementById('sellers-pg-btns');
-  pgWrap.innerHTML = Array.from({length: totalPages}, (_,i) =>
-    `<button class="pg-btn ${sellerPage === i+1 ? 'active-pg' : ''}" onclick="goPage(${i+1})">${i+1}</button>`
-  ).join('') + `<button class="pg-btn" onclick="goPage(${Math.min(sellerPage+1,totalPages)})"><i class="fa-solid fa-chevron-right"></i></button>`;
+  const tp = Math.ceil(data.length / PP);
+  document.getElementById('spgi').textContent = `Showing ${Math.min(start + PP, data.length)} of ${data.length}`;
+  document.getElementById('spgb').innerHTML = Array.from({length:tp},(_,i) => `<button class="pb ${sp===i+1?'ap':''}" onclick="gp(${i+1})">${i+1}</button>`).join('') +
+    `<button class="pb" onclick="gp(${Math.min(sp+1,tp)})"><i class="fa-solid fa-chevron-right"></i></button>`;
 }
 
-function goPage(n) { sellerPage = n; renderSellersTable(); }
-function filterSellers(status, btn) { sellerFilter = status; sellerPage = 1; document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderSellersTable(); }
-function searchSellers(v) { sellerSearch = v; sellerPage = 1; renderSellersTable(); }
+function gp(n) { sp = n; renderS(); }
+function filterS(v, btn) { sf = v; sp = 1; document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderS(); }
+function searchS(v) { ss = v; sp = 1; renderS(); }
 
-function quickDecide(id, status) {
-  if (status === 'rejected') {
-    const note = prompt('Enter rejection reason (required):');
-    if (!note) return;
-    decide(id, status, note);
+function qd(id, st) {
+  if (st === 'rejected') {
+    const n = prompt('Rejection reason (required):');
+    if (!n) return;
+    decide(id, st, n);
   } else {
-    decide(id, status, 'Verified by admin.');
+    decide(id, st, 'Verified by admin.');
   }
 }
 
-function decide(id, status, note) {
-  const s = SELLERS.find(x => x.id === id);
+function decide(id, st, note) {
+  const s = SD.find(e => e.id === id);
   if (!s) return;
-  s.status = status;
+  s.st = st;
   s.note = note;
-  s.reviewed = new Date().toISOString();
-  updatePendingCount();
-  renderSellersTable();
-  renderDashPreview();
-  renderActivity();
-  const notif = { id:'n'+Date.now(), type: status === 'approved' ? 'ok' : 'no', icon: status === 'approved' ? 'fa-check' : 'fa-xmark', title: status === 'approved' ? `✅ ${s.store_name} approved` : `❌ ${s.store_name} rejected`, msg: note, time:'Just now', read:false, appId:id };
-  NOTIFS.unshift(notif);
-  renderNotifs();
-  updateNotifDot();
-  showToast(status === 'approved' ? `✅ ${s.store_name} approved!` : `❌ ${s.store_name} rejected`);
-  closeDrawer();
+  s.rev = new Date().toISOString();
+  syncToLS(s, st, note);
+  updPend(); renderS(); renderPrev(); renderAct();
+  NOTIFS.unshift({id:'n'+Date.now(),tp:st==='approved'?'ok':'no',ic:st==='approved'?'fa-check':'fa-xmark',title:st==='approved'?`${s.sn} approved`:`${s.sn} rejected`,msg:note,time:'Just now',read:false,aid:id});
+  renderNotifs(); updDot();
+  showToast(st === 'approved' ? `${s.sn} approved!` : `${s.sn} rejected`);
+  goBack();
 }
 
-function updatePendingCount() {
-  const n = SELLERS.filter(s => s.status === 'pending').length;
-  const badge = document.getElementById('pending-badge');
-  badge.textContent = n;
-  badge.style.display = n ? '' : 'none';
-  document.getElementById('dash-pending').textContent = n;
+function updPend() {
+  const n = SD.filter(s => s.st === 'pending').length;
+  const b = document.getElementById('pbadge');
+  b.textContent = n;
+  b.style.display = n ? '' : 'none';
+  document.getElementById('dpend').textContent = n;
 }
 
-function exportSellers() {
-  const rows = [['ID','Name','Email','Store','Category','Province','TIN','Status','Submitted']];
-  SELLERS.forEach(s => rows.push([s.id,s.full_name,s.email,s.store_name,s.category,s.province,s.tin,s.status,s.submitted]));
+function exportCSV() {
+  const rows = [['ID','Name','Email','Store','Category','Province','TIN','Status']];
+  SD.forEach(s => rows.push([s.id, s.fn, s.em, s.sn, s.cat, s.prov, s.tin, s.st]));
   const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'seller_applications.csv';
+  a.download = 'sellers.csv';
   a.click();
   showToast('CSV exported!');
 }
 
-// ═══════════════════════════════════════════════
-// DRAWER
-// ═══════════════════════════════════════════════
-function openDrawer(id) {
-  const s = SELLERS.find(x => x.id === id);
-  if (!s) return;
-  document.getElementById('drawer-title').textContent = s.store_name;
-  document.getElementById('drawer-id').textContent = 'ID: ' + id + ' · submitted ' + fmtDate(s.submitted);
-  document.getElementById('drawer-body').innerHTML = buildDrawerHTML(s);
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('drawer').classList.add('open');
-}
+// ─────────────────────────────────────────────
+//  DETAIL PAGE
+//  Now renders base64 images from LS entries,
+//  plus product photo strips for multiple photos
+// ─────────────────────────────────────────────
+function buildDetail(s) {
+  // Separate product photos (can be multiple) from identity docs
+  const identityDocs = s.docs.filter(d => d.t !== 'product_photo');
+  const productDocs  = s.docs.filter(d => d.t === 'product_photo');
 
-function closeDrawer() {
-  document.getElementById('overlay').classList.remove('open');
-  document.getElementById('drawer').classList.remove('open');
-}
+  const miss = identityDocs.filter(d => !d.s).length;
 
-const DOC_LABELS = { id_front:'ID Front', id_back:'ID Back', selfie:'Selfie + ID', tin_cert:'TIN Cert', biz_cert:'Biz Reg', address_proof:'Address', store_photo:'Store', farm_photo:'Farm', product_photo:'Product' };
-
-function buildDrawerHTML(s) {
-  const docCards = s.docs.map(d => `
-    <div class="doc-card" ${d.src ? `onclick="openLB('${d.src}')"` : ''} style="${!d.src ? 'opacity:.4;cursor:default' : ''}">
-      ${d.src ? `<img class="doc-thumb" src="${d.src}" onerror="this.style.display='none'"/>` : `<div class="doc-thumb-ph"><i class="fa-solid fa-file-slash"></i></div>`}
-      <div class="doc-footer">
-        <span class="doc-name">${DOC_LABELS[d.type] || d.type}</span>
-        ${d.src ? `<span class="doc-open"><i class="fa-solid fa-expand" style="font-size:10px"></i></span>` : `<span style="font-size:9px;color:var(--red)">Missing</span>`}
+  const docCards = identityDocs.length ? identityDocs.map(d => {
+    const hasSrc = !!d.s;
+    return `<div class="dcard"${hasSrc ? ` onclick="openLB('${d.s.startsWith('data:') ? 'data-lb-' + d.t : d.s}')"` : ''} style="${!hasSrc?'opacity:.4;cursor:default':''}">
+      ${hasSrc
+        ? `<img class="dthumb" src="${d.s.startsWith('data:') ? d.s : d.s}" onerror="this.outerHTML='<div class=dph><i class=fa-solid\\ fa-image></i></div>'"/>`
+        : '<div class="dph"><i class="fa-solid fa-file-slash"></i></div>'}
+      <div class="dfoot">
+        <span class="dname">${DL[d.t]||d.t}</span>
+        ${hasSrc
+          ? '<span style="font-size:10px;color:var(--sky)"><i class="fa-solid fa-expand"></i></span>'
+          : '<span style="font-size:9px;color:var(--red);font-weight:700">Missing</span>'}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('') : '<p style="font-size:12px;color:var(--t3);padding:8px 0">No documents uploaded yet.</p>';
 
-  const payoutStr = [s.aba_account ? `ABA: ${s.aba_account}` : '', s.wing_phone ? `Wing: ${s.wing_phone}` : ''].filter(Boolean).join(' · ') || '<span style="color:var(--red)">None on file</span>';
+  // Product photo strip (for multiple uploads)
+  const prodStrip = productDocs.length ? `
+    <div style="margin-top:10px">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">
+        Product Photos (${productDocs.length})
+      </div>
+      <div class="prod-strip">
+        ${productDocs.map((d, i) => d.s
+          ? `<img class="prod-thumb" src="${d.s}" onclick="openLB('${d.s}')" onerror="this.style.display='none'" title="Product ${i+1}"/>`
+          : ''
+        ).join('')}
+      </div>
+    </div>` : '';
 
-  return `
-    <div class="dsec-title"><i class="fa-solid fa-circle-user"></i>Personal & Store</div>
-    <div class="dinfo-grid">
-      <div class="dinfo-item"><div class="dinfo-key">Full Name</div><div class="dinfo-val">${esc(s.full_name)}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">Date of Birth</div><div class="dinfo-val">${s.dob}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">Email</div><div class="dinfo-val">${esc(s.email)}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">Phone</div><div class="dinfo-val">+855 ${s.phone}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">Store</div><div class="dinfo-val">${esc(s.store_name)}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">Category</div><div class="dinfo-val">${s.category}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">Province</div><div class="dinfo-val">${s.province}</div></div>
-      <div class="dinfo-item"><div class="dinfo-key">TIN Number</div><div class="dinfo-val" style="color:var(--sky)">${s.tin}</div></div>
-      ${s.biz_reg ? `<div class="dinfo-item"><div class="dinfo-key">Business Reg</div><div class="dinfo-val">${s.biz_reg}</div></div>` : ''}
-      <div class="dinfo-item"><div class="dinfo-key">Stock Volume</div><div class="dinfo-val">${s.stock}</div></div>
-      <div class="dinfo-item" style="grid-column:1/-1"><div class="dinfo-key">Payout Methods</div><div class="dinfo-val">${payoutStr}</div></div>
+  const pay = [
+    s.aba  ? `ABA: ${s.aba}`   : null,
+    s.acl  ? `ACLEDA: ${s.acl}` : null,
+    s.wing ? `Wing: ${s.wing}` : null,
+  ].filter(Boolean).join(' · ') || '<span style="color:var(--red)">None on file</span>';
+
+  const sc = s.st==='approved'?'var(--gd)':s.st==='rejected'?'var(--red)':'var(--orange)';
+  const sb = s.st==='approved'?'var(--gdim)':s.st==='rejected'?'var(--rdim)':'var(--odim)';
+  const sl = s.st==='approved'?'Approved':s.st==='rejected'?'Rejected':'Pending Review';
+
+  return `<div class="dhero">
+    <div class="dav">${(s.fn||'?')[0].toUpperCase()}</div>
+    <div class="dhi">
+      <div class="dsn">${x(s.sn)}</div>
+      <div class="dss">${x(s.fn)} &middot; Submitted ${fd(s.sub)}${s._src==='ls'?' &middot; <span style="color:var(--sky);font-weight:700;font-size:11px"><i class="fa-solid fa-wifi" style="font-size:9px"></i> From Registration Form</span>':''}</div>
+      <div class="dtags">
+        <span class="badge bs">${x(s.cat)}</span>
+        <span class="badge" style="background:rgba(12,43,24,.06);color:var(--t2)"><i class="fa-solid fa-location-dot" style="font-size:9px"></i> ${x(s.prov)}</span>
+        ${s.tin && s.tin!=='—'?`<span class="badge bs">${x(s.tin)}</span>`:''}
+        <span class="badge" style="background:${sb};color:${sc}">${sl}</span>
+      </div>
     </div>
-    ${s.description ? `<div class="dsec-title" style="margin-top:4px"><i class="fa-solid fa-align-left"></i>Description</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px">${esc(s.description)}</div>` : ''}
-    ${s.facebook ? `<div style="margin-bottom:16px"><a href="${s.facebook}" target="_blank" style="font-size:12px;color:var(--sky);font-weight:600"><i class="fa-brands fa-facebook" style="margin-right:5px"></i>${s.facebook}</a></div>` : ''}
-    <div class="dsec-title" style="margin-top:4px"><i class="fa-solid fa-file-shield"></i>Documents (${s.docs.length})</div>
-    <div class="docs-grid" style="margin-bottom:18px">${docCards}</div>
-    ${s.status !== 'pending' ? `
-    <div class="dsec-title"><i class="fa-solid fa-clipboard-check"></i>Decision</div>
-    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin-bottom:14px">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-        <span class="badge badge-${s.status === 'approved' ? 'green' : 'red'}">${s.status === 'approved' ? '✅ Approved' : '❌ Rejected'}</span>
-        <span style="font-size:10px;color:var(--text3)">${s.reviewed ? fmtDate(s.reviewed) : ''}</span>
+    ${s.st==='pending'?`<button class="bap" style="padding:9px 18px;font-size:12px;white-space:nowrap;flex:none" onclick="scrollToReview()"><i class="fa-solid fa-pen-to-square" style="margin-right:5px"></i>Review</button>`:''}
+  </div>
+  <div class="dgrid">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="dc"><h3><i class="fa-solid fa-circle-user" style="color:var(--green)"></i>Personal Information</h3>
+        <div class="ig">
+          <div class="ii"><div class="ik">Full Name</div><div class="iv">${x(s.fn)}</div></div>
+          ${s.dob&&s.dob!=='—'?`<div class="ii"><div class="ik">Date of Birth</div><div class="iv">${s.dob}</div></div>`:''}
+          <div class="ii"><div class="ik">Email</div><div class="iv">${x(s.em)}</div></div>
+          <div class="ii"><div class="ik">Phone</div><div class="iv">${s.ph ? '+855 '+s.ph : '—'}</div></div>
+        </div>
       </div>
-      ${s.note ? `<p style="font-size:12px;color:var(--text2)">${esc(s.note)}</p>` : ''}
-    </div>` : ''}
-    ${s.status === 'pending' ? `
-    <div class="dsec-title"><i class="fa-solid fa-pen-to-square"></i>Your Decision</div>
-    <div class="review-panel">
-      <textarea id="review-note" placeholder="Add note or rejection reason (required for rejection)…"></textarea>
-      <div class="review-row">
-        <button class="btn-approve" onclick="submitDecision('${s.id}','approved')"><i class="fa-solid fa-check" style="margin-right:5px"></i>Approve Seller</button>
-        <button class="btn-reject"  onclick="submitDecision('${s.id}','rejected')"><i class="fa-solid fa-xmark" style="margin-right:5px"></i>Reject</button>
+      <div class="dc"><h3><i class="fa-solid fa-store" style="color:var(--orange)"></i>Store Information</h3>
+        <div class="ig">
+          <div class="ii"><div class="ik">Store Name</div><div class="iv">${x(s.sn)}</div></div>
+          <div class="ii"><div class="ik">Category</div><div class="iv">${x(s.cat)}</div></div>
+          <div class="ii"><div class="ik">Province / Address</div><div class="iv">${x(s.prov)}</div></div>
+          ${s.stk&&s.stk!=='—'?`<div class="ii"><div class="ik">Stock Volume</div><div class="iv">${x(s.stk)}</div></div>`:''}
+          ${s.tin&&s.tin!=='—'?`<div class="ii"><div class="ik">TIN Number</div><div class="iv" style="color:var(--sky)">${x(s.tin)}</div></div>`:''}
+          ${s.breg?`<div class="ii"><div class="ik">Business Reg</div><div class="iv">${x(s.breg)}</div></div>`:''}
+          <div class="ii" style="grid-column:1/-1"><div class="ik">Payout Methods</div><div class="iv">${pay}</div></div>
+        </div>
+        ${s.desc?`<div style="margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--t2);line-height:1.6">${x(s.desc)}</div>`:''}
+        ${s.fb?`<div style="margin-top:9px"><a href="${s.fb}" target="_blank" style="font-size:12px;color:var(--sky);font-weight:600;text-decoration:none"><i class="fa-brands fa-facebook" style="margin-right:5px"></i>${x(s.fb)}</a></div>`:''}
       </div>
-    </div>` : ''}
-  `;
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="dc"><h3><i class="fa-solid fa-file-shield" style="color:var(--sky)"></i>Documents
+        ${identityDocs.length?`<span style="font-size:10px;background:${miss>0?'var(--rdim)':'var(--gdim)'};color:${miss>0?'var(--red)':'var(--gd)'};padding:2px 7px;border-radius:99px;font-weight:700;margin-left:4px">${identityDocs.length-miss}/${identityDocs.length}</span>`:''}
+      </h3>
+        <div class="docsw">${docCards}</div>
+        ${prodStrip}
+      </div>
+      ${s.st==='pending'?`<div class="rp" id="rsec"><h3><i class="fa-solid fa-pen-to-square" style="color:var(--orange)"></i>Your Decision</h3>
+        <textarea id="rnote" placeholder="Add a note or rejection reason (required for rejection)…"></textarea>
+        <div class="rrow">
+          <button class="bap" onclick="submitD('${s.id}','approved')"><i class="fa-solid fa-check" style="margin-right:5px"></i>Approve</button>
+          <button class="brj" onclick="submitD('${s.id}','rejected')"><i class="fa-solid fa-xmark" style="margin-right:5px"></i>Reject</button>
+        </div>
+      </div>`:s.note?`<div class="deccard"><h3><i class="fa-solid fa-clipboard-check" style="color:${s.st==='approved'?'var(--green)':'var(--red)'}"></i>Decision</h3>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+          <span class="badge ${s.st==='approved'?'bg':'br2'}">${s.st==='approved'?'Approved':'Rejected'}</span>
+          <span style="font-size:11px;color:var(--t3)">${fd(s.rev)}</span>
+        </div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.6;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px">${x(s.note)}</p>
+      </div>`:''}
+    </div>
+  </div>`;
 }
 
-function submitDecision(id, status) {
-  const note = document.getElementById('review-note')?.value.trim() || '';
-  if (status === 'rejected' && !note) {
-    document.getElementById('review-note').style.borderColor = 'var(--red)';
+// ─────────────────────────────────────────────
+//  LIGHTBOX — supports both URLs and base64 data URLs
+// ─────────────────────────────────────────────
+function openLB(src) {
+  // src might be a prefixed key 'data-lb-TYPE' — not used now,
+  // but kept for future use. Actual src is a full data URL or https URL.
+  document.getElementById('lbimg').src = src;
+  document.getElementById('lb').classList.add('open');
+}
+function closeLB() { document.getElementById('lb').classList.remove('open'); }
+
+function scrollToReview() { const el=document.getElementById('rsec'); if(el)el.scrollIntoView({behavior:'smooth',block:'center'}); }
+
+function submitD(id, st) {
+  const note = document.getElementById('rnote')?.value.trim() || '';
+  if (st==='rejected' && !note) {
+    document.getElementById('rnote').style.borderColor = 'var(--red)';
     showToast('Please enter a rejection reason.', true);
     return;
   }
-  decide(id, status, note || 'Verified by admin.');
-  renderSellersTable();
+  decide(id, st, note || 'Verified by admin.');
 }
 
-// ═══════════════════════════════════════════════
-// NOTIFICATIONS
-// ═══════════════════════════════════════════════
+// ─────────────────────────────────────────────
+//  NOTIFICATIONS
+// ─────────────────────────────────────────────
 function renderNotifs() {
-  const list = document.getElementById('np-list');
-  const iMap = { new:'npi-new', ok:'npi-ok', no:'npi-no' };
-  list.innerHTML = NOTIFS.map(n => `
-    <div class="np-item ${n.read ? '' : 'unread'}" onclick="notifClick('${n.id}','${n.appId||''}')">
-      <div class="np-icon ${iMap[n.type]}"><i class="fa-solid ${n.icon}" style="color:${n.type==='new'?'var(--amber)':n.type==='ok'?'var(--green)':'var(--red)'}"></i></div>
-      <div style="flex:1;min-width:0"><div class="np-title">${esc(n.title)}</div><div class="np-msg">${esc(n.msg)}</div><div class="np-time">${n.time}</div></div>
-      ${!n.read ? '<div class="np-dot"></div>' : ''}
+  const im = {n:'npi-n',ok:'npi-ok',no:'npi-no'};
+  document.getElementById('npl').innerHTML = NOTIFS.map(n=>`
+    <div class="npi ${n.read?'':'ur'}" onclick="nClick('${n.id}','${n.aid||''}')">
+      <div class="npic ${im[n.tp]}"><i class="fa-solid ${n.ic}" style="color:${n.tp==='n'?'var(--orange)':n.tp==='ok'?'var(--green)':'var(--red)'}"></i></div>
+      <div style="flex:1;min-width:0"><div class="nptit">${x(n.title)}</div><div class="npmsg">${x(n.msg)}</div><div class="nptm">${n.time}</div></div>
+      ${!n.read?'<div class="npdot"></div>':''}
+    </div>`).join('');
+}
+function toggleNotif() { const p=document.getElementById('npanel'); p.classList.toggle('open'); if(p.classList.contains('open'))renderNotifs(); }
+function markRead() { NOTIFS.forEach(n=>n.read=true); updDot(); renderNotifs(); }
+function updDot() { document.getElementById('ndot').style.display=NOTIFS.filter(n=>!n.read).length?'block':'none'; }
+function nClick(id, aid) { const n=NOTIFS.find(e=>e.id===id); if(n)n.read=true; updDot(); document.getElementById('npanel').classList.remove('open'); if(aid)openDetail(aid); renderNotifs(); }
+document.addEventListener('click', e => { if(!e.target.closest('#npanel')&&!e.target.closest('#ntog')) document.getElementById('npanel').classList.remove('open'); });
+
+// ─────────────────────────────────────────────
+//  DASHBOARD PREVIEW
+// ─────────────────────────────────────────────
+function renderPrev() {
+  const p = SD.filter(s=>s.st==='pending').slice(0, 3);
+  document.getElementById('dpreview').innerHTML = p.length ? p.map(s=>`
+    <tr onclick="openDetail('${s.id}')">
+      <td><div class="cell"><div class="av">${(s.fn||'?')[0].toUpperCase()}</div><div>
+        <div class="cn" style="font-size:12px">${x(s.fn)}${s._src==='ls'?'<span class="ls-badge">Live</span>':''}</div>
+        <div class="cm">${x(s.sn)}</div>
+      </div></div></td>
+      <td style="font-size:12px;color:var(--t2)">${s.prov}</td>
+      <td style="font-size:11px;color:var(--sky)">${s.tin&&s.tin!=='—'?s.tin:'—'}</td>
+      <td onclick="event.stopPropagation()" style="display:flex;gap:4px">
+        <button class="ab aap" style="padding:4px 9px;font-size:10px" onclick="qd('${s.id}','approved')">Approve</button>
+        <button class="ab arj" style="padding:4px 9px;font-size:10px" onclick="qd('${s.id}','rejected')">Reject</button>
+      </td>
+    </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--t3);font-size:12px">No pending requests 🎉</td></tr>';
+}
+
+function renderAct() {
+  document.getElementById('afeed').innerHTML = ACT.slice(0,5).map(a=>`
+    <div class="aitem">
+      <div class="aav2">${a.ic}</div>
+      <div><div class="atxt">${a.h}</div><div class="atm">${a.t}</div></div>
     </div>`).join('');
 }
 
-function toggleNotif() {
-  const p = document.getElementById('notif-panel');
-  p.classList.toggle('open');
-  if (p.classList.contains('open')) { renderNotifs(); }
-}
-
-function markAllRead() { NOTIFS.forEach(n => n.read = true); updateNotifDot(); renderNotifs(); }
-function updateNotifDot() {
-  const unread = NOTIFS.filter(n => !n.read).length;
-  document.getElementById('notif-dot').style.display = unread ? 'block' : 'none';
-}
-
-function notifClick(id, appId) {
-  const n = NOTIFS.find(x => x.id === id);
-  if (n) n.read = true;
-  updateNotifDot();
-  document.getElementById('notif-panel').classList.remove('open');
-  if (appId) openDrawer(appId);
-  renderNotifs();
-}
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('#notif-panel') && !e.target.closest('#notif-toggle'))
-    document.getElementById('notif-panel').classList.remove('open');
-});
-
-// ═══════════════════════════════════════════════
-// DASHBOARD PREVIEW
-// ═══════════════════════════════════════════════
-function renderDashPreview() {
-  const pending = SELLERS.filter(s => s.status === 'pending').slice(0, 3);
-  document.getElementById('dash-seller-preview').innerHTML = pending.length
-    ? pending.map(s => `
-      <tr onclick="openDrawer('${s.id}')">
-        <td><div class="seller-cell"><div class="seller-av">${s.full_name[0]}</div><div><div class="seller-name" style="font-size:12px">${esc(s.full_name)}</div><div class="seller-meta">${esc(s.store_name)}</div></div></div></td>
-        <td style="font-size:12px;color:var(--text2)">${s.province}</td>
-        <td style="font-size:11px;color:var(--sky)">${s.tin}</td>
-        <td onclick="event.stopPropagation()" style="display:flex;gap:4px">
-          <button class="act-btn act-approve" style="padding:4px 8px;font-size:10px" onclick="quickDecide('${s.id}','approved')">✓</button>
-          <button class="act-btn act-reject" style="padding:4px 8px;font-size:10px" onclick="quickDecide('${s.id}','rejected')">✗</button>
-        </td>
-      </tr>`).join('')
-    : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);font-size:12px">No pending requests 🎉</td></tr>';
-}
-
-function renderActivity() {
-  document.getElementById('activity-feed').innerHTML = ACTIVITY.slice(0, 5).map(a => `
-    <div class="activity-item">
-      <div class="act-av">${a.icon}</div>
-      <div><div class="act-text">${a.html}</div><div class="act-time">${a.time}</div></div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════
-// GLOBAL SEARCH
-// ═══════════════════════════════════════════════
-function globalSearch(v) {
+// ─────────────────────────────────────────────
+//  SEARCH
+// ─────────────────────────────────────────────
+function gSearch(v) {
   if (!v) return;
   const q = v.toLowerCase();
-  const hits = SELLERS.filter(s =>
-    s.full_name.toLowerCase().includes(q) ||
-    s.store_name.toLowerCase().includes(q) ||
-    s.email.toLowerCase().includes(q)
-  );
-  if (hits.length) {
-    sellerSearch = v;
-    showPage('sellers', document.querySelector('.nav-item[onclick*="sellers"]'));
-    renderSellersTable();
+  if (SD.filter(s=>s.fn.toLowerCase().includes(q)||s.sn.toLowerCase().includes(q)).length) {
+    ss = v;
+    showPage('sellers', document.querySelector('.ni[onclick*="sellers"]'));
+    renderS();
   }
 }
 
-// ═══════════════════════════════════════════════
-// LIGHTBOX
-// ═══════════════════════════════════════════════
-function openLB(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.add('open'); }
-function closeLB() { document.getElementById('lightbox').classList.remove('open'); }
-
-// ═══════════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════════
-function showToast(msg, isErr) {
+// ─────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────
+function showToast(msg, err) {
   const t = document.getElementById('toast');
-  const icon = t.querySelector('i');
-  icon.style.color = isErr ? 'var(--red)' : 'var(--green)';
-  icon.className = 'fa-solid ' + (isErr ? 'fa-circle-xmark' : 'fa-circle-check');
-  document.getElementById('toast-msg').textContent = msg;
+  t.querySelector('i').style.color = err?'var(--red)':'var(--green)';
+  t.querySelector('i').className = 'fa-solid '+(err?'fa-circle-xmark':'fa-circle-check');
+  document.getElementById('tmsg').textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-// ═══════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmtDate(d) {
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+function x(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fd(d) {
   if (!d) return '—';
   const dt = new Date(d);
-  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
 }
 
-// ═══════════════════════════════════════════════
-// CHARTS
-// ═══════════════════════════════════════════════
-const chartDefaults = {
-  plugins: { legend: { display: false } },
-  scales: {
-    x: { grid: { color: 'rgba(44,60,52,.5)' }, ticks: { color: 'rgba(232,240,236,.3)', font: { family: 'Outfit', size: 11 } } },
-    y: { grid: { color: 'rgba(44,60,52,.5)' }, ticks: { color: 'rgba(232,240,236,.3)', font: { family: 'Outfit', size: 11 } } }
-  }
-};
+// ─────────────────────────────────────────────
+//  CHARTS
+// ─────────────────────────────────────────────
+const gc='rgba(200,230,200,.5)', tc='rgba(107,152,120,.6)', tf={family:'DM Sans',size:11};
+new Chart(document.getElementById('lc'), {type:'line',data:{labels:['Dec','Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue ($K)',data:[42,68,54,80,72,95],borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.07)',fill:true,tension:0.45,pointBackgroundColor:'#22C55E',pointRadius:4,pointBorderColor:'#fff',pointBorderWidth:2},{label:'Orders',data:[1800,2400,2100,3100,2900,3800],borderColor:'#0EA5E9',backgroundColor:'rgba(14,165,233,.04)',fill:true,tension:0.45,yAxisID:'y2',pointBackgroundColor:'#0EA5E9',pointRadius:4,pointBorderColor:'#fff',pointBorderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tc,font:tf,boxWidth:12,padding:14}}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf},position:'left'},y2:{grid:{display:false},ticks:{color:tc,font:tf},position:'right'}}}});
+new Chart(document.getElementById('dc2'), {type:'doughnut',data:{labels:['Vegetables','Crafts','Grains','Fruits','Seafood','Other'],datasets:[{data:[28,22,20,14,10,6],backgroundColor:['#22C55E','#F97316','#0EA5E9','#EF4444','#A78BFA','#94A3B8'],borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',layout:{padding:{bottom:4}},plugins:{legend:{display:true,position:'bottom',labels:{color:tc,font:{family:'DM Sans',size:11},boxWidth:10,padding:10}}}}});
+window.addEventListener('resize', () => { ['lc','dc2'].forEach(id=>{const c=Chart.getChart(id);if(c)c.resize();}); });
 
-new Chart(document.getElementById('lineChart'), {
-  type: 'line',
-  data: {
-    labels: ['Dec','Jan','Feb','Mar','Apr','May'],
-    datasets: [
-      { label:'Revenue', data:[42,68,54,80,72,95], borderColor:'#4ADE80', backgroundColor:'rgba(74,222,128,.08)', fill:true, tension:0.45, pointBackgroundColor:'#4ADE80', pointRadius:4 },
-      { label:'Orders', data:[1800,2400,2100,3100,2900,3800], borderColor:'#67C8E8', backgroundColor:'rgba(103,200,232,.04)', fill:true, tension:0.45, yAxisID:'y2', pointBackgroundColor:'#67C8E8', pointRadius:4 }
-    ]
-  },
-  options: { responsive:true, plugins:{ legend:{ display:true, labels:{ color:'rgba(232,240,236,.5)', font:{family:'Outfit',size:11}, boxWidth:12, padding:16 } } }, scales: { x:chartDefaults.scales.x, y:{ ...chartDefaults.scales.y, position:'left' }, y2:{ ...chartDefaults.scales.y, position:'right', grid:{display:false} } } }
-});
-
-new Chart(document.getElementById('donutChart'), {
-  type: 'doughnut',
-  data: {
-    labels: ['Vegetables','Crafts','Grains','Fruits','Seafood','Other'],
-    datasets: [{ data:[28,22,20,14,10,6], backgroundColor:['#4ADE80','#FFC34D','#67C8E8','#FF6B6B','#A78BFA','#6B7280'], borderWidth:0, hoverOffset:6 }]
-  },
-  options: { responsive:true, cutout:'72%', plugins:{ legend:{ display:true, position:'bottom', labels:{ color:'rgba(232,240,236,.45)', font:{family:'Outfit',size:11}, boxWidth:10, padding:12 } } } }
-});
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-renderDashPreview();
-renderActivity();
-updateNotifDot();
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+renderPrev();
+renderAct();
+updDot();
 renderNotifs();
-updatePendingCount();
+updPend();
 </script>
 </body>
 </html>
