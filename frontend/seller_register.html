@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moutanak Seller Central — Empowering Khmer Produce</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (V4 Play CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --sand: #F0EDE5;
@@ -15,7 +22,7 @@
             --sage: #D6E8D0;
             --mint: #C8DFC8;
             --sky: #C8DCE8;
-            --green: #3A8C3F;
+            --green: #10b981;
             --green-light: #5AAF5F;
             --green-dark: #2A6A2E;
             --green-pale: #EAF3E0;
@@ -70,11 +77,11 @@
 
         /* INPUTS */
         .finput {
-            width:100%; border:1.5px solid var(--sage); border-radius:12px; padding:10px 13px;
+            width:105%; max-width: 100%; border:1.5px solid var(--sage); border-radius:12px; padding:10px 13px;
             font-size:14px; background:#fff; color:var(--charcoal); outline:none; transition:.2s;
             font-family:'DM Sans',sans-serif;
         }
-        .finput:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(58,140,63,0.1); }
+        .finput:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
         .finput::placeholder { color:rgba(26,34,24,0.3); }
         .finput.error { border-color:var(--red); background: var(--red-pale); }
         .finput.error:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
@@ -122,7 +129,7 @@
         /* OTP */
         .otp-inputs { display:flex; gap:8px; }
         .otp-inputs input { width:44px; height:50px; text-align:center; font-size:20px; font-weight:700; border:1.5px solid var(--sage); border-radius:10px; outline:none; background:#fff; font-family:'Sora',sans-serif; transition:.2s; }
-        .otp-inputs input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(58,140,63,0.1); }
+        .otp-inputs input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
 
         /* REVIEW PANEL */
         .review-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--sage); font-size:13px; }
@@ -143,6 +150,11 @@
         /* STEPS SCROLL (mobile) */
         .steps-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
         .steps-scroll::-webkit-scrollbar { display:none; }
+
+        @keyframes scalePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -150,14 +162,17 @@
 <!-- NAVBAR -->
 <nav class="sticky top-0 z-50 mt-4 px-[5vw]">
     <div class="flex justify-between items-center px-6 border border-slate-200 rounded-full py-3 bg-white/90 backdrop-blur-md shadow-lg">
-        <span class="font-extrabold text-2xl" style="font-family:'Sora',sans-serif;">Moutanak<span style="color:var(--green)">.</span></span>
+        <div onclick="window.location.href='index.html'" class="flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-leaf text-emerald-500 text-xl"></i>
+            <span class="font-extrabold text-2xl" style="font-family:'Sora',sans-serif;">Moutanak<span style="color:var(--green)">.</span></span>
+        </div>
         <ul class="hidden lg:flex gap-8 font-semibold text-slate-600 text-sm">
             <li><a href="#why-sell" class="hover:text-green-600 transition">Benefits</a></li>
             <li><a href="#success-stories" class="hover:text-green-600 transition">Success Stories</a></li>
             <li><a href="#earning-potential" class="hover:text-green-600 transition">Earning Potential</a></li>
             <li><a href="#faq" class="hover:text-green-600 transition">Support</a></li>
         </ul>
-        <button onclick="openModal()" class="px-6 py-2.5 rounded-full font-bold text-white text-sm shadow-lg transition hover:scale-105 active:scale-95 cursor-pointer" style="background:var(--green)">Register Now</button>
+        <button onclick="openModal()" class="px-6 py-2.5 rounded-full font-bold text-white text-sm shadow-lg transition hover:scale-105 active:scale-95 cursor-pointer bg-emerald-500">Register Now</button>
     </div>
 </nav>
 
@@ -169,7 +184,7 @@
                 <span class="inline-block text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border" style="background:var(--green-pale);color:var(--green-dark);border-color:var(--mint)">💰 Profit Focused</span>
                 <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight mb-6 tracking-tight" style="color:var(--charcoal)">Turn Your Produce into <span style="color:var(--green)">Pure Profit</span></h1>
                 <p class="text-lg mb-10 max-w-lg leading-relaxed" style="color:rgba(26,34,24,.55)">Top sellers on Moutanak earn an average of <b>$2,500/month</b>. We build digital empires for Khmer farmers and artisans.</p>
-                <button onclick="openModal()" class="px-10 py-4 rounded-full font-bold text-white shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer" style="background:var(--green)">Open Your Store Now</button>
+                <button onclick="openModal()" class="px-10 py-4 rounded-full font-bold text-white shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer bg-emerald-500">Open Your Store Now</button>
             </div>
             <div class="hidden lg:block flex-1 relative h-full">
                 <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
@@ -184,7 +199,7 @@
                 <span class="inline-block text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border" style="background:rgba(200,220,232,.4);color:#075985;border-color:rgba(200,220,232,.8)">📈 Viral Growth</span>
                 <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight mb-6 tracking-tight" style="color:var(--charcoal)">Your Store, <br><span style="color:var(--green)">Always Busy</span></h1>
                 <p class="text-lg mb-10 max-w-lg leading-relaxed" style="color:rgba(26,34,24,.55)">Our platform serves over <b>500,000 active shoppers</b> every month. We handle the marketing, you handle the harvest.</p>
-                <button onclick="document.getElementById('success-stories').scrollIntoView({behavior:'smooth'})" class="px-10 py-4 rounded-full font-bold text-white shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer" style="background:var(--charcoal)">See Success Stories</button>
+                <button onclick="document.getElementById('success-stories').scrollIntoView({behavior:'smooth'})" class="px-10 py-4 rounded-full font-bold text-white shadow-xl hover:scale-105 transition active:scale-95 cursor-pointer bg-slate-900">See Success Stories</button>
             </div>
             <div class="hidden lg:block flex-1 rounded-[2.5rem] overflow-hidden h-[85%] border-8 border-white shadow-2xl rotate-2">
                 <img src="https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
@@ -224,7 +239,7 @@
                 <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
             </div>
         </div>
-        <div class="md:col-span-4 p-12 rounded-[3rem] text-white flex flex-col justify-between shadow-2xl relative overflow-hidden" style="background:var(--green)">
+        <div class="md:col-span-4 p-12 rounded-[3rem] text-white flex flex-col justify-between shadow-2xl relative overflow-hidden bg-emerald-500">
             <div>
                 <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-8 text-2xl"><i class="fa-solid fa-seedling"></i></div>
                 <h3 class="text-3xl font-black mb-4">Support Khmer Produce</h3>
@@ -262,17 +277,17 @@
         <div class="relative grid grid-cols-1 md:grid-cols-3 gap-16">
             <div class="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-px border-t-2 border-dashed border-slate-200"></div>
             <div class="flex flex-col items-center gap-6 relative z-10">
-                <div class="w-24 h-24 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-600 text-2xl shadow-xl"><i class="fa-solid fa-user-plus"></i></div>
+                <div class="w-24 h-24 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-650 text-2xl shadow-xl"><i class="fa-solid fa-user-plus text-emerald-500"></i></div>
                 <h4 class="text-2xl font-bold">Register</h4>
                 <p class="text-slate-500 max-w-xs">Complete verification with your Cambodian ID, TIN, and business details.</p>
             </div>
             <div class="flex flex-col items-center gap-6 relative z-10">
-                <div class="w-24 h-24 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-600 text-2xl shadow-xl"><i class="fa-solid fa-upload"></i></div>
+                <div class="w-24 h-24 rounded-full bg-white border-4 border-green-100 flex items-center justify-center text-green-650 text-2xl shadow-xl"><i class="fa-solid fa-upload text-emerald-500"></i></div>
                 <h4 class="text-2xl font-bold">List Products</h4>
                 <p class="text-slate-500 max-w-xs">Upload high-quality photos and descriptions of your Khmer produce.</p>
             </div>
             <div class="flex flex-col items-center gap-6 relative z-10">
-                <div class="w-24 h-24 rounded-full border-4 border-white flex items-center justify-center text-white text-2xl shadow-2xl" style="background:var(--green);box-shadow:0 20px 40px -10px rgba(58,140,63,.4)"><i class="fa-solid fa-rocket"></i></div>
+                <div class="w-24 h-24 rounded-full border-4 border-white flex items-center justify-center text-white text-2xl shadow-2xl bg-emerald-500 hover:bg-emerald-600" style="box-shadow:0 20px 40px -10px rgba(16,185,129,.4)"><i class="fa-solid fa-rocket animate-pulse"></i></div>
                 <h4 class="text-2xl font-bold">Start Earning</h4>
                 <p class="text-slate-500 max-w-xs">Receive orders, fulfill them, and get paid weekly directly to your bank.</p>
             </div>
@@ -330,7 +345,7 @@
 <section id="faq" class="max-w-7xl mx-auto px-[5vw] py-24">
     <div class="flex flex-col md:flex-row gap-20">
         <div class="md:w-1/3">
-            <h2 class="text-4xl font-black text-slate-900 mb-6">Frequently Asked Questions</h2>
+            <h2 class="text-4xl font-black text-slate-900 mb-6 font-serif">Frequently Asked Questions</h2>
             <p class="text-slate-500 text-lg leading-relaxed mb-10">Everything you need to know about becoming a successful seller on Moutanak.</p>
             <div class="p-8 rounded-3xl bg-amber-50 border border-amber-100">
                 <p class="font-bold text-amber-900 mb-2">Still have questions?</p>
@@ -363,12 +378,12 @@
 <section class="max-w-7xl mx-auto px-[5vw] pb-24">
     <div class="bg-slate-900 rounded-[3.5rem] p-16 md:p-32 text-center relative overflow-hidden text-white shadow-2xl">
         <div class="relative z-10 max-w-2xl mx-auto">
-            <h2 class="text-5xl md:text-7xl font-black mb-8">Ready to boost your profit?</h2>
+            <h2 class="text-5xl md:text-7xl font-black mb-8 font-serif">Ready to boost your profit?</h2>
             <p class="text-white/60 text-lg mb-12">Join 1,500+ successful Cambodian sellers and start growing your brand with national pride.</p>
-            <button onclick="openModal()" class="px-12 py-5 text-white font-black text-xl rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all" style="background:var(--green)">Start Earning Today</button>
+            <button onclick="openModal()" class="px-12 py-5 text-white font-black text-xl rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all bg-emerald-500">Start Earning Today</button>
         </div>
         <div class="absolute inset-0 opacity-20 pointer-events-none">
-            <div class="absolute top-[-50%] left-[-20%] w-[150%] h-[150%] bg-green-500 blur-[200px] rounded-full"></div>
+            <div class="absolute top-[-50%] left-[-20%] w-[150%] h-[150%] bg-emerald-500 blur-[200px] rounded-full"></div>
             <div class="absolute bottom-[-50%] right-[-20%] w-[150%] h-[150%] bg-amber-500 blur-[200px] rounded-full"></div>
         </div>
     </div>
@@ -382,18 +397,18 @@
                 <i class="fa-solid fa-leaf text-green-600 text-xl"></i>
                 <span class="font-black text-xl" style="font-family:'Sora',sans-serif;">Moutanak</span>
             </div>
-            <p class="text-slate-400 text-sm">© 2025 Moutanak Commerce. All Rights Reserved.</p>
+            <p class="text-slate-400 text-sm">© 2026 Moutanak Commerce. All Rights Reserved.</p>
         </div>
         <div class="flex flex-wrap justify-center gap-8 font-bold text-slate-500 text-sm">
-            <a href="#" class="hover:text-green-600 transition">About</a>
-            <a href="#" class="hover:text-green-600 transition">Terms</a>
-            <a href="#" class="hover:text-green-600 transition">Privacy</a>
-            <a href="#" class="hover:text-green-600 transition">Contact</a>
+            <a href="#" class="hover:text-green-650 transition">About</a>
+            <a href="#" class="hover:text-green-650 transition">Terms</a>
+            <a href="#" class="hover:text-green-650 transition">Privacy</a>
+            <a href="#" class="hover:text-green-650 transition">Contact</a>
         </div>
         <div class="flex gap-4">
-            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition cursor-pointer"><i class="fa-brands fa-facebook"></i></div>
-            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition cursor-pointer"><i class="fa-brands fa-instagram"></i></div>
-            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-600 hover:border-green-100 transition cursor-pointer"><i class="fa-brands fa-tiktok"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-605 hover:border-green-100 transition cursor-pointer"><i class="fa-brands fa-facebook font-semibold"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-605 hover:border-green-100 transition cursor-pointer"><i class="fa-brands fa-instagram font-semibold"></i></div>
+            <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:text-green-605 hover:border-green-100 transition cursor-pointer"><i class="fa-brands fa-tiktok font-semibold"></i></div>
         </div>
     </div>
 </footer>
@@ -401,7 +416,7 @@
 <!-- ===========================
      SELLER REGISTRATION MODAL
      =========================== -->
-<div id="seller-modal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4 lg:p-6 overflow-y-auto" style="background:rgba(26,34,24,.5);backdrop-filter:blur(8px)">
+<div id="seller-modal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4 lg:p-6 overflow-y-auto bg-slate-900/50 backdrop-blur-md">
     <div class="bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden relative shadow-2xl flex flex-col" style="animation:fadeUp .4s ease">
 
         <!-- Header -->
@@ -416,10 +431,8 @@
         <!-- Progress Bar -->
         <div class="px-8 pt-4 pb-1" style="background:var(--sand)">
             <div class="flex items-center gap-1 steps-scroll pb-2">
-                <!-- Pills generated by JS -->
                 <div id="progress-pills" class="flex items-center gap-1 w-full"></div>
             </div>
-            <!-- Thin bar -->
             <div class="h-1 rounded-full mt-2" style="background:var(--sage)">
                 <div id="progress-fill" class="h-full rounded-full transition-all duration-500" style="background:var(--green);width:0%"></div>
             </div>
@@ -451,7 +464,7 @@
                         <p class="flabel">Cambodian Phone Number <span style="color:var(--red)">*</span></p>
                         <div class="flex gap-2">
                             <span class="finput flex items-center justify-center font-bold text-sm px-3 w-20 flex-shrink-0" style="background:var(--sand);color:var(--charcoal)">+855</span>
-                            <input class="finput flex-1" id="f-phone" type="tel" placeholder="xx xxx xxxx" maxlength="10" oninput="clearErr(this)"/>
+                            <input class="finput flex-1 animate-pulse" id="f-phone" type="tel" placeholder="xx xxx xxxx" maxlength="10" oninput="clearErr(this)"/>
                         </div>
                         <p class="field-err" id="e-phone"><i class="fa-solid fa-circle-exclamation"></i> Valid KH number required</p>
                     </div>
@@ -478,13 +491,13 @@
             <!-- =========== STEP 2: OTP =========== -->
             <div class="form-section p-8" id="s2">
                 <div class="text-center mb-8">
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background:var(--green-pale)">
-                        <i class="fa-solid fa-mobile-screen-button text-2xl" style="color:var(--green)"></i>
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-emerald-50">
+                        <i class="fa-solid fa-mobile-screen-button text-2xl text-emerald-500"></i>
                     </div>
                     <h4 class="font-extrabold text-xl mb-2" style="font-family:'Sora',sans-serif;color:var(--charcoal)">Verify Your Phone</h4>
                     <p class="text-sm" style="color:rgba(26,34,24,.5)">We sent a 6-digit OTP to your phone number.<br>Enter it below to confirm your identity.</p>
                 </div>
-                <div class="flex justify-center mb-4">
+                <div class="flex justify-center mb-4 text-emerald-950 font-black">
                     <div class="otp-inputs" id="otp-wrap">
                         <input type="text" maxlength="1" class="otp-digit" oninput="otpMove(this,0)">
                         <input type="text" maxlength="1" class="otp-digit" oninput="otpMove(this,1)">
@@ -495,7 +508,7 @@
                     </div>
                 </div>
                 <p class="field-err justify-center" id="e-otp"><i class="fa-solid fa-circle-exclamation"></i> Enter the 6-digit code</p>
-                <p class="text-center text-xs mt-4" style="color:rgba(26,34,24,.4)">Didn't receive it? <button class="font-bold underline" style="color:var(--green)" onclick="fakeResend()">Resend OTP</button></p>
+                <p class="text-center text-xs mt-4" style="color:rgba(26,34,24,.4)">Didn't receive it? <button class="font-bold underline text-emerald-600" onclick="fakeResend()">Resend OTP</button></p>
                 <div class="warn-box mt-6">⚠️ For demo purposes, enter <b>123456</b> to proceed.</div>
             </div>
 
@@ -549,11 +562,11 @@
                     </div>
                     <div class="sm:col-span-2">
                         <p class="flabel">Store Profile Photo <span style="color:var(--red)">*</span></p>
-                        <div class="ubox" id="box-store-photo" onclick="this.querySelector('input').click()">
-                            <i class="fa-solid fa-camera text-2xl mb-2" style="color:var(--green)"></i>
-                            <p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:rgba(26,34,24,.4)">Click to upload store photo</p>
+                        <div class="ubox text-emerald-800 border-2" id="box-store-photo" onclick="this.querySelector('input').click()">
+                            <i class="fa-solid fa-camera text-2xl mb-2 text-emerald-500"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider mb-1 text-emerald-950">Click to upload store photo</p>
                             <p class="text-xs" style="color:rgba(26,34,24,.3)">JPG, PNG — max 5MB</p>
-                            <p id="lbl-store-photo" class="text-xs font-bold mt-2 hidden" style="color:var(--green)">✓ Photo uploaded</p>
+                            <p id="lbl-store-photo" class="text-xs font-bold mt-2 hidden text-emerald-600">✓ Photo uploaded</p>
                             <input type="file" accept="image/*" onchange="markFile(this,'lbl-store-photo','box-store-photo')"/>
                         </div>
                         <p class="field-err" id="e-store-photo"><i class="fa-solid fa-circle-exclamation"></i> Store photo required</p>
@@ -564,26 +577,26 @@
             <!-- =========== STEP 4: Identity / Legal Docs =========== -->
             <div class="form-section p-8" id="s4">
                 <div class="tip-box mb-3">🔒 All documents are encrypted using AES-256 and used only for identity verification. Never shared with third parties.</div>
-                <div class="warn-box mb-6">⚠️ Ensure all images are clear, not blurry, and unobstructed. Blurry submissions will be rejected.</div>
+                <div class="warn-box mb-6 font-semibold">⚠️ Ensure all images are clear, not blurry, and unobstructed. Blurry submissions will be rejected.</div>
 
                 <!-- National ID -->
                 <div class="id-group mb-4">
-                    <div class="id-group-title"><i class="fa-solid fa-id-card" style="color:var(--green)"></i> National ID Card <span class="id-required-badge">REQUIRED</span></div>
+                    <div class="id-group-title"><i class="fa-solid fa-id-card text-emerald-500"></i> National ID Card <span class="id-required-badge">REQUIRED</span></div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <div class="ubox h-28 flex flex-col items-center justify-center" id="box-id-front" onclick="this.querySelector('input').click()">
-                                <i class="fa-regular fa-address-card text-2xl mb-1" style="color:var(--green)"></i>
-                                <p class="text-[10px] font-bold uppercase" style="color:rgba(26,34,24,.4)">Front Side</p>
-                                <p id="lbl-id-front" class="text-xs font-bold mt-1 hidden" style="color:var(--green)">✓ Uploaded</p>
+                            <div class="ubox h-28 flex flex-col items-center justify-center text-emerald-800" id="box-id-front" onclick="this.querySelector('input').click()">
+                                <i class="fa-regular fa-address-card text-2xl mb-1 text-emerald-500"></i>
+                                <p class="text-[10px] font-bold uppercase">Front Side</p>
+                                <p id="lbl-id-front" class="text-xs font-bold mt-1 hidden text-emerald-600">✓ Uploaded</p>
                                 <input type="file" accept="image/*" onchange="markFile(this,'lbl-id-front','box-id-front')"/>
                             </div>
                             <p class="field-err" id="e-id-front"><i class="fa-solid fa-circle-exclamation"></i> Required</p>
                         </div>
                         <div>
-                            <div class="ubox h-28 flex flex-col items-center justify-center" id="box-id-back" onclick="this.querySelector('input').click()">
-                                <i class="fa-solid fa-id-card text-2xl mb-1" style="color:var(--green)"></i>
-                                <p class="text-[10px] font-bold uppercase" style="color:rgba(26,34,24,.4)">Back Side</p>
-                                <p id="lbl-id-back" class="text-xs font-bold mt-1 hidden" style="color:var(--green)">✓ Uploaded</p>
+                            <div class="ubox h-28 flex flex-col items-center justify-center text-emerald-800" id="box-id-back" onclick="this.querySelector('input').click()">
+                                <i class="fa-solid fa-id-card text-2xl mb-1 text-emerald-500"></i>
+                                <p class="text-[10px] font-bold uppercase">Back Side</p>
+                                <p id="lbl-id-back" class="text-xs font-bold mt-1 hidden text-emerald-600">✓ Uploaded</p>
                                 <input type="file" accept="image/*" onchange="markFile(this,'lbl-id-back','box-id-back')"/>
                             </div>
                             <p class="field-err" id="e-id-back"><i class="fa-solid fa-circle-exclamation"></i> Required</p>
@@ -593,12 +606,12 @@
 
                 <!-- Selfie with ID -->
                 <div class="id-group mb-4">
-                    <div class="id-group-title"><i class="fa-solid fa-user-check" style="color:var(--green)"></i> Selfie Holding Your ID <span class="id-required-badge">REQUIRED</span></div>
-                    <div class="ubox flex flex-col items-center justify-center py-5" id="box-selfie" onclick="this.querySelector('input').click()">
-                        <i class="fa-solid fa-face-smile text-3xl mb-2" style="color:var(--green)"></i>
-                        <p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:rgba(26,34,24,.4)">Hold your ID card next to your face</p>
+                    <div class="id-group-title"><i class="fa-solid fa-user-check text-emerald-500"></i> Selfie Holding Your ID <span class="id-required-badge">REQUIRED</span></div>
+                    <div class="ubox flex flex-col items-center justify-center py-5 text-emerald-800" id="box-selfie" onclick="this.querySelector('input').click()">
+                        <i class="fa-solid fa-face-smile text-3xl mb-2 text-emerald-500"></i>
+                        <p class="text-xs font-bold uppercase tracking-wider mb-1">Hold your ID card next to your face</p>
                         <p class="text-xs" style="color:rgba(26,34,24,.3)">Face and ID must both be clearly visible</p>
-                        <p id="lbl-selfie" class="text-xs font-bold mt-2 hidden" style="color:var(--green)">✓ Selfie uploaded</p>
+                        <p id="lbl-selfie" class="text-xs font-bold mt-2 hidden text-emerald-600">✓ Selfie uploaded</p>
                         <input type="file" accept="image/*" onchange="markFile(this,'lbl-selfie','box-selfie')"/>
                     </div>
                     <p class="field-err" id="e-selfie"><i class="fa-solid fa-circle-exclamation"></i> Selfie with ID required</p>
@@ -606,7 +619,7 @@
 
                 <!-- TIN -->
                 <div class="id-group mb-4">
-                    <div class="id-group-title"><i class="fa-solid fa-file-invoice" style="color:var(--green)"></i> Tax Identification Number (TIN) <span class="id-required-badge">REQUIRED</span></div>
+                    <div class="id-group-title"><i class="fa-solid fa-file-invoice text-emerald-500"></i> Tax Identification Number (TIN) <span class="id-required-badge">REQUIRED</span></div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <p class="flabel">TIN Number <span style="color:var(--red)">*</span></p>
@@ -615,10 +628,10 @@
                         </div>
                         <div>
                             <p class="flabel">TIN Certificate (upload) <span style="color:var(--red)">*</span></p>
-                            <div class="ubox h-10 flex items-center justify-center gap-2 px-3" id="box-tin" onclick="this.querySelector('input').click()">
-                                <i class="fa-solid fa-file-arrow-up text-sm" style="color:var(--green)"></i>
-                                <p class="text-xs font-bold uppercase tracking-wider" style="color:rgba(26,34,24,.4)">Upload PDF or Image</p>
-                                <p id="lbl-tin" class="text-xs font-bold hidden" style="color:var(--green)">✓</p>
+                            <div class="ubox h-10 flex items-center justify-center gap-2 px-3 text-emerald-800" id="box-tin" onclick="this.querySelector('input').click()">
+                                <i class="fa-solid fa-file-arrow-up text-sm text-emerald-500"></i>
+                                <p class="text-xs font-bold uppercase tracking-wider">Upload PDF or Image</p>
+                                <p id="lbl-tin" class="text-xs font-bold hidden text-emerald-600">✓</p>
                                 <input type="file" accept="image/*,.pdf" onchange="markFile(this,'lbl-tin','box-tin')"/>
                             </div>
                             <p class="field-err" id="e-tin-file"><i class="fa-solid fa-circle-exclamation"></i> TIN certificate required</p>
@@ -626,10 +639,10 @@
                     </div>
                 </div>
 
-                <!-- Business Reg (conditional) -->
+                <!-- Business Reg -->
                 <div class="id-group mb-4">
-                    <div class="id-group-title"><i class="fa-solid fa-building" style="color:var(--green)"></i> Business Registration (CAMREGS) <span class="id-optional-badge">IF REGISTERED</span></div>
-                    <p class="text-xs mb-3" style="color:rgba(26,34,24,.45)">Required if you are a registered business. Sole traders / individual farmers may skip.</p>
+                    <div class="id-group-title"><i class="fa-solid fa-building text-emerald-500"></i> Business Registration (CAMREGS) <span class="id-optional-badge">IF REGISTERED</span></div>
+                    <p class="text-xs mb-3 font-medium" style="color:rgba(26,34,24,.45)">Required if you are a registered business. Sole traders / individual farmers may skip.</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <p class="flabel">Business Registration No.</p>
@@ -637,10 +650,10 @@
                         </div>
                         <div>
                             <p class="flabel">Certificate (upload)</p>
-                            <div class="ubox h-10 flex items-center justify-center gap-2 px-3" id="box-biz" onclick="this.querySelector('input').click()">
-                                <i class="fa-solid fa-file-arrow-up text-sm" style="color:var(--green)"></i>
-                                <p class="text-xs font-bold uppercase tracking-wider" style="color:rgba(26,34,24,.4)">Upload PDF or Image</p>
-                                <p id="lbl-biz" class="text-xs font-bold hidden" style="color:var(--green)">✓</p>
+                            <div class="ubox h-10 flex items-center justify-center gap-2 px-3 text-emerald-950" id="box-biz" onclick="this.querySelector('input').click()">
+                                <i class="fa-solid fa-file-arrow-up text-sm text-emerald-500" style="color:var(--green)"></i>
+                                <p class="text-xs font-bold uppercase tracking-wider">Upload PDF or Image</p>
+                                <p id="lbl-biz" class="text-xs font-bold hidden text-emerald-600">✓</p>
                                 <input type="file" accept="image/*,.pdf" onchange="markFile(this,'lbl-biz','box-biz')"/>
                             </div>
                         </div>
@@ -649,13 +662,13 @@
 
                 <!-- Address Proof -->
                 <div class="id-group">
-                    <div class="id-group-title"><i class="fa-solid fa-location-dot" style="color:var(--green)"></i> Proof of Business Address <span class="id-required-badge">REQUIRED</span></div>
-                    <p class="text-xs mb-3" style="color:rgba(26,34,24,.45)">Upload a utility bill, lease agreement, or official letter showing your business address. Must be dated within 3 months.</p>
-                    <div class="ubox flex flex-col items-center justify-center py-5" id="box-addr" onclick="this.querySelector('input').click()">
-                        <i class="fa-solid fa-house-chimney text-2xl mb-2" style="color:var(--green)"></i>
-                        <p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:rgba(26,34,24,.4)">Utility Bill / Lease / Official Letter</p>
+                    <div class="id-group-title"><i class="fa-solid fa-location-dot text-emerald-500"></i> Proof of Business Address <span class="id-required-badge">REQUIRED</span></div>
+                    <p class="text-xs mb-3 font-medium" style="color:rgba(26,34,24,.45)">Upload a utility bill, lease agreement, or official letter showing your business address. Must be dated within 3 months.</p>
+                    <div class="ubox flex flex-col items-center justify-center py-5 text-emerald-950" id="box-addr" onclick="this.querySelector('input').click()">
+                        <i class="fa-solid fa-house-chimney text-2xl mb-2 text-emerald-500" style="color:var(--green)"></i>
+                        <p class="text-xs font-bold uppercase tracking-wider mb-1">Utility Bill / Lease / Official Letter</p>
                         <p class="text-xs" style="color:rgba(26,34,24,.3)">PDF, JPG, PNG — max 10MB</p>
-                        <p id="lbl-addr" class="text-xs font-bold mt-2 hidden" style="color:var(--green)">✓ Document uploaded</p>
+                        <p id="lbl-addr" class="text-xs font-bold mt-2 hidden text-emerald-600">✓ Document uploaded</p>
                         <input type="file" accept="image/*,.pdf" onchange="markFile(this,'lbl-addr','box-addr')"/>
                     </div>
                     <p class="field-err" id="e-addr"><i class="fa-solid fa-circle-exclamation"></i> Address proof required</p>
@@ -665,33 +678,33 @@
             <!-- =========== STEP 5: Product Proof =========== -->
             <div class="form-section p-8" id="s5">
                 <div class="tip-box mb-4">📦 We need to confirm you actually have products ready to sell. Upload real photos of your inventory or farm/workshop.</div>
-                <div class="warn-box mb-6">⚠️ Stock images or photos downloaded from the internet are not accepted and will result in rejection.</div>
+                <div class="warn-box mb-6 font-semibold">⚠️ Stock images or photos downloaded from the internet are not accepted and will result in rejection.</div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
                         <p class="flabel">Product / Inventory Photos <span style="color:var(--red)">*</span> <span class="text-xs font-normal normal-case tracking-normal" style="color:rgba(26,34,24,.4)">(min. 3 photos)</span></p>
-                        <div class="ubox flex flex-col items-center justify-center py-8" id="box-products" onclick="this.querySelector('input').click()">
-                            <i class="fa-solid fa-images text-3xl mb-2" style="color:var(--green)"></i>
-                            <p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:rgba(26,34,24,.4)">Upload 3–10 product photos</p>
+                        <div class="ubox flex flex-col items-center justify-center py-8 text-emerald-950" id="box-products" onclick="this.querySelector('input').click()">
+                            <i class="fa-solid fa-images text-3xl mb-2 text-emerald-500" style="color:var(--green)"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider mb-1">Upload 3–10 product photos</p>
                             <p class="text-xs" style="color:rgba(26,34,24,.3)">JPG, PNG — max 5MB each</p>
-                            <p id="lbl-products" class="text-xs font-bold mt-2 hidden" style="color:var(--green)">✓ Photos uploaded</p>
+                            <p id="lbl-products" class="text-xs font-bold mt-2 hidden text-emerald-600">✓ Photos uploaded</p>
                             <input type="file" accept="image/*" multiple onchange="markFileMulti(this,'lbl-products','box-products','e-products',3)"/>
                         </div>
                         <p class="field-err" id="e-products"><i class="fa-solid fa-circle-exclamation"></i> Upload at least 3 product photos</p>
                     </div>
                     <div class="sm:col-span-2">
                         <p class="flabel">Farm / Workshop Photo <span style="color:var(--red)">*</span></p>
-                        <div class="ubox flex flex-col items-center justify-center py-6" id="box-farm" onclick="this.querySelector('input').click()">
-                            <i class="fa-solid fa-tractor text-3xl mb-2" style="color:var(--green)"></i>
-                            <p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:rgba(26,34,24,.4)">Photo of your farm, shop, or workshop</p>
+                        <div class="ubox flex flex-col items-center justify-center py-6 text-emerald-950 animate-pulse" id="box-farm" onclick="this.querySelector('input').click()">
+                            <i class="fa-solid fa-tractor text-3xl mb-2 text-emerald-500" style="color:var(--green)"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider mb-1">Photo of your farm, shop, or workshop</p>
                             <p class="text-xs" style="color:rgba(26,34,24,.3)">Shows where you operate</p>
-                            <p id="lbl-farm" class="text-xs font-bold mt-2 hidden" style="color:var(--green)">✓ Uploaded</p>
+                            <p id="lbl-farm" class="text-xs font-bold mt-2 hidden text-emerald-600">✓ Uploaded</p>
                             <input type="file" accept="image/*" onchange="markFile(this,'lbl-farm','box-farm')"/>
                         </div>
                         <p class="field-err" id="e-farm"><i class="fa-solid fa-circle-exclamation"></i> Farm/workshop photo required</p>
                     </div>
                     <div class="sm:col-span-2">
                         <p class="flabel">Approximate Monthly Stock Volume <span style="color:var(--red)">*</span></p>
-                        <select class="finput" id="f-stock">
+                        <select class="finput animate-none" id="f-stock">
                             <option value="">— Select Range —</option>
                             <option>Less than 50 kg / units</option>
                             <option>50 – 200 kg / units</option>
@@ -709,9 +722,9 @@
                 <div class="tip-box mb-6">💳 Your payout details must match the name on your National ID. Mismatches will delay payments.</div>
                 <p class="text-xs font-bold mb-4 uppercase tracking-wider" style="color:rgba(26,34,24,.4)">Select at least one payout method</p>
                 <div class="space-y-3">
-                    <div class="pay-card">
+                    <div class="pay-card border-emerald-100">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style="background:var(--lemon)">ABA</div>
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm bg-emerald-50 text-emerald-850">ABA</div>
                             <p class="font-bold text-sm">ABA Bank</p>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
@@ -725,9 +738,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pay-card">
+                    <div class="pay-card border-blue-100">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style="background:#DBEAFE;color:#1D4ED8">ACL</div>
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs bg-[#DBEAFE] text-[#1D4ED8]">ACL</div>
                             <p class="font-bold text-sm">ACLEDA Bank</p>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
@@ -743,8 +756,8 @@
                     </div>
                     <div class="pay-card">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:var(--sky)"><i class="fa-solid fa-mobile-screen text-sm" style="color:var(--charcoal)"></i></div>
-                            <p class="font-bold text-sm">Wing Money / TrueMoney</p>
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-50"><i class="fa-solid fa-mobile-screen text-sm text-emerald-800"></i></div>
+                            <p class="font-bold text-sm">Wing / TrueMoney</p>
                         </div>
                         <input class="finput" id="f-wing" type="tel" placeholder="Phone number linked to Wing/TrueMoney"/>
                     </div>
@@ -756,8 +769,7 @@
             <div class="form-section p-8" id="s7">
                 <div class="tip-box mb-6">✅ Review your application before submitting. Once submitted, a member of our team will verify your documents within 24–48 hours.</div>
 
-                <!-- Review Summary -->
-                <div class="border rounded-2xl overflow-hidden mb-5" style="border-color:var(--sage)">
+                <div class="border rounded-2xl overflow-hidden mb-5 border-emerald-100">
                     <div class="px-4 py-3 font-bold text-xs uppercase tracking-wider" style="background:var(--sand);color:rgba(26,34,24,.5)">Application Summary</div>
                     <div class="px-4 py-2">
                         <div class="review-row"><span class="review-key">Full Name</span><span class="review-val" id="rv-name">—</span></div>
@@ -802,15 +814,51 @@
                 <p class="field-err mt-2" id="e-terms"><i class="fa-solid fa-circle-exclamation"></i> Please confirm all checkboxes to proceed</p>
             </div>
 
-            <!-- =========== SUCCESS =========== -->
+            <!-- =========== SUCCESS (Awaiting Review & Polling) =========== -->
             <div class="form-section p-8 text-center py-14" id="s8">
-                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border-4" style="background:var(--green-pale);border-color:var(--mint)">
-                    <i class="fa-solid fa-check text-4xl" style="color:var(--green)"></i>
+                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-300 relative bg-amber-50">
+                    <i class="fa-solid fa-clock-rotate-left text-3xl text-amber-500 animate-spin" style="animation-duration: 4s;"></i>
                 </div>
                 <h3 class="text-3xl font-extrabold mb-3" style="font-family:'Sora',sans-serif;color:var(--charcoal)">Application Received!</h3>
-                <p class="text-sm max-w-xs mx-auto leading-relaxed mb-2" style="color:rgba(26,34,24,.55)">Our verification team will review your documents and contact you within <b>24–48 hours</b>.</p>
-                <p class="text-xs" style="color:rgba(26,34,24,.35)">Check your email for a confirmation receipt.</p>
-                <button onclick="closeModal()" class="mt-8 px-8 py-3 text-white rounded-full font-bold text-sm" style="background:var(--charcoal)">Back to Home</button>
+                <p class="text-sm max-w-xs mx-auto leading-relaxed mb-4" style="color:rgba(26,34,24,.55)">Our verification team is reviewing your documents.</p>
+                
+                <!-- Live status check card -->
+                <div class="max-w-xs mx-auto p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left mb-6 my-2 text-xs">
+                    <div class="flex items-center gap-2 justify-between mb-2">
+                        <p class="font-bold text-slate-505">Verification Queue</p>
+                        <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-extrabold uppercase text-[9px] animate-pulse">Under Review</span>
+                    </div>
+                    <p class="text-slate-400 mb-1 leading-normal">Status: <strong class="text-slate-700 font-bold">Awaiting Admin Sign-off</strong></p>
+                    <p class="text-[10px] text-slate-400">Listening to real-time events... We will automatically present congratulations when approved online.</p>
+                </div>
+
+                <div class="flex flex-col gap-2 max-w-xs mx-auto">
+                    <button onclick="closeModal()" class="w-full py-3 text-white rounded-xl font-bold bg-slate-900 hover:bg-slate-800 transition text-sm">Back to Home</button>
+                </div>
+
+                <!-- Simulation Helper for Testing -->
+                <div class="mt-8 border-t pt-6 max-w-xs mx-auto border-dashed border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">💡 DEMO MODE SPEED REVIEW</p>
+                    <button onclick="simulateAdminApproval()" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs transition active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Simulate Coop Board Approval</span>
+                    </button>
+                    <p class="text-[9px] text-center text-slate-400 mt-2">Instantly triggers authorized admin sign-off in local storage requests database to demonstrate congratulations screen.</p>
+                </div>
+            </div>
+
+            <!-- =========== SUCCESS: CONGRATULATIONS AND REDIRECTION =========== -->
+            <div class="form-section p-8 text-center py-14" id="s9-congrats">
+                <div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-300 relative bg-amber-50" style="animation: scalePulse 2s infinite ease-in-out;">
+                    <i class="fa-solid fa-trophy text-5xl text-amber-500 animate-bounce"></i>
+                </div>
+                <h3 class="text-3xl font-black mb-2 text-emerald-600 font-serif">Congratulations!</h3>
+                <h4 class="text-xl font-bold mb-4" id="congrats-store-name">Your Coop Store is Active!</h4>
+                <div class="bg-emerald-50 text-emerald-800 p-4 rounded-2xl border border-emerald-100 max-w-sm mx-auto mb-6 text-xs leading-relaxed font-semibold">
+                    🎉 The Moutanak Coop Board of Directors has reviewed and successfully authorized your storefront!
+                </div>
+                <p class="text-xs text-slate-500 mb-6">Preparing your secure merchant channel...<br>Redirecting to store panel in <span id="congrats-timer" class="font-bold text-emerald-600 font-mono text-base">5</span> seconds...</p>
+                <button onclick="navigateToDashboard()" class="px-8 py-3 text-white rounded-full font-bold text-sm bg-slate-900 hover:bg-slate-800 shadow-md">Go to Seller Workspace Now</button>
             </div>
         </div>
 
@@ -833,6 +881,10 @@
 </div>
 
 <script>
+// Global variables
+let activeRequestID = null;
+let pollTimer = null;
+
 // ===== MODAL =====
 function openModal() {
     const m = document.getElementById('seller-modal');
@@ -840,11 +892,13 @@ function openModal() {
     m.classList.add('flex');
     buildPills();
     updateStep();
+    checkIfSubmissionPending();
 }
 function closeModal() {
     const m = document.getElementById('seller-modal');
     m.classList.add('hidden');
     m.classList.remove('flex');
+    if (pollTimer) clearInterval(pollTimer);
 }
 
 // ===== STEP CONFIG =====
@@ -879,11 +933,9 @@ function buildPills() {
 }
 
 function updateStep() {
-    // Sections
     document.querySelectorAll('.form-section').forEach((s, i) => {
         s.classList.toggle('active', i === cur);
     });
-    // Pills
     STEPS.forEach((_, i) => {
         const pill = document.getElementById('pill-' + i);
         if (!pill) return;
@@ -893,20 +945,17 @@ function updateStep() {
         const line = document.getElementById('line-' + i);
         if (line) line.className = 'step-line ' + (i < cur ? 'done' : 'idle') + ' flex-1';
     });
-    // Header
     const step = STEPS[cur];
     if (step) {
         document.getElementById('modal-title').textContent = step.title;
         document.getElementById('modal-sub').textContent = step.sub;
     }
-    // Progress fill
     document.getElementById('progress-fill').style.width = ((cur / (STEPS.length - 1)) * 100) + '%';
-    // Buttons
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     prevBtn.style.visibility = cur === 0 ? 'hidden' : 'visible';
     const isLast = cur === STEPS.length - 1;
-    nextBtn.className = isLast ? 'btn-next submit-btn' : 'btn-next';
+    nextBtn.className = isLast ? 'btn-next submit-btn bg-emerald-500' : 'btn-next bg-slate-900';
     nextBtn.innerHTML = isLast
         ? 'Submit Application <i class="fa-solid fa-rocket text-xs"></i>'
         : 'Next <i class="fa-solid fa-arrow-right text-xs"></i>';
@@ -915,17 +964,14 @@ function updateStep() {
 function go(dir) {
     if (dir === 1) {
         if (!validateStep(cur)) return;
-        // LAST STEP
         if (cur === STEPS.length - 1) {
             submitSellerForm();
             return;
         }
         cur++;
     } else {
-
         cur = Math.max(0, cur - 1);
     }
-    // Populate review on last step
     if (cur === 6) populateReview();
     updateStep();
     document.querySelector('.form-scroll').scrollTop = 0;
@@ -996,7 +1042,7 @@ function emailVal(fid, eid) {
     hideErr(eid); return true;
 }
 function phoneVal(fid, eid) {
-    const v = document.getElementById(fid).value.replace(/\D/g,'');
+    const v = document.getElementById(fid).value.replace(/\D/,'');
     if (v.length < 8 || v.length > 10) { showErr(eid); document.getElementById(fid).classList.add('error'); return false; }
     hideErr(eid); return true;
 }
@@ -1099,7 +1145,6 @@ function populateReview() {
     set('rv-prov', document.getElementById('f-province').value);
     set('rv-tin', document.getElementById('f-tin').value);
 
-    // Docs badges
     const docs = [
         ['rv-id-front','box-id-front','ID Front'],
         ['rv-id-back','box-id-back','ID Back'],
@@ -1113,7 +1158,6 @@ function populateReview() {
         if (el) { el.textContent = name; el.className = 'review-badge' + (uploaded ? '' : ' missing'); }
     });
 
-    // Payout
     const methods = [];
     if (document.getElementById('f-aba-acc').value) methods.push('ABA Bank');
     if (document.getElementById('f-acl-acc').value) methods.push('ACLEDA');
@@ -1121,56 +1165,345 @@ function populateReview() {
     set('rv-payout', methods.length ? methods.join(', ') : 'None set');
 }
 
-// ===== SUBMIT =====
+// ===== SUBMIT — reads all files as base64 then saves =====
+async function submitSellerForm() {
+    function compressImage(dataUrl, maxWidth = 500, quality = 0.6) {
+        return new Promise(resolve => {
+            if (!dataUrl || !dataUrl.startsWith('data:image/')) {
+                resolve(dataUrl);
+                return;
+            }
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    resolve(dataUrl);
+                    return;
+                }
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = () => resolve(dataUrl);
+            img.src = dataUrl;
+        });
+    }
+
+    function readFile(boxId) {
+        return new Promise(resolve => {
+            const box = document.getElementById(boxId);
+            const inp = box && box.querySelector('input[type=file]');
+            if (!inp || !inp.files || !inp.files[0]) { resolve(null); return; }
+            const r = new FileReader();
+            r.onload = e => {
+                compressImage(e.target.result).then(compressed => resolve(compressed));
+            };
+            r.onerror = () => resolve(null);
+            r.readAsDataURL(inp.files[0]);
+        });
+    }
+    
+    function readFiles(boxId) {
+        const box = document.getElementById(boxId);
+        const inp = box && box.querySelector('input[type=file]');
+        if (!inp || !inp.files || !inp.files.length) return Promise.resolve([]);
+        return Promise.all(Array.from(inp.files).map(file => new Promise(resolve => {
+            const r = new FileReader();
+            r.onload = e => {
+                compressImage(e.target.result).then(compressed => resolve(compressed));
+            };
+            r.onerror = () => resolve(null);
+            r.readAsDataURL(file);
+        })));
+    }
+
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> Processing…';
+
+    try {
+        const [idFront, idBack, selfie, tinCert, bizCert, addrProof, storePhoto, farmPhoto] = await Promise.all([
+            readFile('box-id-front'),
+            readFile('box-id-back'),
+            readFile('box-selfie'),
+            readFile('box-tin'),
+            readFile('box-biz'),
+            readFile('box-addr'),
+            readFile('box-store-photo'),
+            readFile('box-farm'),
+        ]);
+        const productPhotos = await readFiles('box-products');
+
+        let user = null;
+        try {
+            user = JSON.parse(localStorage.getItem("moutanak_user") || "null");
+        } catch (e) {
+            console.warn("Could not parse moutanak_user:", e);
+        }
+
+        const reqId = 'req-' + Math.floor(100 + Math.random() * 900);
+        const nameVal = document.getElementById('f-fullname').value;
+        const storeVal = document.getElementById('f-storename').value;
+        const phoneVal = document.getElementById('f-phone').value;
+        const emailVal = document.getElementById('f-email').value;
+        const provVal = document.getElementById('f-province').value;
+        const catVal = document.getElementById('f-cat').value;
+        const descVal = document.getElementById('f-desc').value;
+
+        const request = {
+            id: reqId,
+
+            // Personal info
+            sellerName:  nameVal,
+            fn:          nameVal, // compatibility
+            email:       emailVal,
+            em:          emailVal, // compatibility
+            phone:       phoneVal,
+            ph:          phoneVal, // compatibility
+            dob:         document.getElementById('f-dob').value,
+
+            // Store info
+            storeName:   storeVal,
+            sn:          storeVal, // compatibility
+            category:    catVal,
+            cat:         catVal, // compatibility
+            province:    provVal,
+            prov:        provVal, // compatibility
+            description: descVal,
+            facebook:    document.getElementById('f-fb').value,
+            stockVolume: document.getElementById('f-stock').value,
+
+            // Legal
+            tin:         document.getElementById('f-tin').value,
+            businessReg: document.getElementById('f-biz').value,
+
+            // Payout
+            abaAccount:  document.getElementById('f-aba-acc').value,
+            abaName:     document.getElementById('f-aba-name').value,
+            aclAccount:  document.getElementById('f-acl-acc').value,
+            aclName:     document.getElementById('f-acl-name').value,
+            wingAccount: document.getElementById('f-wing').value,
+
+            // ── Document images ──
+            doc_id_front:       idFront,
+            doc_id_back:        idBack,
+            doc_selfie:         selfie,
+            doc_tin_cert:       tinCert,
+            doc_biz_cert:       bizCert,
+            doc_address_proof:  addrProof,
+            doc_store_photo:    storePhoto,
+            doc_farm_photo:     farmPhoto,
+            doc_product_photos: productPhotos.filter(Boolean),
+
+            status:      "pending",
+            st:          "pending", // compatibility
+            submittedAt: new Date().toISOString(),
+            userId:      user?.id || user?.username || "demo_user"
+        };
+
+        // Safe Storage Helper to handle existing QuotaExceededError in user environment
+        function safeSave(key, listObj) {
+            try {
+                localStorage.setItem(key, JSON.stringify(listObj));
+            } catch (e) {
+                if (e.name === 'QuotaExceededError' || e.code === 22) {
+                    console.warn("Storage quota exceeded, purging historic submissions or simplifying images to prevent failures...");
+                    // Try saving only the current single most recent request
+                    const currentOnly = listObj.slice(-1);
+                    try {
+                        localStorage.setItem(key, JSON.stringify(currentOnly));
+                    } catch (e2) {
+                        // Clear all old keys to free up maximum volume
+                        localStorage.removeItem("seller_requests");
+                        localStorage.removeItem("mou_seller_requests");
+                        // Clear potential heavy product storage
+                        localStorage.removeItem("mou_products");
+                        try {
+                            localStorage.setItem(key, JSON.stringify(currentOnly));
+                        } catch (e3) {
+                            console.error("Critical: Storage failed even after purge", e3);
+                        }
+                    }
+                } else {
+                    console.error("Storage error:", e);
+                }
+            }
+        }
+
+        // Write to mou_seller_requests and seller_requests simultaneously
+        let mouRequests = [];
+        try { mouRequests = JSON.parse(localStorage.getItem("mou_seller_requests") || "[]"); } catch(e){}
+        mouRequests.push(request);
+        if (mouRequests.length > 5) {
+            mouRequests = mouRequests.slice(-5);
+        }
+        safeSave("mou_seller_requests", mouRequests);
+
+        let requests = [];
+        try { requests = JSON.parse(localStorage.getItem("seller_requests") || "[]"); } catch(e){}
+        requests.push(request);
+        if (requests.length > 5) {
+            requests = requests.slice(-5);
+        }
+        safeSave("seller_requests", requests);
+
+        // Save active ID
+        try {
+            localStorage.setItem('mou_current_submitting_id', reqId);
+        } catch (e) {
+            localStorage.removeItem("mou_products"); // clear heavy data
+            localStorage.setItem('mou_current_submitting_id', reqId);
+        }
+        activeRequestID = reqId;
+
+        // Show success / wait screen
+        submitApp();
+
+    } catch (err) {
+        console.error('submitSellerForm error:', err);
+        if (err && (err.name === 'QuotaExceededError' || err.code === 22)) {
+            showToast('Quota exceeded — automatically cleared old entries, please submit again.');
+        } else {
+            showToast('Submission failed — please try again.');
+        }
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = 'Submit Application <i class="fa-solid fa-rocket text-xs"></i>';
+    }
+}
+
+// ===== REDIRECTION & POLLING STATUS =====
 function submitApp() {
-    cur = STEPS.length; // past all steps
+    cur = STEPS.length;
     document.querySelectorAll('.form-section').forEach((s, i) => s.classList.toggle('active', i === STEPS.length));
     document.getElementById('nav-bar').style.display = 'none';
     document.getElementById('progress-fill').style.width = '100%';
-    document.getElementById('modal-title').textContent = 'Application Complete';
-    document.getElementById('modal-sub').textContent = 'Awaiting review';
+    document.getElementById('modal-title').textContent = 'Application Pending Review';
+    document.getElementById('modal-sub').textContent = 'Status: Waiting for verification';
     showToast('Application submitted successfully!');
+
+    // Start checking for approvals
+    startListeningForApproval(activeRequestID);
 }
 
-function submitSellerForm() {
+function checkIfSubmissionPending() {
+    const storedId = localStorage.getItem('mou_current_submitting_id');
+    if (storedId) {
+        let requests = [];
+        try { requests = JSON.parse(localStorage.getItem('mou_seller_requests') || '[]'); } catch(e){}
+        const req = requests.find(q => q.id == storedId);
+        if (req) {
+            if (req.st === 'approved' || req.status === 'approved') {
+                showCongrats(req);
+            } else if (req.st === 'pending' || req.status === 'pending') {
+                activeRequestID = storedId;
+                cur = STEPS.length;
+                updateStep();
+                document.querySelectorAll('.form-section').forEach((s, i) => s.classList.toggle('active', i === STEPS.length));
+                document.getElementById('nav-bar').style.display = 'none';
+                document.getElementById('progress-fill').style.width = '100%';
+                document.getElementById('modal-title').textContent = 'Application Pending Review';
+                document.getElementById('modal-sub').textContent = 'Status: Waiting for verification';
+                startListeningForApproval(storedId);
+            }
+        }
+    }
+}
 
-    const user = JSON.parse(localStorage.getItem("moutanak_user"));
+function startListeningForApproval(reqId) {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(() => {
+        let requests = [];
+        try { requests = JSON.parse(localStorage.getItem('mou_seller_requests') || '[]'); } catch(e){}
+        const item = requests.find(q => q.id == reqId);
+        if (item && (item.st === 'approved' || item.status === 'approved')) {
+            clearInterval(pollTimer);
+            showCongrats(item);
+        }
+    }, 1500);
+}
 
-    const request = {
-        id: Date.now(),
+function showCongrats(item) {
+    // Hide standard steps & success sections
+    document.querySelectorAll('.form-section').forEach(s => {
+        s.classList.remove('active');
+        s.classList.add('hidden');
+    });
 
-        sellerName: document.getElementById('f-fullname').value,
-        email: document.getElementById('f-email').value,
-        phone: document.getElementById('f-phone').value,
+    // Populate store brand in congrats block
+    document.getElementById('congrats-store-name').textContent = item.storeName || item.sn || 'Your Custom Store';
 
-        storeName: document.getElementById('f-storename').value,
-        category: document.getElementById('f-cat').value,
-        province: document.getElementById('f-province').value,
+    // Show congratulations screen
+    const congratsScreen = document.getElementById('s9-congrats');
+    congratsScreen.classList.remove('hidden');
+    congratsScreen.classList.add('active');
 
-        tin: document.getElementById('f-tin').value,
+    document.getElementById('nav-bar').style.display = 'none';
+    document.getElementById('modal-title').textContent = 'Approved!';
+    document.getElementById('modal-sub').textContent = 'Certified Moutanak Merchant';
 
-        status: "pending",
+    // Trigger local audio or visual cue and store approved merchant login
+    localStorage.setItem('mou_auth_approved_store', JSON.stringify({
+        id: item.id,
+        storeName: item.storeName || item.sn,
+        sellerName: item.sellerName || item.fn,
+        category: item.category || item.cat,
+        province: item.province || item.prov
+    }));
 
-        submittedAt: new Date().toLocaleDateString(),
+    // Start redirect countdown
+    let timerCount = 5;
+    const timerText = document.getElementById('congrats-timer');
+    const redirectTimer = setInterval(() => {
+        timerCount--;
+        if (timerText) timerText.textContent = timerCount;
+        if (timerCount <= 0) {
+            clearInterval(redirectTimer);
+            navigateToDashboard();
+        }
+    }, 1000);
+}
 
-        userId: user?.id || user?.username
-    };
+function navigateToDashboard() {
+    window.location.href = 'seller-dashboard.html';
+}
 
-    // GET OLD REQUESTS
-    let requests = JSON.parse(localStorage.getItem("seller_requests")) || [];
+function simulateAdminApproval() {
+    const reqId = localStorage.getItem('mou_current_submitting_id') || activeRequestID;
+    if (!reqId) {
+        showToast('Please submit an application first!');
+        return;
+    }
 
-    // ADD NEW REQUEST
-    requests.push(request);
+    // Set storage st='approved'
+    try {
+        let reqs = JSON.parse(localStorage.getItem('mou_seller_requests') || '[]');
+        let idx = reqs.findIndex(q => q.id == reqId);
+        if (idx !== -1) {
+            reqs[idx].st = 'approved';
+            reqs[idx].status = 'approved';
+            localStorage.setItem('mou_seller_requests', JSON.stringify(reqs));
+        }
+    } catch(e){}
 
-    // SAVE BACK
-    localStorage.setItem(
-        "seller_requests",
-        JSON.stringify(requests)
-    );
+    try {
+        let reqs = JSON.parse(localStorage.getItem('seller_requests') || '[]');
+        let idx = reqs.findIndex(q => q.id == reqId);
+        if (idx !== -1) {
+            reqs[idx].st = 'approved';
+            reqs[idx].status = 'approved';
+            localStorage.setItem('seller_requests', JSON.stringify(reqs));
+        }
+    } catch(e){}
 
-    alert("Application submitted!");
-
-    window.location.href = "admin.html";
+    showToast('✨ Simulated instant Board Approval!');
 }
 
 // ===== TOAST =====
@@ -1179,6 +1512,14 @@ function showToast(msg) {
     document.getElementById('toast-text').textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function triggerToastAlert(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    const msgNode = document.getElementById('toast-text');
+    msgNode.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
 // ===== SLIDESHOW =====

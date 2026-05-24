@@ -17,29 +17,26 @@
   --red:#EF4444;--rdim:rgba(239,68,68,.10);
   --amber:#F59E0B;--adim:rgba(245,158,11,.10);
   --sky:#0EA5E9;--sdim:rgba(14,165,233,.10);
+  --purple:#8B5CF6;--pdim:rgba(139,92,246,.10);
+  --pink:#EC4899;--pkdim:rgba(236,72,153,.10);
   --text:#0C2B18;--t2:#2A4A35;--t3:#6B9878;
   --sh:0 1px 3px rgba(12,43,24,.05),0 4px 16px rgba(12,43,24,.05);
   --shm:0 4px 24px rgba(12,43,24,.09);
   --shl:0 8px 48px rgba(12,43,24,.13);
   --fd:'Fraunces',serif;--fn:'DM Sans',sans-serif;
   --r:12px;--r2:18px;--r3:24px;
-  --sb-w:236px;
+  --sb-w:240px;
 }
 html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--text);overflow:hidden}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:15;backdrop-filter:blur(2px)}
 .overlay.open{display:block}
 .shell{display:flex;height:100vh;position:relative}
-.sidebar{
-  width:var(--sb-w);flex-shrink:0;background:var(--bg2);
-  border-right:1px solid var(--border);display:flex;flex-direction:column;
-  z-index:20;transition:width .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)
-}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sb-w);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:20;transition:width .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1);overflow:hidden}
 .sidebar.col{width:64px}
-@media(max-width:767px){
-  .sidebar{position:fixed;top:0;left:0;height:100%;width:var(--sb-w) !important;transform:translateX(-100%);box-shadow:var(--shl)}
-  .sidebar.mob-open{transform:translateX(0)}
-}
-.sb-top{padding:18px 14px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden;white-space:nowrap}
+@media(max-width:767px){.sidebar{position:fixed;top:0;left:0;height:100%;width:var(--sb-w) !important;transform:translateX(-100%);box-shadow:var(--shl)}.sidebar.mob-open{transform:translateX(0)}}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden;white-space:nowrap;flex-shrink:0}
 .sb-logo{width:34px;height:34px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.3)}
 .sb-logo i{color:#fff;font-size:13px}
 .sb-brand{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--text)}
@@ -47,9 +44,12 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .sb-sub{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.1em}
 .sb-close{display:none;margin-left:auto;width:28px;height:28px;border-radius:8px;background:var(--surface3);border:1px solid var(--border);align-items:center;justify-content:center;cursor:pointer;color:var(--t3);flex-shrink:0}
 @media(max-width:767px){.sb-close{display:flex}}
-.nsl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);padding:14px 18px 4px;overflow:hidden;white-space:nowrap}
-.sidebar.col .nsl{opacity:0}
-.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border-radius:var(--r);transition:all .15s;white-space:nowrap;overflow:hidden;margin:1px 8px}
+
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:8px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.nsl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);padding:12px 18px 4px;overflow:hidden;white-space:nowrap;flex-shrink:0}
+.sidebar.col .nsl{opacity:0;padding:12px 0 4px}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border-radius:var(--r);transition:all .15s;white-space:nowrap;overflow:hidden;margin:1px 8px}
 .ni:hover{color:var(--text);background:var(--surface3)}
 .ni.active{color:var(--gd);background:var(--gdim);font-weight:600}
 .ni.active .nic{color:var(--green)}
@@ -57,8 +57,10 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .nil{flex:1}
 .nbadge{background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:1px 7px;border-radius:99px;flex-shrink:0}
 .nbadge.amb{background:var(--amber)}
+.nbadge.red{background:var(--red)}
 .sidebar.col .nil,.sidebar.col .nbadge{display:none}
-.sb-foot{margin-top:auto;border-top:1px solid var(--border);padding:10px}
+
+.sb-foot{border-top:1px solid var(--border);padding:10px;flex-shrink:0}
 .lang-tog{display:flex;background:var(--surface3);border:1px solid var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
 .lb{flex:1;padding:5px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;text-align:center;border:none;background:transparent;color:var(--t3)}
 .lb.active{background:var(--green);color:#fff;border-radius:99px}
@@ -66,6 +68,8 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .col-btn:hover{color:var(--text);border-color:var(--border2)}
 .sidebar.col .col-btn span{display:none}
 @media(max-width:767px){.col-btn{display:none}}
+
+/* ── MAIN ── */
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .topbar{display:flex;align-items:center;gap:10px;padding:10px 18px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
 .mob-menu{display:none;width:34px;height:34px;border-radius:9px;background:var(--surface3);border:1px solid var(--border);align-items:center;justify-content:center;cursor:pointer;color:var(--t3);flex-shrink:0}
@@ -88,22 +92,30 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .aav{width:24px;height:24px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
 .an{font-size:12px;font-weight:600;color:var(--t2)}
 @media(max-width:359px){.an,.ac i{display:none}}
-.content{flex:1;overflow-y:auto;padding:20px 20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .content::-webkit-scrollbar{width:4px}
 .content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 @media(max-width:479px){.content{padding:14px 12px}}
 .page{display:none;animation:fu .3s ease}
 .page.active{display:block}
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SHARED ── */
 .ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap}
 .pt{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--text);line-height:1}
 .ps{font-size:12px;color:var(--t3);margin-top:4px}
 @media(max-width:479px){.pt{font-size:22px}}
 .ha{display:flex;gap:8px;flex-shrink:0}
-.sg{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
-@media(max-width:1199px){.sg{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:767px){.sg{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:359px){.sg{grid-template-columns:1fr}}
+.sg{display:grid;gap:12px;margin-bottom:20px}
+.sg-5{grid-template-columns:repeat(5,1fr)}
+.sg-4{grid-template-columns:repeat(4,1fr)}
+.sg-3{grid-template-columns:repeat(3,1fr)}
+.sg-2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1199px){.sg-5,.sg-4{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:767px){.sg-5,.sg-4,.sg-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:479px){.sg-5,.sg-4,.sg-3,.sg-2{grid-template-columns:1fr}}
 .sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;transition:all .2s;box-shadow:var(--sh)}
 .sc:hover{box-shadow:var(--shm);transform:translateY(-2px);border-color:var(--border2)}
 .sc .si{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px}
@@ -117,15 +129,14 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .ct span{font-size:11px;font-weight:500;color:var(--t3);margin-left:auto}
 .chart-wrap{position:relative;width:100%;height:220px}
 .donut-wrap{height:260px}
-@media(max-width:899px){.donut-wrap{height:300px}}
-@media(max-width:479px){.chart-wrap{height:180px}.donut-wrap{height:260px}}
+@media(max-width:479px){.chart-wrap{height:180px}}
 .br{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:767px){.br{grid-template-columns:1fr}}
 .tw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh)}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .th2{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .th2 h3{font-size:13px;font-weight:700;color:var(--text)}
-.dt{width:100%;border-collapse:collapse;min-width:580px}
+.dt{width:100%;border-collapse:collapse;min-width:540px}
 .dt th{padding:8px 13px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap}
 .dt td{padding:10px 13px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
 .dt tbody tr:last-child td{border-bottom:none}
@@ -137,6 +148,8 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .ba{background:var(--adim);color:#92400E}
 .bs{background:var(--sdim);color:var(--sky)}
 .bo{background:var(--odim);color:var(--od)}
+.bp{background:var(--pdim);color:var(--purple)}
+.bpk{background:var(--pkdim);color:var(--pink)}
 .cell{display:flex;align-items:center;gap:9px}
 .av{width:32px;height:32px;border-radius:9px;background:var(--gdim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--gd);flex-shrink:0}
 .cn{font-weight:600;font-size:13px;color:var(--text)}
@@ -198,7 +211,7 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .rp textarea:focus{border-color:var(--green);background:#fff}
 .rp textarea::placeholder{color:var(--t3)}
 .rrow{display:flex;gap:9px}
-.bap{flex:1;padding:10px;border-radius:10px;font-family:var(--fn);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--green);color:#fff;transition:.15s;box-shadow:0 2px 8px rgba(34,197,94,.28)}
+.bap{flex:1;padding:10px;border-radius:10px;font-family:var(--fn);font-weight:700;font-size:13px;cursor:pointer;border:none;background:var(--green);color:#fff;transition:.15s}
 .bap:hover{background:var(--gd)}
 .brj{flex:1;padding:10px;border-radius:10px;font-family:var(--fn);font-weight:700;font-size:13px;cursor:pointer;background:var(--surface3);color:var(--red);border:1.5px solid rgba(239,68,68,.2);transition:.15s}
 .brj:hover{background:var(--red);color:#fff;border-color:var(--red)}
@@ -214,7 +227,6 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .npi{padding:11px 13px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s;display:flex;gap:9px}
 .npi:last-child{border-bottom:none}
 .npi:hover{background:var(--surface2)}
-.npi.ur{background:rgba(34,197,94,.02)}
 .npic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
 .npi-n{background:var(--odim)}.npi-ok{background:var(--gdim)}.npi-no{background:var(--rdim)}
 .nptit{font-size:12px;font-weight:700;color:var(--text);margin-bottom:1px}
@@ -245,11 +257,6 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .uname{font-weight:700;font-size:14px;color:var(--text);margin-bottom:2px}
 .urole{font-size:11px;color:var(--t3);margin-bottom:8px}
 .umeta{display:flex;gap:7px;flex-wrap:wrap}
-.osr{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
-@media(max-width:767px){.osr{grid-template-columns:repeat(2,1fr)}}
-.osc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--sh)}
-.osn{font-family:var(--fd);font-size:22px;font-weight:700;margin-bottom:2px}
-.osl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
 .setgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:767px){.setgrid{grid-template-columns:1fr}}
 .setcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px;box-shadow:var(--sh)}
@@ -265,20 +272,87 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 .tog.on{background:var(--green);border-color:var(--green)}
 .tog::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .tog.on::after{left:20px}
-.spkrow{display:flex;align-items:center;gap:6px}
-.spkbar{height:5px;border-radius:4px;background:var(--green)}
-@media(max-width:767px){.dt.products-table .col-stock{display:none}}
-@media(max-width:479px){.dt.products-table .col-cat,.dt.products-table .col-price{display:none}}
 .ls-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700;background:rgba(14,165,233,.08);color:var(--sky);border:1px solid rgba(14,165,233,.2);margin-left:4px;vertical-align:middle}
-/* product photos strip */
 .prod-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .prod-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer;transition:.15s}
 .prod-thumb:hover{border-color:var(--green);transform:scale(1.05)}
+
+/* ── STARS ── */
+.stars{display:flex;gap:1px}
+.stars i{font-size:11px;color:var(--amber)}
+.stars i.empty{color:var(--border)}
+
+/* ── PROGRESS BAR ── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.prog-label{font-size:11px;color:var(--t3);width:60px;flex-shrink:0}
+.prog-bar-bg{flex:1;height:6px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:4px;background:var(--green);transition:width .6s ease}
+.prog-count{font-size:11px;color:var(--t3);width:28px;text-align:right;flex-shrink:0}
+
+/* ── KPI ROW ── */
+.krow{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.kc{flex:1;min-width:130px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--sh)}
+.kn{font-family:var(--fd);font-size:22px;font-weight:700;line-height:1;margin-bottom:2px}
+.kl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.kt{font-size:11px;font-weight:600;margin-top:4px}
+
+/* ── TIMELINE ── */
+.tl{position:relative;padding-left:20px}
+.tl::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:var(--border)}
+.tli{position:relative;padding:0 0 16px 16px}
+.tli::before{content:'';position:absolute;left:-14px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--green);border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
+.tlt{font-size:12px;font-weight:700;color:var(--text)}
+.tls{font-size:11px;color:var(--t3);margin-top:1px}
+
+/* ── REPORT TABS ── */
+.rtabs{display:flex;gap:2px;background:var(--surface3);border:1px solid var(--border);border-radius:12px;padding:3px;margin-bottom:18px}
+.rtab{flex:1;padding:7px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;color:var(--t3);transition:.15s;border:none;background:transparent;font-family:var(--fn)}
+.rtab.active{background:#fff;color:var(--text);box-shadow:var(--sh)}
+
+/* ── PAYMENT CARD ── */
+.pay-hero{background:linear-gradient(135deg,#16A34A,#22C55E);border-radius:var(--r3);padding:22px 24px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden}
+.pay-hero::after{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;background:rgba(255,255,255,.08);border-radius:50%}
+.pay-hero::before{content:'';position:absolute;right:50px;bottom:-40px;width:120px;height:120px;background:rgba(255,255,255,.05);border-radius:50%}
+.ph-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:6px}
+.ph-amount{font-family:var(--fd);font-size:42px;font-weight:700;line-height:1;margin-bottom:4px}
+.ph-sub{font-size:13px;opacity:.8}
+.ph-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:18px}
+.ph-col{background:rgba(255,255,255,.12);border-radius:12px;padding:12px 14px}
+.ph-col-n{font-family:var(--fd);font-size:18px;font-weight:700}
+.ph-col-l{font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+@media(max-width:599px){.ph-cols{grid-template-columns:1fr 1fr}}
+
+/* ── REVIEW CARD ── */
+.rv-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:10px;box-shadow:var(--sh);transition:.15s}
+.rv-card:hover{box-shadow:var(--shm);border-color:var(--border2)}
+.rv-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.rv-meta{flex:1}
+.rv-name{font-weight:700;font-size:13px;color:var(--text)}
+.rv-store{font-size:11px;color:var(--t3)}
+.rv-date{font-size:10px;color:var(--t3);margin-left:auto;white-space:nowrap}
+.rv-text{font-size:13px;color:var(--t2);line-height:1.6;padding:10px 12px;background:var(--surface2);border-radius:9px;border:1px solid var(--border)}
+.rv-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+
+/* ── SELLER CARD GRID ── */
+.scard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:899px){.scard-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:479px){.scard-grid{grid-template-columns:1fr}}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;transition:.2s;cursor:pointer;box-shadow:var(--sh)}
+.scard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shm)}
+.scard-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.scard-av{width:42px;height:42px;border-radius:12px;background:var(--gdim);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:16px;font-weight:700;color:var(--gd);flex-shrink:0}
+.scard-name{font-weight:700;font-size:14px;color:var(--text)}
+.scard-sub{font-size:11px;color:var(--t3)}
+.scard-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.scard-stat{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 8px;text-align:center}
+.scard-stat-n{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--text)}
+.scard-stat-l{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.spkrow{display:flex;align-items:center;gap:6px}
+.spkbar{height:5px;border-radius:4px;background:var(--green)}
 </style>
 </head>
 <body>
 <div class="shell">
-
 <div class="overlay" id="overlay" onclick="closeMobSB()"></div>
 
 <!-- SIDEBAR -->
@@ -288,16 +362,24 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
     <div style="flex:1;min-width:0"><div class="sb-brand">Moutanak<em>.</em></div><div class="sb-sub">Admin Console</div></div>
     <div class="sb-close" onclick="closeMobSB()"><i class="fa-solid fa-xmark" style="font-size:12px"></i></div>
   </div>
-  <p class="nsl">Overview</p>
-  <div class="ni active" onclick="showPage('dashboard',this)"><i class="nic fa-solid fa-chart-tree-map"></i><span class="nil">Dashboard</span></div>
-  <p class="nsl">Commerce</p>
-  <div class="ni" onclick="showPage('sellers',this)"><i class="nic fa-solid fa-store"></i><span class="nil">Seller Requests</span><span class="nbadge" id="pbadge">3</span></div>
-  <div class="ni" onclick="showPage('products',this)"><i class="nic fa-solid fa-boxes-stacked"></i><span class="nil">Products</span></div>
-  <div class="ni" onclick="showPage('orders',this)"><i class="nic fa-solid fa-receipt"></i><span class="nil">Orders</span><span class="nbadge amb">12</span></div>
-  <p class="nsl">People</p>
-  <div class="ni" onclick="showPage('users',this)"><i class="nic fa-solid fa-users"></i><span class="nil">Users</span></div>
-  <p class="nsl">System</p>
-  <div class="ni" onclick="showPage('settings',this)"><i class="nic fa-solid fa-sliders"></i><span class="nil">Settings</span></div>
+  <div class="sb-nav">
+    <p class="nsl">Overview</p>
+    <div class="ni active" onclick="showPage('dashboard',this)"><i class="nic fa-solid fa-chart-tree-map"></i><span class="nil">Dashboard</span></div>
+    <p class="nsl">Marketplace</p>
+    <div class="ni" onclick="showPage('seller-requests',this)"><i class="nic fa-solid fa-hourglass-half"></i><span class="nil">Seller Requests</span><span class="nbadge" id="pbadge">3</span></div>
+    <div class="ni" onclick="showPage('sellers',this)"><i class="nic fa-solid fa-store"></i><span class="nil">Sellers</span></div>
+    <div class="ni" onclick="showPage('products',this)"><i class="nic fa-solid fa-boxes-stacked"></i><span class="nil">Products</span></div>
+    <div class="ni" onclick="showPage('orders',this)"><i class="nic fa-solid fa-receipt"></i><span class="nil">Orders</span><span class="nbadge amb">12</span></div>
+    <p class="nsl">Customers</p>
+    <div class="ni" onclick="showPage('users',this)"><i class="nic fa-solid fa-users"></i><span class="nil">Users</span></div>
+    <div class="ni" onclick="showPage('reviews',this)"><i class="nic fa-solid fa-star"></i><span class="nil">Reviews</span><span class="nbadge red">5</span></div>
+    <p class="nsl">Finance</p>
+    <div class="ni" onclick="showPage('payments',this)"><i class="nic fa-solid fa-wallet"></i><span class="nil">Payments</span></div>
+    <div class="ni" onclick="showPage('transactions',this)"><i class="nic fa-solid fa-arrow-right-arrow-left"></i><span class="nil">Transactions</span></div>
+    <p class="nsl">System</p>
+    <div class="ni" onclick="showPage('reports',this)"><i class="nic fa-solid fa-chart-bar"></i><span class="nil">Reports</span></div>
+    <div class="ni" onclick="showPage('settings',this)"><i class="nic fa-solid fa-sliders"></i><span class="nil">Settings</span></div>
+  </div>
   <div class="sb-foot">
     <div class="lang-tog">
       <button class="lb active" onclick="this.closest('.lang-tog').querySelectorAll('.lb').forEach(b=>b.classList.remove('active'));this.classList.add('active')">EN</button>
@@ -310,7 +392,7 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="mob-menu" onclick="openMobSB()" aria-label="Open menu"><i class="fa-solid fa-bars" style="font-size:13px"></i></div>
+    <div class="mob-menu" onclick="openMobSB()"><i class="fa-solid fa-bars" style="font-size:13px"></i></div>
     <div class="tbc"><i class="fa-solid fa-house" style="font-size:10px"></i> <strong id="bct">Dashboard</strong><span id="bcd"></span></div>
     <div class="sp"></div>
     <div class="ts"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search anything…" oninput="gSearch(this.value)"/></div>
@@ -320,13 +402,13 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 
   <div class="content">
 
-    <!-- DASHBOARD -->
+    <!-- ══ DASHBOARD ══ -->
     <section id="dashboard" class="page active">
       <div class="ph">
-        <div><div class="pt">Dashboard</div><div class="ps">Welcome back, Admin &middot; Saturday, 23 May 2026</div></div>
+        <div><div class="pt">Dashboard</div><div class="ps">Welcome back, Admin · Sunday, 24 May 2026</div></div>
         <div class="ha"><button class="ab av2" onclick="showToast('Exported!')"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export</button></div>
       </div>
-      <div class="sg">
+      <div class="sg sg-5">
         <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-store" style="color:var(--green)"></i></div><div class="sn" style="color:var(--gd)">1,580</div><div class="sl">Active Sellers</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+8% this week</div></div>
         <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-hourglass-half" style="color:var(--orange)"></i></div><div class="sn" style="color:var(--orange)" id="dpend">3</div><div class="sl">Pending Review</div><div class="schange" style="color:var(--orange)"><i class="fa-solid fa-circle-exclamation"></i>Needs action</div></div>
         <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-cart-shopping" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">44K</div><div class="sl">Total Orders</div><div class="schange" style="color:var(--sky)"><i class="fa-solid fa-arrow-trend-up"></i>+12% vs last month</div></div>
@@ -335,11 +417,11 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
       </div>
       <div class="cr">
         <div class="cc"><div class="ct"><i class="fa-solid fa-chart-line" style="color:var(--green)"></i>Revenue &amp; Orders<span>Last 6 months</span></div><div class="chart-wrap"><canvas id="lc"></canvas></div></div>
-        <div class="cc cc-donut"><div class="ct"><i class="fa-solid fa-chart-pie" style="color:var(--orange)"></i>Category Split<span>By revenue</span></div><div class="chart-wrap donut-wrap"><canvas id="dc2"></canvas></div></div>
+        <div class="cc"><div class="ct"><i class="fa-solid fa-chart-pie" style="color:var(--orange)"></i>Category Split<span>By revenue</span></div><div class="chart-wrap donut-wrap"><canvas id="dc2"></canvas></div></div>
       </div>
       <div class="br">
         <div class="tw">
-          <div class="th2"><h3>⏳ Pending Requests</h3><button class="ab av2" onclick="showPage('sellers',document.querySelector('.ni[onclick*=sellers]'))">View All</button></div>
+          <div class="th2"><h3>⏳ Pending Requests</h3><button class="ab av2" onclick="showPage('seller-requests',document.querySelector('.ni[onclick*=seller-requests]'))">View All</button></div>
           <div class="tscroll"><table class="dt"><thead><tr><th>Seller</th><th>Province</th><th>TIN</th><th>Action</th></tr></thead><tbody id="dpreview"></tbody></table></div>
         </div>
         <div class="tw">
@@ -349,8 +431,8 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
       </div>
     </section>
 
-    <!-- SELLERS LIST -->
-    <section id="sellers" class="page">
+    <!-- ══ SELLER REQUESTS ══ -->
+    <section id="seller-requests" class="page">
       <div class="ph">
         <div><div class="pt">Seller Requests</div><div class="ps">Review, approve or reject store applications</div></div>
         <div class="ha"><button class="ab av2" onclick="exportCSV()"><i class="fa-solid fa-file-csv" style="margin-right:4px"></i>Export CSV</button></div>
@@ -368,47 +450,138 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
       </div>
     </section>
 
-    <!-- SELLER DETAIL PAGE -->
+    <!-- ══ SELLER DETAIL ══ -->
     <section id="seller-detail" class="page">
       <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Back to Seller Requests</button>
       <div id="sdc"><div class="spin"></div></div>
     </section>
 
-    <!-- PRODUCTS -->
-    <section id="products" class="page">
-      <div class="ph"><div><div class="pt">Products</div><div class="ps">Manage all listed products</div></div><div class="ha"><button class="btn-add" onclick="showToast('Add product — connect to API')"><i class="fa-solid fa-plus"></i>Add Product</button></div></div>
-      <div class="tw">
-        <div class="tscroll"><table class="dt products-table"><thead><tr><th>Product</th><th>Seller</th><th class="col-cat">Category</th><th class="col-price">Price</th><th class="col-stock">Stock</th><th>Status</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td><div class="cell"><div class="av" style="background:var(--sdim);color:var(--sky)">KP</div><div><div class="cn">Kampot Pepper 500g</div><div class="cm">SKU-00121</div></div></div></td><td style="color:var(--t2)">Vanna's Farm</td><td class="col-cat"><span class="badge bs">Spices</span></td><td class="col-price" style="font-weight:700">$12.50</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:70%"></div><span style="font-size:11px;color:var(--t3)">420</span></div></td><td><span class="badge bg">Active</span></td><td><button class="ab av2">Edit</button></td></tr>
-          <tr><td><div class="cell"><div class="av" style="background:var(--adim);color:var(--amber)">KS</div><div><div class="cn">Khmer Silk Scarf</div><div class="cm">SKU-00088</div></div></div></td><td style="color:var(--t2)">Khmer Weaver</td><td class="col-cat"><span class="badge ba">Crafts</span></td><td class="col-price" style="font-weight:700">$38.00</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:30%;background:var(--amber)"></div><span style="font-size:11px;color:var(--t3)">85</span></div></td><td><span class="badge bg">Active</span></td><td><button class="ab av2">Edit</button></td></tr>
-          <tr><td><div class="cell"><div class="av">JR</div><div><div class="cn">Jasmine Rice 5kg</div><div class="cm">SKU-00204</div></div></div></td><td style="color:var(--t2)">Gold Jasmine Coop</td><td class="col-cat"><span class="badge bg">Grains</span></td><td class="col-price" style="font-weight:700">$9.80</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:90%"></div><span style="font-size:11px;color:var(--t3)">1,200</span></div></td><td><span class="badge bg">Active</span></td><td><button class="ab av2">Edit</button></td></tr>
-          <tr><td><div class="cell"><div class="av" style="background:var(--rdim);color:var(--red)">DM</div><div><div class="cn">Dried Mango 250g</div><div class="cm">SKU-00302</div></div></div></td><td style="color:var(--t2)">Kampong Fresh</td><td class="col-cat"><span class="badge bo">Fruits</span></td><td class="col-price" style="font-weight:700">$6.50</td><td class="col-stock"><div class="spkrow"><div class="spkbar" style="width:10%;background:var(--red)"></div><span style="font-size:11px;color:var(--t3)">18</span></div></td><td><span class="badge br2">Low Stock</span></td><td><button class="ab av2">Edit</button></td></tr>
-        </tbody></table></div>
+    <!-- ══ SELLERS (APPROVED) ══ -->
+    <section id="sellers" class="page">
+      <div class="ph">
+        <div><div class="pt">Sellers</div><div class="ps">All active and approved seller stores</div></div>
+        <div class="ha">
+          <button class="ab av2"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export</button>
+          <button class="btn-add" onclick="showToast('Feature: invite seller')"><i class="fa-solid fa-plus"></i>Add Seller</button>
+        </div>
+      </div>
+      <div class="fb">
+        <button class="ftab active">All Sellers</button>
+        <button class="ftab">Top Rated</button>
+        <button class="ftab">New</button>
+        <button class="ftab">Suspended</button>
+        <div class="fs"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search stores…"/></div>
+      </div>
+      <div class="scard-grid">
+        <div class="scard" onclick="showToast('Seller profile — connect to API')">
+          <div class="scard-top"><div class="scard-av">VS</div><div><div class="scard-name">Vanna's Spicy Farm</div><div class="scard-sub">Vanna Sok · Kampot <span class="badge bg" style="font-size:9px;margin-left:4px">Active</span></div></div></div>
+          <div class="scard-stats">
+            <div class="scard-stat"><div class="scard-stat-n">$24,800</div><div class="scard-stat-l">Revenue</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">312</div><div class="scard-stat-l">Orders</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">4.8★</div><div class="scard-stat-l">Rating</div></div>
+          </div>
+        </div>
+        <div class="scard" onclick="showToast('Seller profile — connect to API')">
+          <div class="scard-top"><div class="scard-av" style="background:var(--adim);color:#92400E">KW</div><div><div class="scard-name">The Khmer Weaver</div><div class="scard-sub">Dara Chhan · Takeo <span class="badge bg" style="font-size:9px;margin-left:4px">Active</span></div></div></div>
+          <div class="scard-stats">
+            <div class="scard-stat"><div class="scard-stat-n">$18,300</div><div class="scard-stat-l">Revenue</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">208</div><div class="scard-stat-l">Orders</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">4.6★</div><div class="scard-stat-l">Rating</div></div>
+          </div>
+        </div>
+        <div class="scard" onclick="showToast('Seller profile — connect to API')">
+          <div class="scard-top"><div class="scard-av" style="background:var(--sdim);color:var(--sky)">GJ</div><div><div class="scard-name">Gold Jasmine Coop</div><div class="scard-sub">Lyna Pech · Battambang <span class="badge bg" style="font-size:9px;margin-left:4px">Active</span></div></div></div>
+          <div class="scard-stats">
+            <div class="scard-stat"><div class="scard-stat-n">$42,100</div><div class="scard-stat-l">Revenue</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">540</div><div class="scard-stat-l">Orders</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">4.9★</div><div class="scard-stat-l">Rating</div></div>
+          </div>
+        </div>
+        <div class="scard" onclick="showToast('Seller profile — connect to API')">
+          <div class="scard-top"><div class="scard-av" style="background:var(--odim);color:var(--od)">KF</div><div><div class="scard-name">Kampong Fresh</div><div class="scard-sub">Rith Panha · Kampong Cham <span class="badge bg" style="font-size:9px;margin-left:4px">Active</span></div></div></div>
+          <div class="scard-stats">
+            <div class="scard-stat"><div class="scard-stat-n">$9,600</div><div class="scard-stat-l">Revenue</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">148</div><div class="scard-stat-l">Orders</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">4.4★</div><div class="scard-stat-l">Rating</div></div>
+          </div>
+        </div>
+        <div class="scard" onclick="showToast('Seller profile — connect to API')">
+          <div class="scard-top"><div class="scard-av" style="background:var(--rdim);color:var(--red)">CC</div><div><div class="scard-name">Coastal Catch Co.</div><div class="scard-sub">Mony Keo · Sihanoukville <span class="badge br2" style="font-size:9px;margin-left:4px">Suspended</span></div></div></div>
+          <div class="scard-stats">
+            <div class="scard-stat"><div class="scard-stat-n">$3,200</div><div class="scard-stat-l">Revenue</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">44</div><div class="scard-stat-l">Orders</div></div>
+            <div class="scard-stat"><div class="scard-stat-n">3.9★</div><div class="scard-stat-l">Rating</div></div>
+          </div>
+        </div>
+        <div class="scard" style="border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;box-shadow:none;cursor:pointer" onclick="showToast('Invite new seller')">
+          <i class="fa-solid fa-plus" style="color:var(--t3);font-size:20px;margin-bottom:8px"></i>
+          <span style="font-size:12px;color:var(--t3);font-weight:600">Invite Seller</span>
+        </div>
       </div>
     </section>
 
-    <!-- ORDERS -->
+    <!-- ══ PRODUCTS ══ -->
+    <section id="products" class="page">
+      <div class="ph"><div><div class="pt">Products</div><div class="ps">All listed products across stores</div></div><div class="ha"><button class="btn-add" onclick="showToast('Add product — connect to API')"><i class="fa-solid fa-plus"></i>Add Product</button></div></div>
+      <div class="fb">
+        <button class="ftab active">All</button>
+        <button class="ftab">Active</button>
+        <button class="ftab">Low Stock</button>
+        <button class="ftab">Out of Stock</button>
+        <div class="fs"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Product name, SKU…"/></div>
+      </div>
+      <div class="tw">
+        <div class="tscroll"><table class="dt"><thead><tr><th>Product</th><th>Seller</th><th>Category</th><th>Price</th><th>Stock</th><th>Orders</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><div class="cell"><div class="av" style="background:var(--sdim);color:var(--sky)">KP</div><div><div class="cn">Kampot Pepper 500g</div><div class="cm">SKU-00121</div></div></div></td><td style="color:var(--t2)">Vanna's Farm</td><td><span class="badge bs">Spices</span></td><td style="font-weight:700">$12.50</td><td><div class="spkrow"><div class="spkbar" style="width:70%"></div><span style="font-size:11px;color:var(--t3)">420</span></div></td><td style="font-weight:600;color:var(--gd)">1,204</td><td><span class="badge bg">Active</span></td><td><button class="ab av2" onclick="showToast('Edit product')">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--adim);color:var(--amber)">KS</div><div><div class="cn">Khmer Silk Scarf</div><div class="cm">SKU-00088</div></div></div></td><td style="color:var(--t2)">Khmer Weaver</td><td><span class="badge ba">Crafts</span></td><td style="font-weight:700">$38.00</td><td><div class="spkrow"><div class="spkbar" style="width:30%;background:var(--amber)"></div><span style="font-size:11px;color:var(--t3)">85</span></div></td><td style="font-weight:600;color:var(--gd)">690</td><td><span class="badge bg">Active</span></td><td><button class="ab av2" onclick="showToast('Edit product')">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av">JR</div><div><div class="cn">Jasmine Rice 5kg</div><div class="cm">SKU-00204</div></div></div></td><td style="color:var(--t2)">Gold Jasmine Coop</td><td><span class="badge bg">Grains</span></td><td style="font-weight:700">$9.80</td><td><div class="spkrow"><div class="spkbar" style="width:90%"></div><span style="font-size:11px;color:var(--t3)">1,200</span></div></td><td style="font-weight:600;color:var(--gd)">2,340</td><td><span class="badge bg">Active</span></td><td><button class="ab av2" onclick="showToast('Edit product')">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--rdim);color:var(--red)">DM</div><div><div class="cn">Dried Mango 250g</div><div class="cm">SKU-00302</div></div></div></td><td style="color:var(--t2)">Kampong Fresh</td><td><span class="badge bo">Fruits</span></td><td style="font-weight:700">$6.50</td><td><div class="spkrow"><div class="spkbar" style="width:10%;background:var(--red)"></div><span style="font-size:11px;color:var(--t3)">18</span></div></td><td style="font-weight:600;color:var(--gd)">388</td><td><span class="badge br2">Low Stock</span></td><td><button class="ab av2" onclick="showToast('Edit product')">Edit</button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--pdim);color:var(--purple)">BS</div><div><div class="cn">Battambang Spring Rolls</div><div class="cm">SKU-00401</div></div></div></td><td style="color:var(--t2)">Gold Jasmine Coop</td><td><span class="badge bp">Snacks</span></td><td style="font-weight:700">$4.20</td><td><div class="spkrow"><div class="spkbar" style="width:60%"></div><span style="font-size:11px;color:var(--t3)">312</span></div></td><td style="font-weight:600;color:var(--gd)">820</td><td><span class="badge bg">Active</span></td><td><button class="ab av2" onclick="showToast('Edit product')">Edit</button></td></tr>
+        </tbody></table></div>
+        <div class="pg"><span class="pgi">Showing 5 of 482 products</span><div class="pgb"><button class="pb ap">1</button><button class="pb">2</button><button class="pb">3</button><button class="pb">…</button><button class="pb">48</button><button class="pb"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+      </div>
+    </section>
+
+    <!-- ══ ORDERS ══ -->
     <section id="orders" class="page">
-      <div class="ph"><div><div class="pt">Orders</div><div class="ps">Monitor and manage all customer orders</div></div></div>
-      <div class="osr">
-        <div class="osc"><div class="osn" style="color:var(--sky)">44,128</div><div class="osl">Total Orders</div></div>
-        <div class="osc"><div class="osn" style="color:var(--orange)">12</div><div class="osl">Pending</div></div>
-        <div class="osc"><div class="osn" style="color:var(--green)">43,841</div><div class="osl">Completed</div></div>
-        <div class="osc"><div class="osn" style="color:var(--red)">275</div><div class="osl">Cancelled</div></div>
+      <div class="ph"><div><div class="pt">Orders</div><div class="ps">Monitor and manage all customer orders</div></div><div class="ha"><button class="ab av2"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export</button></div></div>
+      <div class="sg sg-4" style="margin-bottom:20px">
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-cart-shopping" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">44,128</div><div class="sl">Total Orders</div></div>
+        <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-clock" style="color:var(--orange)"></i></div><div class="sn" style="color:var(--orange)">12</div><div class="sl">Pending</div></div>
+        <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-check-circle" style="color:var(--green)"></i></div><div class="sn" style="color:var(--gd)">43,841</div><div class="sl">Completed</div></div>
+        <div class="sc"><div class="si" style="background:var(--rdim)"><i class="fa-solid fa-ban" style="color:var(--red)"></i></div><div class="sn" style="color:var(--red)">275</div><div class="sl">Cancelled</div></div>
+      </div>
+      <div class="fb">
+        <button class="ftab active">All</button>
+        <button class="ftab">Pending</button>
+        <button class="ftab">Processing</button>
+        <button class="ftab">Shipped</button>
+        <button class="ftab">Completed</button>
+        <button class="ftab">Cancelled</button>
+        <div class="fs"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Order ID, customer…"/></div>
       </div>
       <div class="tw"><div class="tscroll"><table class="dt"><thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Seller</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
         <tbody>
-          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10041</td><td><div class="cell"><div class="av" style="font-size:10px">LH</div><div><div class="cn">Lay Horn</div><div class="cm">Phnom Penh</div></div></div></td><td>3 items</td><td style="font-weight:700">$250.00</td><td style="color:var(--t2)">Vanna's Farm</td><td style="color:var(--t3);font-size:12px">19 May 2026</td><td><span class="badge bg">Completed</span></td><td><button class="ab av2">Detail</button></td></tr>
-          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10042</td><td><div class="cell"><div class="av" style="font-size:10px">SD</div><div><div class="cn">Sok Dara</div><div class="cm">Siem Reap</div></div></div></td><td>1 item</td><td style="font-weight:700">$120.00</td><td style="color:var(--t2)">Khmer Weaver</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge bo">Pending</span></td><td><button class="ab av2">Detail</button></td></tr>
-          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10043</td><td><div class="cell"><div class="av" style="font-size:10px">CV</div><div><div class="cn">Chan Vira</div><div class="cm">Battambang</div></div></div></td><td>5 items</td><td style="font-weight:700">$980.00</td><td style="color:var(--t2)">Gold Jasmine</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge br2">Cancelled</span></td><td><button class="ab av2">Detail</button></td></tr>
-          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10044</td><td><div class="cell"><div class="av" style="font-size:10px">RP</div><div><div class="cn">Rith Panha</div><div class="cm">Kampot</div></div></div></td><td>2 items</td><td style="font-weight:700">$74.00</td><td style="color:var(--t2)">Vanna's Farm</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge bs">Shipped</span></td><td><button class="ab av2">Detail</button></td></tr>
-        </tbody></table></div></div>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10041</td><td><div class="cell"><div class="av" style="font-size:10px">LH</div><div><div class="cn">Lay Horn</div><div class="cm">Phnom Penh</div></div></div></td><td>3 items</td><td style="font-weight:700">$250.00</td><td style="color:var(--t2)">Vanna's Farm</td><td style="color:var(--t3);font-size:12px">19 May 2026</td><td><span class="badge bg">Completed</span></td><td><button class="ab av2" onclick="showToast('Order detail')">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10042</td><td><div class="cell"><div class="av" style="font-size:10px">SD</div><div><div class="cn">Sok Dara</div><div class="cm">Siem Reap</div></div></div></td><td>1 item</td><td style="font-weight:700">$120.00</td><td style="color:var(--t2)">Khmer Weaver</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge bo">Pending</span></td><td><button class="ab av2" onclick="showToast('Order detail')">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10043</td><td><div class="cell"><div class="av" style="font-size:10px">CV</div><div><div class="cn">Chan Vira</div><div class="cm">Battambang</div></div></div></td><td>5 items</td><td style="font-weight:700">$980.00</td><td style="color:var(--t2)">Gold Jasmine</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge br2">Cancelled</span></td><td><button class="ab av2" onclick="showToast('Order detail')">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10044</td><td><div class="cell"><div class="av" style="font-size:10px">RP</div><div><div class="cn">Rith Panha</div><div class="cm">Kampot</div></div></div></td><td>2 items</td><td style="font-weight:700">$74.00</td><td style="color:var(--t2)">Vanna's Farm</td><td style="color:var(--t3);font-size:12px">20 May 2026</td><td><span class="badge bs">Shipped</span></td><td><button class="ab av2" onclick="showToast('Order detail')">Detail</button></td></tr>
+          <tr><td style="font-family:var(--fd);color:var(--gd);font-weight:700">#10045</td><td><div class="cell"><div class="av" style="font-size:10px;background:var(--pdim);color:var(--purple)">MK</div><div><div class="cn">Mony Keo</div><div class="cm">Sihanoukville</div></div></div></td><td>4 items</td><td style="font-weight:700">$310.00</td><td style="color:var(--t2)">Kampong Fresh</td><td style="color:var(--t3);font-size:12px">21 May 2026</td><td><span class="badge bp">Processing</span></td><td><button class="ab av2" onclick="showToast('Order detail')">Detail</button></td></tr>
+        </tbody></table></div>
+        <div class="pg"><span class="pgi">Showing 5 of 44,128 orders</span><div class="pgb"><button class="pb ap">1</button><button class="pb">2</button><button class="pb">3</button><button class="pb"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+      </div>
     </section>
 
-    <!-- USERS -->
+    <!-- ══ USERS ══ -->
     <section id="users" class="page">
-      <div class="ph"><div><div class="pt">Users</div><div class="ps">Manage admin and platform accounts</div></div><div class="ha"><button class="btn-add" onclick="showToast('Invite user — connect to API')"><i class="fa-solid fa-user-plus"></i>Invite User</button></div></div>
+      <div class="ph"><div><div class="pt">Users</div><div class="ps">Manage admin and platform accounts</div></div><div class="ha"><button class="btn-add" onclick="showToast('Invite user')"><i class="fa-solid fa-user-plus"></i>Invite User</button></div></div>
+      <div class="sg sg-4" style="margin-bottom:20px">
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-users" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">520K</div><div class="sl">Total Customers</div></div>
+        <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-user-check" style="color:var(--green)"></i></div><div class="sn" style="color:var(--gd)">484K</div><div class="sl">Verified</div></div>
+        <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-user-clock" style="color:var(--orange)"></i></div><div class="sn" style="color:var(--orange)">36K</div><div class="sl">Unverified</div></div>
+        <div class="sc"><div class="si" style="background:var(--rdim)"><i class="fa-solid fa-user-xmark" style="color:var(--red)"></i></div><div class="sn" style="color:var(--red)">1,240</div><div class="sl">Banned</div></div>
+      </div>
       <div class="ug">
         <div class="ucard"><div class="uavlg">LH</div><div class="uname">Lay Horn</div><div class="urole">Super Admin</div><div class="umeta"><span class="badge bg">Active</span><span class="badge bs">Admin</span></div></div>
         <div class="ucard"><div class="uavlg" style="background:var(--adim);color:#92400E">SD</div><div class="uname">Sok Dara</div><div class="urole">Reviewer</div><div class="umeta"><span class="badge bg">Active</span><span class="badge ba">Reviewer</span></div></div>
@@ -417,9 +590,230 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
         <div class="ucard"><div class="uavlg" style="background:var(--odim);color:var(--od)">PN</div><div class="uname">Piseth Nov</div><div class="urole">Finance</div><div class="umeta"><span class="badge bg">Active</span><span class="badge bs">Finance</span></div></div>
         <div class="ucard" style="border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:110px;box-shadow:none" onclick="showToast('Invite new user')"><i class="fa-solid fa-plus" style="color:var(--t3);font-size:18px;margin-bottom:7px"></i><span style="font-size:12px;color:var(--t3);font-weight:600">Add User</span></div>
       </div>
+      <div style="margin-top:20px">
+        <div class="tw">
+          <div class="th2"><h3>👥 Customer Accounts</h3><button class="ab av2" onclick="showToast('Export customers')">Export</button></div>
+          <div class="tscroll"><table class="dt"><thead><tr><th>Customer</th><th>Phone</th><th>Province</th><th>Joined</th><th>Orders</th><th>Spent</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><div class="cell"><div class="av" style="font-size:10px">LH</div><div><div class="cn">Lay Horn</div><div class="cm">layhorn@email.kh</div></div></div></td><td style="color:var(--t3);font-size:12px">012 345 678</td><td style="font-size:12px">Phnom Penh</td><td style="font-size:11px;color:var(--t3)">Jan 2026</td><td style="font-weight:600">24</td><td style="font-weight:700;color:var(--gd)">$1,240</td><td><span class="badge bg">Active</span></td><td><button class="ab av2" onclick="showToast('View customer')">View</button></td></tr>
+            <tr><td><div class="cell"><div class="av" style="font-size:10px;background:var(--sdim);color:var(--sky)">SD</div><div><div class="cn">Sok Dara</div><div class="cm">sokdara@email.kh</div></div></div></td><td style="color:var(--t3);font-size:12px">098 765 432</td><td style="font-size:12px">Siem Reap</td><td style="font-size:11px;color:var(--t3)">Feb 2026</td><td style="font-weight:600">11</td><td style="font-weight:700;color:var(--gd)">$620</td><td><span class="badge bg">Active</span></td><td><button class="ab av2" onclick="showToast('View customer')">View</button></td></tr>
+            <tr><td><div class="cell"><div class="av" style="font-size:10px;background:var(--adim);color:#92400E">CV</div><div><div class="cn">Chan Vira</div><div class="cm">chanvira@email.kh</div></div></div></td><td style="color:var(--t3);font-size:12px">077 111 222</td><td style="font-size:12px">Battambang</td><td style="font-size:11px;color:var(--t3)">Mar 2026</td><td style="font-weight:600">8</td><td style="font-weight:700;color:var(--gd)">$380</td><td><span class="badge ba">Inactive</span></td><td><button class="ab av2" onclick="showToast('View customer')">View</button></td></tr>
+            <tr><td><div class="cell"><div class="av" style="font-size:10px;background:var(--rdim);color:var(--red)">RP</div><div><div class="cn">Rith Panha</div><div class="cm">rithpanha@email.kh</div></div></div></td><td style="color:var(--t3);font-size:12px">012 999 888</td><td style="font-size:12px">Kampot</td><td style="font-size:11px;color:var(--t3)">Apr 2026</td><td style="font-weight:600">3</td><td style="font-weight:700;color:var(--gd)">$74</td><td><span class="badge br2">Banned</span></td><td><button class="ab arj" onclick="showToast('User unbanned')">Unban</button></td></tr>
+          </tbody></table></div>
+          <div class="pg"><span class="pgi">Showing 4 of 520,000 customers</span><div class="pgb"><button class="pb ap">1</button><button class="pb">2</button><button class="pb"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+        </div>
+      </div>
     </section>
 
-    <!-- SETTINGS -->
+    <!-- ══ REVIEWS ══ -->
+    <section id="reviews" class="page">
+      <div class="ph"><div><div class="pt">Reviews</div><div class="ps">Customer ratings and feedback management</div></div><div class="ha"><button class="ab av2"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export</button></div></div>
+      <div class="sg sg-4" style="margin-bottom:20px">
+        <div class="sc"><div class="si" style="background:var(--adim)"><i class="fa-solid fa-star" style="color:var(--amber)"></i></div><div class="sn" style="color:var(--amber)">4.7</div><div class="sl">Platform Avg.</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+0.2 this month</div></div>
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-comments" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">28,400</div><div class="sl">Total Reviews</div></div>
+        <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-flag" style="color:var(--orange)"></i></div><div class="sn" style="color:var(--orange)">5</div><div class="sl">Flagged</div></div>
+        <div class="sc"><div class="si" style="background:var(--rdim)"><i class="fa-solid fa-trash" style="color:var(--red)"></i></div><div class="sn" style="color:var(--red)">142</div><div class="sl">Removed</div></div>
+      </div>
+      <div class="cr">
+        <div>
+          <div class="fb">
+            <button class="ftab active">All Reviews</button>
+            <button class="ftab">⚠️ Flagged</button>
+            <button class="ftab">1–2 Stars</button>
+            <button class="ftab">5 Stars</button>
+            <div class="fs"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search reviews…"/></div>
+          </div>
+          <div class="rv-card">
+            <div class="rv-head"><div class="av" style="font-size:10px">LH</div><div class="rv-meta"><div class="rv-name">Lay Horn</div><div class="rv-store">Vanna's Spicy Farm · Kampot Pepper 500g</div></div><span class="rv-date">22 May 2026</span></div>
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <div class="rv-text" style="margin-top:8px">Exceptional quality pepper — the aroma is incredible. Ordered 3 packs and they arrived perfectly packaged. Will definitely reorder.</div>
+            <div class="rv-foot"><div style="display:flex;gap:6px"><button class="ab av2" onclick="showToast('Review approved')"><i class="fa-solid fa-check" style="margin-right:3px"></i>Keep</button><button class="ab arj" onclick="showToast('Review removed')"><i class="fa-solid fa-trash" style="margin-right:3px"></i>Remove</button></div><span class="badge bg">5 Stars</span></div>
+          </div>
+          <div class="rv-card" style="border-color:rgba(249,115,22,.3)">
+            <div class="rv-head"><div class="av" style="font-size:10px;background:var(--odim);color:var(--od)">SD</div><div class="rv-meta"><div class="rv-name">Sok Dara</div><div class="rv-store">The Khmer Weaver · Khmer Silk Scarf</div></div><span class="rv-date">21 May 2026</span></div>
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star empty"></i><i class="fa-solid fa-star empty"></i><i class="fa-solid fa-star empty"></i></div>
+            <div class="rv-text" style="margin-top:8px">Product arrived damaged and seller refuses refund. Very disappointed with the service. ⚠️</div>
+            <div class="rv-foot"><div style="display:flex;gap:6px"><button class="ab av2" onclick="showToast('Review approved')"><i class="fa-solid fa-check" style="margin-right:3px"></i>Keep</button><button class="ab arj" onclick="showToast('Review removed')"><i class="fa-solid fa-trash" style="margin-right:3px"></i>Remove</button><button class="ab" style="background:var(--odim);color:var(--od);border:1px solid rgba(249,115,22,.2)" onclick="showToast('Review escalated')"><i class="fa-solid fa-flag" style="margin-right:3px"></i>Escalate</button></div><span class="badge bo">Flagged</span></div>
+          </div>
+          <div class="rv-card">
+            <div class="rv-head"><div class="av" style="font-size:10px;background:var(--pdim);color:var(--purple)">CV</div><div class="rv-meta"><div class="rv-name">Chan Vira</div><div class="rv-store">Gold Jasmine Coop · Jasmine Rice 5kg</div></div><span class="rv-date">20 May 2026</span></div>
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star empty"></i></div>
+            <div class="rv-text" style="margin-top:8px">Great rice, very fragrant. Delivery was fast to Battambang. The packaging could be better but the quality is excellent.</div>
+            <div class="rv-foot"><div style="display:flex;gap:6px"><button class="ab av2" onclick="showToast('Review kept')"><i class="fa-solid fa-check" style="margin-right:3px"></i>Keep</button><button class="ab arj" onclick="showToast('Review removed')"><i class="fa-solid fa-trash" style="margin-right:3px"></i>Remove</button></div><span class="badge ba">4 Stars</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="cc">
+            <div class="ct"><i class="fa-solid fa-chart-bar" style="color:var(--amber)"></i>Rating Distribution</div>
+            <div style="padding:4px 0">
+              <div class="prog-row"><span class="prog-label">5 Stars</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:72%"></div></div><span class="prog-count">72%</span></div>
+              <div class="prog-row"><span class="prog-label">4 Stars</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:18%;background:var(--sky)"></div></div><span class="prog-count">18%</span></div>
+              <div class="prog-row"><span class="prog-label">3 Stars</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:6%;background:var(--amber)"></div></div><span class="prog-count">6%</span></div>
+              <div class="prog-row"><span class="prog-label">2 Stars</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:2%;background:var(--orange)"></div></div><span class="prog-count">2%</span></div>
+              <div class="prog-row"><span class="prog-label">1 Star</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:2%;background:var(--red)"></div></div><span class="prog-count">2%</span></div>
+            </div>
+          </div>
+          <div class="cc" style="margin-top:14px">
+            <div class="ct"><i class="fa-solid fa-store" style="color:var(--green)"></i>Top Rated Sellers</div>
+            <div>
+              <div class="aitem" style="align-items:center"><div class="aav2"><i class="fa-solid fa-trophy" style="color:var(--amber)"></i></div><div class="atxt"><strong>Gold Jasmine Coop</strong><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="stars"><i class="fa-solid fa-star" style="font-size:10px"></i></div><span style="font-size:10px;color:var(--t3)">4.9 · 8,240 reviews</span></div></div></div>
+              <div class="aitem" style="align-items:center"><div class="aav2"><i class="fa-solid fa-medal" style="color:var(--t3)"></i></div><div class="atxt"><strong>Vanna's Spicy Farm</strong><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="stars"><i class="fa-solid fa-star" style="font-size:10px"></i></div><span style="font-size:10px;color:var(--t3)">4.8 · 6,100 reviews</span></div></div></div>
+              <div class="aitem" style="align-items:center;padding-bottom:0;border-bottom:none"><div class="aav2"><i class="fa-solid fa-award" style="color:var(--orange)"></i></div><div class="atxt"><strong>The Khmer Weaver</strong><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><div class="stars"><i class="fa-solid fa-star" style="font-size:10px"></i></div><span style="font-size:10px;color:var(--t3)">4.6 · 4,820 reviews</span></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PAYMENTS ══ -->
+    <section id="payments" class="page">
+      <div class="ph"><div><div class="pt">Payments</div><div class="ps">Seller payouts, platform revenue and disbursements</div></div><div class="ha"><button class="btn-add" onclick="showToast('Process payout batch')"><i class="fa-solid fa-paper-plane"></i>Process Payouts</button></div></div>
+      <div class="pay-hero">
+        <div class="ph-label">Total Platform Revenue</div>
+        <div class="ph-amount">$8,248,300</div>
+        <div class="ph-sub">As of May 24, 2026 · All-time cumulative</div>
+        <div class="ph-cols">
+          <div class="ph-col"><div class="ph-col-n">$284,400</div><div class="ph-col-l">This Month</div></div>
+          <div class="ph-col"><div class="ph-col-n">$92,100</div><div class="ph-col-l">This Week</div></div>
+          <div class="ph-col"><div class="ph-col-n">$14,300</div><div class="ph-col-l">Today</div></div>
+        </div>
+      </div>
+      <div class="sg sg-3" style="margin-bottom:20px">
+        <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i></div><div class="sn" style="color:var(--gd)">$7.8M</div><div class="sl">Paid Out to Sellers</div></div>
+        <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-hourglass" style="color:var(--orange)"></i></div><div class="sn" style="color:var(--orange)">$48,200</div><div class="sl">Pending Payouts</div></div>
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-percent" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">$412,000</div><div class="sl">Commission Earned</div></div>
+      </div>
+      <div class="cr">
+        <div class="cc"><div class="ct"><i class="fa-solid fa-chart-line" style="color:var(--green)"></i>Monthly Payouts<span>Last 6 months</span></div><div class="chart-wrap"><canvas id="payChart"></canvas></div></div>
+        <div>
+          <div class="cc" style="margin-bottom:14px">
+            <div class="ct"><i class="fa-solid fa-wallet" style="color:var(--purple)"></i>Payment Methods</div>
+            <div class="chart-wrap" style="height:180px"><canvas id="payMethods"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="tw">
+        <div class="th2"><h3>💸 Pending Payout Requests</h3><span style="font-size:11px;color:var(--t3)">$48,200 total pending</span></div>
+        <div class="tscroll"><table class="dt"><thead><tr><th>Seller</th><th>Method</th><th>Account</th><th>Amount</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><div class="cell"><div class="av">VS</div><div><div class="cn">Vanna's Spicy Farm</div><div class="cm">Vanna Sok</div></div></div></td><td><span class="badge bs">ABA</span></td><td style="font-size:12px;color:var(--t3)">0001234</td><td style="font-weight:700;color:var(--gd)">$1,800</td><td style="font-size:11px;color:var(--t3)">23 May 2026</td><td><span class="badge ba">Pending</span></td><td style="display:flex;gap:4px"><button class="ab aap" onclick="showToast('Payout approved!')"><i class="fa-solid fa-check"></i> Approve</button><button class="ab arj" onclick="showToast('Payout rejected')"><i class="fa-solid fa-xmark"></i></button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--sdim);color:var(--sky)">GJ</div><div><div class="cn">Gold Jasmine Coop</div><div class="cm">Lyna Pech</div></div></div></td><td><span class="badge bg">ABA</span></td><td style="font-size:12px;color:var(--t3)">0007770</td><td style="font-weight:700;color:var(--gd)">$4,200</td><td style="font-size:11px;color:var(--t3)">22 May 2026</td><td><span class="badge ba">Pending</span></td><td style="display:flex;gap:4px"><button class="ab aap" onclick="showToast('Payout approved!')"><i class="fa-solid fa-check"></i> Approve</button><button class="ab arj" onclick="showToast('Payout rejected')"><i class="fa-solid fa-xmark"></i></button></td></tr>
+          <tr><td><div class="cell"><div class="av" style="background:var(--adim);color:#92400E">KW</div><div><div class="cn">The Khmer Weaver</div><div class="cm">Dara Chhan</div></div></div></td><td><span class="badge bp">Wing</span></td><td style="font-size:12px;color:var(--t3)">098765432</td><td style="font-weight:700;color:var(--gd)">$950</td><td style="font-size:11px;color:var(--t3)">21 May 2026</td><td><span class="badge bg">Approved</span></td><td><button class="ab av2" onclick="showToast('Viewing payout')">View</button></td></tr>
+        </tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ══ TRANSACTIONS ══ -->
+    <section id="transactions" class="page">
+      <div class="ph"><div><div class="pt">Transactions</div><div class="ps">Complete financial ledger and transaction history</div></div><div class="ha"><button class="ab av2"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export</button><button class="ab av2"><i class="fa-solid fa-filter" style="margin-right:4px"></i>Filter</button></div></div>
+      <div class="sg sg-4" style="margin-bottom:20px">
+        <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-arrow-up" style="color:var(--green)"></i></div><div class="sn" style="color:var(--gd)">$284K</div><div class="sl">Inflow (May)</div></div>
+        <div class="sc"><div class="si" style="background:var(--rdim)"><i class="fa-solid fa-arrow-down" style="color:var(--red)"></i></div><div class="sn" style="color:var(--red)">$238K</div><div class="sl">Outflow (May)</div></div>
+        <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-scale-balanced" style="color:var(--sky)"></i></div><div class="sn" style="color:var(--sky)">$46K</div><div class="sl">Net (May)</div></div>
+        <div class="sc"><div class="si" style="background:var(--pdim)"><i class="fa-solid fa-rotate" style="color:var(--purple)"></i></div><div class="sn" style="color:var(--purple)">$8.4K</div><div class="sl">Refunds (May)</div></div>
+      </div>
+      <div class="fb">
+        <button class="ftab active">All</button>
+        <button class="ftab">Orders</button>
+        <button class="ftab">Payouts</button>
+        <button class="ftab">Refunds</button>
+        <button class="ftab">Fees</button>
+        <div class="fs"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Transaction ID…"/></div>
+      </div>
+      <div class="tw">
+        <div class="tscroll"><table class="dt"><thead><tr><th>Transaction ID</th><th>Type</th><th>Party</th><th>Amount</th><th>Method</th><th>Date &amp; Time</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--fd);font-size:12px;color:var(--sky)">TXN-20260524-001</td><td><span class="badge bg">Order</span></td><td><div class="cell"><div class="av" style="font-size:10px">LH</div><div><div class="cn">Lay Horn → Vanna's Farm</div><div class="cm">Order #10041</div></div></div></td><td style="font-weight:700;color:var(--gd)">+$250.00</td><td><span class="badge bs">ABA Pay</span></td><td style="font-size:11px;color:var(--t3)">24 May 08:14</td><td><span class="badge bg">Settled</span></td></tr>
+          <tr><td style="font-family:var(--fd);font-size:12px;color:var(--sky)">TXN-20260524-002</td><td><span class="badge bp">Payout</span></td><td><div class="cell"><div class="av" style="background:var(--pdim);color:var(--purple);font-size:10px">MT</div><div><div class="cn">Moutanak → Vanna's Farm</div><div class="cm">Weekly settlement</div></div></div></td><td style="font-weight:700;color:var(--red)">-$1,800.00</td><td><span class="badge bg">ABA</span></td><td style="font-size:11px;color:var(--t3)">24 May 09:00</td><td><span class="badge bg">Completed</span></td></tr>
+          <tr><td style="font-family:var(--fd);font-size:12px;color:var(--sky)">TXN-20260524-003</td><td><span class="badge bo">Refund</span></td><td><div class="cell"><div class="av" style="font-size:10px;background:var(--adim);color:#92400E">CV</div><div><div class="cn">Chan Vira ← Gold Jasmine</div><div class="cm">Order #10043 cancelled</div></div></div></td><td style="font-weight:700;color:var(--red)">-$980.00</td><td><span class="badge bs">Wing</span></td><td style="font-size:11px;color:var(--t3)">24 May 10:22</td><td><span class="badge ba">Processing</span></td></tr>
+          <tr><td style="font-family:var(--fd);font-size:12px;color:var(--sky)">TXN-20260523-044</td><td><span class="badge bs">Fee</span></td><td><div class="cell"><div class="av" style="font-size:10px;background:var(--sdim);color:var(--sky)">SY</div><div><div class="cn">Commission — Khmer Weaver</div><div class="cm">2% on $38.00</div></div></div></td><td style="font-weight:700;color:var(--gd)">+$0.76</td><td><span class="badge bg">Internal</span></td><td style="font-size:11px;color:var(--t3)">23 May 16:08</td><td><span class="badge bg">Settled</span></td></tr>
+          <tr><td style="font-family:var(--fd);font-size:12px;color:var(--sky)">TXN-20260523-040</td><td><span class="badge bg">Order</span></td><td><div class="cell"><div class="av" style="font-size:10px;background:var(--odim);color:var(--od)">RP</div><div><div class="cn">Rith Panha → Vanna's Farm</div><div class="cm">Order #10044</div></div></div></td><td style="font-weight:700;color:var(--gd)">+$74.00</td><td><span class="badge bp">Wing</span></td><td style="font-size:11px;color:var(--t3)">23 May 14:30</td><td><span class="badge bg">Settled</span></td></tr>
+        </tbody></table></div>
+        <div class="pg"><span class="pgi">Showing 5 of 12,480 transactions</span><div class="pgb"><button class="pb ap">1</button><button class="pb">2</button><button class="pb">3</button><button class="pb"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+      </div>
+    </section>
+
+    <!-- ══ REPORTS ══ -->
+    <section id="reports" class="page">
+      <div class="ph"><div><div class="pt">Reports</div><div class="ps">Analytics, performance metrics and data exports</div></div><div class="ha"><button class="ab av2"><i class="fa-solid fa-download" style="margin-right:4px"></i>Export PDF</button><button class="btn-add" onclick="showToast('Report scheduled!')"><i class="fa-solid fa-calendar"></i>Schedule</button></div></div>
+      <div class="rtabs">
+        <button class="rtab active" onclick="switchReport('revenue',this)">Revenue</button>
+        <button class="rtab" onclick="switchReport('sellers',this)">Sellers</button>
+        <button class="rtab" onclick="switchReport('customers',this)">Customers</button>
+        <button class="rtab" onclick="switchReport('products',this)">Products</button>
+      </div>
+
+      <!-- Revenue Report -->
+      <div id="rep-revenue">
+        <div class="sg sg-4" style="margin-bottom:18px">
+          <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-sack-dollar" style="color:var(--gd)"></i></div><div class="sn">$284K</div><div class="sl">May Revenue</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+18% vs April</div></div>
+          <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-cart-shopping" style="color:var(--sky)"></i></div><div class="sn">5,428</div><div class="sl">May Orders</div><div class="schange" style="color:var(--sky)"><i class="fa-solid fa-arrow-trend-up"></i>+12%</div></div>
+          <div class="sc"><div class="si" style="background:var(--adim)"><i class="fa-solid fa-divide" style="color:var(--amber)"></i></div><div class="sn">$52.30</div><div class="sl">Avg Order Value</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+5%</div></div>
+          <div class="sc"><div class="si" style="background:var(--pdim)"><i class="fa-solid fa-percent" style="color:var(--purple)"></i></div><div class="sn">$5,680</div><div class="sl">Commission May</div></div>
+        </div>
+        <div class="cr">
+          <div class="cc"><div class="ct"><i class="fa-solid fa-chart-area" style="color:var(--green)"></i>Daily Revenue — May 2026<span>$284,400 total</span></div><div class="chart-wrap" style="height:240px"><canvas id="repChart1"></canvas></div></div>
+          <div class="cc"><div class="ct"><i class="fa-solid fa-chart-pie" style="color:var(--orange)"></i>Revenue by Province</div><div class="chart-wrap donut-wrap"><canvas id="repChart2"></canvas></div></div>
+        </div>
+        <div class="tw">
+          <div class="th2"><h3>📊 Monthly Summary</h3></div>
+          <div class="tscroll"><table class="dt"><thead><tr><th>Month</th><th>Orders</th><th>Revenue</th><th>Payouts</th><th>Commission</th><th>New Sellers</th><th>Growth</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">May 2026</td><td>5,428</td><td style="color:var(--gd);font-weight:700">$284,400</td><td>$238,000</td><td>$5,680</td><td>48</td><td><span class="badge bg">+18%</span></td></tr>
+            <tr><td style="font-weight:700">Apr 2026</td><td>4,840</td><td style="color:var(--gd);font-weight:700">$240,600</td><td>$201,000</td><td>$4,812</td><td>36</td><td><span class="badge bg">+12%</span></td></tr>
+            <tr><td style="font-weight:700">Mar 2026</td><td>4,320</td><td style="color:var(--gd);font-weight:700">$214,800</td><td>$180,000</td><td>$4,296</td><td>29</td><td><span class="badge bs">+8%</span></td></tr>
+            <tr><td style="font-weight:700">Feb 2026</td><td>3,900</td><td style="color:var(--gd);font-weight:700">$198,400</td><td>$166,000</td><td>$3,968</td><td>22</td><td><span class="badge ba">+5%</span></td></tr>
+            <tr><td style="font-weight:700">Jan 2026</td><td>3,600</td><td style="color:var(--gd);font-weight:700">$180,000</td><td>$151,200</td><td>$3,600</td><td>18</td><td><span class="badge bg">+14%</span></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+
+      <!-- Sellers Report (hidden by default) -->
+      <div id="rep-sellers" style="display:none">
+        <div class="sg sg-4" style="margin-bottom:18px">
+          <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-store" style="color:var(--green)"></i></div><div class="sn">1,580</div><div class="sl">Active Sellers</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+48 this month</div></div>
+          <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-user-plus" style="color:var(--orange)"></i></div><div class="sn">48</div><div class="sl">New This Month</div></div>
+          <div class="sc"><div class="si" style="background:var(--rdim)"><i class="fa-solid fa-user-minus" style="color:var(--red)"></i></div><div class="sn">3</div><div class="sl">Churned</div></div>
+          <div class="sc"><div class="si" style="background:var(--adim)"><i class="fa-solid fa-star" style="color:var(--amber)"></i></div><div class="sn">4.7</div><div class="sl">Avg Rating</div></div>
+        </div>
+        <div class="cc"><div class="ct"><i class="fa-solid fa-chart-bar" style="color:var(--sky)"></i>Seller Growth — 2026<span>Monthly new sellers</span></div><div class="chart-wrap"><canvas id="repSellersChart"></canvas></div></div>
+      </div>
+
+      <!-- Customers Report (hidden) -->
+      <div id="rep-customers" style="display:none">
+        <div class="sg sg-4" style="margin-bottom:18px">
+          <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-users" style="color:var(--sky)"></i></div><div class="sn">520K</div><div class="sl">Total Users</div><div class="schange" style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i>+8.4K this month</div></div>
+          <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-repeat" style="color:var(--green)"></i></div><div class="sn">68%</div><div class="sl">Repeat Buyers</div></div>
+          <div class="sc"><div class="si" style="background:var(--pdim)"><i class="fa-solid fa-mobile" style="color:var(--purple)"></i></div><div class="sn">84%</div><div class="sl">Mobile Users</div></div>
+          <div class="sc"><div class="si" style="background:var(--adim)"><i class="fa-solid fa-hourglass" style="color:var(--amber)"></i></div><div class="sn">4.2 min</div><div class="sl">Avg Session</div></div>
+        </div>
+        <div class="cr">
+          <div class="cc"><div class="ct"><i class="fa-solid fa-chart-line" style="color:var(--sky)"></i>User Growth 2026<span>Monthly active users</span></div><div class="chart-wrap"><canvas id="repCustChart"></canvas></div></div>
+          <div class="cc"><div class="ct"><i class="fa-solid fa-map" style="color:var(--orange)"></i>Users by Province</div><div class="chart-wrap donut-wrap"><canvas id="repProvChart"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- Products Report (hidden) -->
+      <div id="rep-products" style="display:none">
+        <div class="sg sg-4" style="margin-bottom:18px">
+          <div class="sc"><div class="si" style="background:var(--gdim)"><i class="fa-solid fa-boxes-stacked" style="color:var(--green)"></i></div><div class="sn">12,480</div><div class="sl">Listed Products</div></div>
+          <div class="sc"><div class="si" style="background:var(--sdim)"><i class="fa-solid fa-fire" style="color:var(--sky)"></i></div><div class="sn">3,820</div><div class="sl">Active SKUs</div></div>
+          <div class="sc"><div class="si" style="background:var(--rdim)"><i class="fa-solid fa-triangle-exclamation" style="color:var(--red)"></i></div><div class="sn">248</div><div class="sl">Low Stock</div></div>
+          <div class="sc"><div class="si" style="background:var(--odim)"><i class="fa-solid fa-ban" style="color:var(--orange)"></i></div><div class="sn">62</div><div class="sl">Out of Stock</div></div>
+        </div>
+        <div class="tw">
+          <div class="th2"><h3>🏆 Top Products by Orders</h3></div>
+          <div class="tscroll"><table class="dt"><thead><tr><th>Rank</th><th>Product</th><th>Category</th><th>Seller</th><th>Orders</th><th>Revenue</th><th>Rating</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--fd);font-weight:700;color:var(--amber)">#1</td><td><div class="cn">Jasmine Rice 5kg</div><div class="cm">SKU-00204</div></td><td><span class="badge bg">Grains</span></td><td style="color:var(--t2)">Gold Jasmine</td><td style="font-weight:700">2,340</td><td style="color:var(--gd);font-weight:700">$22,932</td><td><span style="color:var(--amber)">★ 4.9</span></td></tr>
+            <tr><td style="font-family:var(--fd);font-weight:700;color:var(--t3)">#2</td><td><div class="cn">Kampot Pepper 500g</div><div class="cm">SKU-00121</div></td><td><span class="badge bs">Spices</span></td><td style="color:var(--t2)">Vanna's Farm</td><td style="font-weight:700">1,204</td><td style="color:var(--gd);font-weight:700">$15,050</td><td><span style="color:var(--amber)">★ 4.8</span></td></tr>
+            <tr><td style="font-family:var(--fd);font-weight:700;color:var(--od)">#3</td><td><div class="cn">Khmer Silk Scarf</div><div class="cm">SKU-00088</div></td><td><span class="badge ba">Crafts</span></td><td style="color:var(--t2)">Khmer Weaver</td><td style="font-weight:700">690</td><td style="color:var(--gd);font-weight:700">$26,220</td><td><span style="color:var(--amber)">★ 4.6</span></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SETTINGS ══ -->
     <section id="settings" class="page">
       <div class="ph"><div><div class="pt">Settings</div><div class="ps">Platform configuration and preferences</div></div></div>
       <div class="setgrid">
@@ -435,12 +829,14 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
           <div class="trow"><span class="tlab">Application approved</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
           <div class="trow"><span class="tlab">New order placed</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
           <div class="trow"><span class="tlab">Low stock alert</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab">New review flagged</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
           <div class="trow"><span class="tlab">Daily summary email</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
         </div>
         <div class="setcard"><h3><i class="fa-solid fa-percent" style="color:var(--sky)"></i>Commission Rates</h3>
           <div class="fl"><label class="flab">Base Commission (%)</label><input class="fi" value="2"/></div>
           <div class="fl"><label class="flab">Verified Business (%)</label><input class="fi" value="1.5"/></div>
           <div class="fl"><label class="flab">Premium Seller (%)</label><input class="fi" value="1"/></div>
+          <div class="fl"><label class="flab">Payout Schedule</label><select class="fse"><option>Weekly</option><option>Bi-weekly</option><option>Monthly</option></select></div>
           <button class="btn-save" onclick="showToast('Rates updated!')">Update Rates</button>
         </div>
         <div class="setcard"><h3><i class="fa-solid fa-shield-halved" style="color:var(--red)"></i>Verification Rules</h3>
@@ -449,6 +845,21 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
           <div class="trow"><span class="tlab">Require address proof</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
           <div class="trow"><span class="tlab">Auto-approve after 48hrs</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
           <div class="trow"><span class="tlab">Require biz registration</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div class="setcard"><h3><i class="fa-solid fa-globe" style="color:var(--purple)"></i>Regional Settings</h3>
+          <div class="fl"><label class="flab">Default Currency</label><select class="fse"><option>USD ($)</option><option>KHR (៛)</option></select></div>
+          <div class="fl"><label class="flab">Timezone</label><select class="fse"><option>Asia/Phnom_Penh (UTC+7)</option><option>UTC</option></select></div>
+          <div class="fl"><label class="flab">Date Format</label><select class="fse"><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
+          <div class="fl"><label class="flab">Delivery Regions</label><input class="fi" value="All 25 Provinces"/></div>
+          <button class="btn-save" onclick="showToast('Regional settings saved!')">Save</button>
+        </div>
+        <div class="setcard"><h3><i class="fa-solid fa-plug" style="color:var(--sky)"></i>Integrations</h3>
+          <div class="trow"><span class="tlab"><i class="fa-solid fa-credit-card" style="margin-right:6px;color:var(--sky)"></i>ABA PayWay</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab"><i class="fa-solid fa-mobile-screen" style="margin-right:6px;color:var(--purple)"></i>Wing Money</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab"><i class="fa-solid fa-building-columns" style="margin-right:6px;color:var(--gd)"></i>ACLEDA Bank</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab"><i class="fa-brands fa-facebook" style="margin-right:6px;color:#1877F2"></i>Facebook Login</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab"><i class="fa-solid fa-envelope" style="margin-right:6px;color:var(--orange)"></i>Email (SMTP)</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="trow"><span class="tlab"><i class="fa-solid fa-chart-line" style="margin-right:6px;color:var(--amber)"></i>Analytics API</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
         </div>
       </div>
     </section>
@@ -473,200 +884,98 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--tex
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i><span id="tmsg"></span></div>
 
 <script>
-// ─────────────────────────────────────────────
-//  STATIC SEED DATA (demo entries with Unsplash images)
-// ─────────────────────────────────────────────
+// ── SEED DATA ──
 const SEED = [
-  {id:'S001',fn:'Vanna Sok',em:'vanna@farm.kh',ph:'012345678',dob:'1988-04-12',sn:"Vanna's Spicy Farm",cat:'Vegetables & Herbs',prov:'Kampot',tin:'K000-123456',breg:'',stk:'200–500 kg',aba:'0001234',abn:'Vanna Sok',wing:'',desc:'Family-run organic spice farm in Kampot, specialising in pepper and chilli.',fb:'https://facebook.com/vannasfarm',st:'pending',sub:'2026-05-18T08:22:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{t:'product_photo',s:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'}],_src:'seed'},
-  {id:'S002',fn:'Dara Chhan',em:'dara@weave.kh',ph:'098765432',dob:'1992-07-30',sn:'The Khmer Weaver',cat:'Artisan Crafts',prov:'Takeo',tin:'K000-654321',breg:'00-001234-MOC',stk:'50–200 kg',aba:'',abn:'',wing:'098765432',desc:'Traditional Khmer silk weaving cooperative, 3rd generation artisans.',fb:'',st:'pending',sub:'2026-05-18T11:10:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1614023342667-6f060e9d1e04?w=400'},{t:'id_back',s:null},{t:'selfie',s:'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400'},{t:'farm_photo',s:null},{t:'product_photo',s:'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400'}],_src:'seed'},
-  {id:'S003',fn:'Lyna Pech',em:'lyna@jasmine.kh',ph:'077111222',dob:'1985-01-15',sn:'Gold Jasmine Coop',cat:'Grains & Spices',prov:'Battambang',tin:'K000-777888',breg:'00-009876-MOC',stk:'More than 1 tonne',aba:'0007770',abn:'Lyna Pech',wing:'',desc:'Rice cooperative supplying premium jasmine rice to Phnom Penh and Siem Reap.',fb:'https://facebook.com/goldjasmine',st:'pending',sub:'2026-05-17T09:00:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'},{t:'tin_cert',s:null},{t:'biz_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'},{t:'product_photo',s:'https://images.unsplash.com/photo-1536304993881-ff86e0c9e9b7?w=400'}],_src:'seed'},
-  {id:'S004',fn:'Rith Panha',em:'rith@kampong.kh',ph:'012999888',dob:'1995-11-05',sn:'Kampong Fresh',cat:'Fruits',prov:'Kampong Cham',tin:'K000-001122',breg:'',stk:'50–200 kg',aba:'',abn:'',wing:'012999888',desc:'Fresh tropical fruits harvested daily from family orchards in Kampong Cham.',fb:'',st:'approved',sub:'2026-05-16T08:00:00Z',rev:'2026-05-16T12:00:00Z',note:'All documents verified. Welcome to Moutanak!',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'}],_src:'seed'},
-  {id:'S005',fn:'Mony Keo',em:'mony@sea.kh',ph:'099334455',dob:'1990-03-22',sn:'Coastal Catch Co.',cat:'Seafood & Fish',prov:'Sihanoukville',tin:'K000-998877',breg:'',stk:'500kg–1tonne',aba:'0009988',abn:'Mony Keo',wing:'',desc:'Daily fresh seafood from local Sihanoukville fishermen.',fb:'',st:'rejected',sub:'2026-05-15T07:00:00Z',rev:'2026-05-15T14:00:00Z',note:'TIN certificate image too blurry to verify. Please resubmit a clear scan.',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:null},{t:'selfie',s:null},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:null},{t:'farm_photo',s:null}],_src:'seed'},
+  {id:'S001',fn:'Vanna Sok',em:'vanna@farm.kh',ph:'012345678',dob:'1988-04-12',sn:"Vanna's Spicy Farm",cat:'Vegetables & Herbs',prov:'Kampot',tin:'K000-123456',breg:'',stk:'200–500 kg',aba:'0001234',abn:'Vanna Sok',wing:'',desc:'Family-run organic spice farm in Kampot.',fb:'https://facebook.com/vannasfarm',st:'pending',sub:'2026-05-18T08:22:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{t:'product_photo',s:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'}],_src:'seed'},
+  {id:'S002',fn:'Dara Chhan',em:'dara@weave.kh',ph:'098765432',dob:'1992-07-30',sn:'The Khmer Weaver',cat:'Artisan Crafts',prov:'Takeo',tin:'K000-654321',breg:'00-001234-MOC',stk:'50–200 kg',aba:'',abn:'',wing:'098765432',desc:'Traditional Khmer silk weaving cooperative.',fb:'',st:'pending',sub:'2026-05-18T11:10:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1614023342667-6f060e9d1e04?w=400'},{t:'id_back',s:null},{t:'selfie',s:'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400'},{t:'farm_photo',s:null},{t:'product_photo',s:'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400'}],_src:'seed'},
+  {id:'S003',fn:'Lyna Pech',em:'lyna@jasmine.kh',ph:'077111222',dob:'1985-01-15',sn:'Gold Jasmine Coop',cat:'Grains & Spices',prov:'Battambang',tin:'K000-777888',breg:'00-009876-MOC',stk:'More than 1 tonne',aba:'0007770',abn:'Lyna Pech',wing:'',desc:'Rice cooperative supplying premium jasmine rice.',fb:'https://facebook.com/goldjasmine',st:'pending',sub:'2026-05-17T09:00:00Z',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400'},{t:'farm_photo',s:'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400'},{t:'product_photo',s:'https://images.unsplash.com/photo-1536304993881-ff86e0c9e9b7?w=400'}],_src:'seed'},
+  {id:'S004',fn:'Rith Panha',em:'rith@kampong.kh',ph:'012999888',dob:'1995-11-05',sn:'Kampong Fresh',cat:'Fruits',prov:'Kampong Cham',tin:'K000-001122',breg:'',stk:'50–200 kg',aba:'',abn:'',wing:'012999888',desc:'Fresh tropical fruits from Kampong Cham.',fb:'',st:'approved',sub:'2026-05-16T08:00:00Z',rev:'2026-05-16T12:00:00Z',note:'All documents verified. Welcome!',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'selfie',s:'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400'},{t:'tin_cert',s:null},{t:'address_proof',s:null},{t:'store_photo',s:'https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=400'}],_src:'seed'},
+  {id:'S005',fn:'Mony Keo',em:'mony@sea.kh',ph:'099334455',dob:'1990-03-22',sn:'Coastal Catch Co.',cat:'Seafood & Fish',prov:'Sihanoukville',tin:'K000-998877',breg:'',stk:'500kg–1tonne',aba:'0009988',abn:'Mony Keo',wing:'',desc:'Daily fresh seafood from Sihanoukville.',fb:'',st:'rejected',sub:'2026-05-15T07:00:00Z',rev:'2026-05-15T14:00:00Z',note:'TIN certificate image too blurry.',docs:[{t:'id_front',s:'https://images.unsplash.com/photo-1642615703316-e3c29bbb0deb?w=400'},{t:'id_back',s:null},{t:'selfie',s:null},{t:'tin_cert',s:null},{t:'address_proof',s:null}],_src:'seed'},
 ];
 
-// ─────────────────────────────────────────────
-//  MAP localStorage seller_requests → internal format
-//  The registration form now saves doc_* base64 fields.
-//  We map them into the docs[] array so buildDetail can render them.
-// ─────────────────────────────────────────────
 function lsToSD(req) {
-  const fn = req.sellerName || req.username || req.name || (req.email ? req.email.split('@')[0] : 'Unknown');
-  const sn = req.storeName || 'Unnamed Store';
-  const id = 'LS-' + (req.id || req.userId || Math.random().toString(36).slice(2,7));
-  const st = (req.status || 'pending').toLowerCase();
-
-  let sub = req.submittedAt || req.createdAt || req.sub || new Date().toISOString();
-  if (!/T/.test(sub)) {
-    const parsed = Date.parse(sub);
-    sub = parsed ? new Date(parsed).toISOString() : new Date().toISOString();
-  }
-
-  // ── Build docs array from doc_* fields saved by the registration form ──
-  // Each entry: { t: doc_type_key, s: base64_data_url_or_null }
-  const docMap = [
-    { t: 'id_front',      key: 'doc_id_front' },
-    { t: 'id_back',       key: 'doc_id_back' },
-    { t: 'selfie',        key: 'doc_selfie' },
-    { t: 'tin_cert',      key: 'doc_tin_cert' },
-    { t: 'biz_cert',      key: 'doc_biz_cert' },
-    { t: 'address_proof', key: 'doc_address_proof' },
-    { t: 'store_photo',   key: 'doc_store_photo' },
-    { t: 'farm_photo',    key: 'doc_farm_photo' },
-  ];
-  const docs = docMap.map(({ t, key }) => ({ t, s: req[key] || null }));
-
-  // Product photos come as an array; add each as a separate doc entry
-  if (Array.isArray(req.doc_product_photos)) {
-    req.doc_product_photos.forEach((b64, i) => {
-      docs.push({ t: 'product_photo', s: b64 || null });
-    });
-  }
-
-  return {
-    id,
-    fn,
-    em:   req.email || '—',
-    ph:   req.phone || req.phoneNumber || '',
-    dob:  req.dob || '—',
-    sn,
-    cat:  req.category || req.productCategory || '—',
-    prov: req.province || req.address || req.city || '—',
-    tin:  req.tin || req.tinNumber || '—',
-    breg: req.businessReg || req.breg || '',
-    stk:  req.stockVolume || req.stock || '—',
-    aba:  req.abaAccount || req.aba || '',
-    abn:  req.abaName || req.abn || '',
-    acl:  req.aclAccount || '',
-    acln: req.aclName || '',
-    wing: req.wingAccount || req.wing || '',
-    desc: req.description || req.desc || '',
-    fb:   req.facebook || req.fb || '',
-    st,
-    sub,
-    rev:  req.rev || req.reviewedAt || '',
-    note: req.note || req.adminNote || '',
-    docs,
-    _src:    'ls',
-    _lsId:   req.id,
-    _userId: req.userId,
-  };
+  const fn = req.sellerName||req.username||req.name||(req.email?req.email.split('@')[0]:'Unknown');
+  const sn = req.storeName||'Unnamed Store';
+  const id = 'LS-'+(req.id||Math.random().toString(36).slice(2,7));
+  const st = (req.status||'pending').toLowerCase();
+  let sub = req.submittedAt||req.createdAt||new Date().toISOString();
+  if(!/T/.test(sub)){const p=Date.parse(sub);sub=p?new Date(p).toISOString():new Date().toISOString();}
+  const docMap=[{t:'id_front',key:'doc_id_front'},{t:'id_back',key:'doc_id_back'},{t:'selfie',key:'doc_selfie'},{t:'tin_cert',key:'doc_tin_cert'},{t:'biz_cert',key:'doc_biz_cert'},{t:'address_proof',key:'doc_address_proof'},{t:'store_photo',key:'doc_store_photo'},{t:'farm_photo',key:'doc_farm_photo'}];
+  const docs=docMap.map(({t,key})=>({t,s:req[key]||null}));
+  if(Array.isArray(req.doc_product_photos))req.doc_product_photos.forEach(b64=>docs.push({t:'product_photo',s:b64||null}));
+  return{id,fn,em:req.email||'—',ph:req.phone||'',dob:req.dob||'—',sn,cat:req.category||'—',prov:req.province||'—',tin:req.tin||'—',breg:req.businessReg||'',stk:req.stockVolume||'—',aba:req.abaAccount||'',abn:req.abaName||'',wing:req.wingAccount||'',desc:req.description||'',fb:req.facebook||'',st,sub,rev:req.rev||'',note:req.note||'',docs,_src:'ls',_lsId:req.id,_userId:req.userId};
 }
 
-// ─────────────────────────────────────────────
-//  MERGED DATA
-// ─────────────────────────────────────────────
-function loadSD() {
-  const ls = JSON.parse(localStorage.getItem('seller_requests') || '[]');
-  return [...ls.map(lsToSD), ...SEED];
+function loadSD(){const ls=JSON.parse(localStorage.getItem('seller_requests')||'[]');return[...ls.map(lsToSD),...SEED];}
+let SD=loadSD();
+
+function syncToLS(entry,newStatus,note){
+  if(entry._src!=='ls')return;
+  const ls=JSON.parse(localStorage.getItem('seller_requests')||'[]');
+  const updated=ls.map(r=>{if(r.id===entry._lsId){r.status=newStatus;if(note)r.note=note;if(entry._userId)localStorage.setItem('seller_'+entry._userId,newStatus);}return r;});
+  localStorage.setItem('seller_requests',JSON.stringify(updated));
 }
 
-let SD = loadSD();
-
-function syncToLS(entry, newStatus, note) {
-  if (entry._src !== 'ls') return;
-  const ls = JSON.parse(localStorage.getItem('seller_requests') || '[]');
-  const updated = ls.map(r => {
-    if (r.id === entry._lsId) {
-      r.status = newStatus;
-      if (note) r.note = note;
-      if (entry._userId) localStorage.setItem('seller_' + entry._userId, newStatus);
-    }
-    return r;
-  });
-  localStorage.setItem('seller_requests', JSON.stringify(updated));
-}
-
-// ─────────────────────────────────────────────
-//  NOTIFICATIONS
-// ─────────────────────────────────────────────
-const NOTIFS = [
-  {id:'n1',tp:'n',ic:'fa-store',title:"New: Vanna's Spicy Farm",msg:'Vanna Sok — Kampot, Vegetables',time:'8 min ago',read:false,aid:'S001'},
-  {id:'n2',tp:'n',ic:'fa-store',title:'New: The Khmer Weaver',msg:'Dara Chhan — Takeo, Crafts',time:'2 hrs ago',read:false,aid:'S002'},
-  {id:'n3',tp:'ok',ic:'fa-check',title:'Kampong Fresh approved',msg:"Rith Panha's store is now live.",time:'Yesterday',read:true,aid:'S004'},
-  {id:'n4',tp:'no',ic:'fa-xmark',title:'Coastal Catch rejected',msg:'Mony Keo — TIN certificate issue.',time:'2 days ago',read:true,aid:'S005'},
-  {id:'n5',tp:'n',ic:'fa-boxes-stacked',title:'Low stock: Dried Mango 250g',msg:'Only 18 units remaining.',time:'3 hrs ago',read:false,aid:null},
+// ── NOTIFICATIONS ──
+const NOTIFS=[
+  {id:'n1',tp:'n',ic:'fa-store',title:"New: Vanna's Spicy Farm",msg:'Vanna Sok — Kampot',time:'8 min ago',read:false,aid:'S001'},
+  {id:'n2',tp:'n',ic:'fa-store',title:'New: The Khmer Weaver',msg:'Dara Chhan — Takeo',time:'2 hrs ago',read:false,aid:'S002'},
+  {id:'n3',tp:'ok',ic:'fa-check',title:'Kampong Fresh approved',msg:"Rith Panha's store is live.",time:'Yesterday',read:true,aid:'S004'},
+  {id:'n4',tp:'no',ic:'fa-xmark',title:'Coastal Catch rejected',msg:'TIN certificate issue.',time:'2 days ago',read:true,aid:'S005'},
+  {id:'n5',tp:'n',ic:'fa-star',title:'5 reviews flagged',msg:'Require moderation action.',time:'3 hrs ago',read:false,aid:null},
 ];
-
-const ACT = [
+const ACT=[
   {ic:'✅',h:'<strong>Kampong Fresh</strong> approved by Admin',t:'Yesterday 12:00'},
   {ic:'❌',h:'<strong>Coastal Catch Co.</strong> rejected — TIN issue',t:'2 days ago 14:00'},
   {ic:'🆕',h:'<strong>Gold Jasmine Coop</strong> submitted application',t:'3 days ago 09:00'},
   {ic:'📦',h:'Order <strong>#10043</strong> cancelled by customer',t:'3 days ago 11:30'},
-  {ic:'💰',h:'Payout processed for <strong>34 sellers</strong> · $28,400',t:'1 week ago'},
+  {ic:'💰',h:'Payout processed for <strong>34 sellers</strong>',t:'1 week ago'},
 ];
+const DL={id_front:'ID Front',id_back:'ID Back',selfie:'Selfie+ID',tin_cert:'TIN Cert',biz_cert:'Biz Reg',address_proof:'Address',store_photo:'Store',farm_photo:'Farm',product_photo:'Product'};
 
-// Human-readable labels for document types
-const DL = {
-  id_front:'ID Front', id_back:'ID Back', selfie:'Selfie+ID',
-  tin_cert:'TIN Cert', biz_cert:'Biz Reg', address_proof:'Address',
-  store_photo:'Store', farm_photo:'Farm', product_photo:'Product'
-};
-
-// ─────────────────────────────────────────────
-//  SIDEBAR / NAV
-// ─────────────────────────────────────────────
+// ── SIDEBAR ──
 function openMobSB(){document.getElementById('sb').classList.add('mob-open');document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden';}
 function closeMobSB(){document.getElementById('sb').classList.remove('mob-open');document.getElementById('overlay').classList.remove('open');document.body.style.overflow='';}
 function toggleSB(){const s=document.getElementById('sb');s.classList.toggle('col');document.getElementById('coli').className=s.classList.contains('col')?'fa-solid fa-angles-right':'fa-solid fa-angles-left';}
 
-let prevPage = 'sellers';
-function showPage(id, el) {
+let prevPage='seller-requests';
+function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const T = {dashboard:'Dashboard',sellers:'Seller Requests','seller-detail':'Seller Detail',products:'Products',orders:'Orders',users:'Users',settings:'Settings'};
-  document.getElementById('bct').textContent = T[id] || id;
-  document.getElementById('bcd').textContent = '';
-  if (el) el.classList.add('active');
-  if (id === 'sellers') { SD = loadSD(); renderS(); }
-  document.querySelector('.content').scrollTop = 0;
+  const T={dashboard:'Dashboard','seller-requests':'Seller Requests','seller-detail':'Seller Detail',sellers:'Sellers',products:'Products',orders:'Orders',users:'Users',reviews:'Reviews',payments:'Payments',transactions:'Transactions',reports:'Reports',settings:'Settings'};
+  document.getElementById('bct').textContent=T[id]||id;
+  document.getElementById('bcd').textContent='';
+  if(el)el.classList.add('active');
+  if(id==='seller-requests'){SD=loadSD();renderS();}
+  document.querySelector('.content').scrollTop=0;
   closeMobSB();
+  initPageCharts(id);
 }
 
-function openDetail(id) {
-  prevPage = document.querySelector('.page.active')?.id || 'sellers';
-  const s = SD.find(e => e.id === id);
-  if (!s) return;
+function openDetail(id){
+  prevPage=document.querySelector('.page.active')?.id||'seller-requests';
+  const s=SD.find(e=>e.id===id);if(!s)return;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('seller-detail').classList.add('active');
-  document.querySelector('.ni[onclick*="sellers"]').classList.add('active');
-  document.getElementById('bct').textContent = 'Seller Requests';
-  document.getElementById('bcd').innerHTML = ' <span style="color:var(--t3)">›</span> <strong style="color:var(--t2)">' + x(s.sn) + '</strong>';
-  document.getElementById('sdc').innerHTML = buildDetail(s);
-  document.querySelector('.content').scrollTop = 0;
+  document.querySelector('.ni[onclick*="seller-requests"]').classList.add('active');
+  document.getElementById('bct').textContent='Seller Requests';
+  document.getElementById('bcd').innerHTML=' <span style="color:var(--t3)">›</span> <strong style="color:var(--t2)">'+x(s.sn)+'</strong>';
+  document.getElementById('sdc').innerHTML=buildDetail(s);
+  document.querySelector('.content').scrollTop=0;
 }
+function goBack(){showPage(prevPage,document.querySelector('.ni[onclick*="'+prevPage+'"]'));}
 
-function goBack() { showPage(prevPage, document.querySelector('.ni[onclick*="' + prevPage + '"]')); }
-
-// ─────────────────────────────────────────────
-//  SELLERS TABLE
-// ─────────────────────────────────────────────
-let sf = '', ss = '', sp = 1;
-const PP = 8;
-
-function getF() {
-  return SD.filter(s => {
-    const ms = !sf || s.st === sf;
-    const q = ss.toLowerCase();
-    const mq = !q || s.fn.toLowerCase().includes(q) || s.sn.toLowerCase().includes(q) || s.tin.toLowerCase().includes(q) || s.em.toLowerCase().includes(q);
-    return ms && mq;
-  });
-}
-
-function renderS() {
-  const data = getF();
-  const start = (sp - 1) * PP;
-  const page = data.slice(start, start + PP);
-  document.getElementById('stbody').innerHTML = page.length ? page.map(s => `
+// ── SELLERS TABLE ──
+let sf='',ss='',sp=1;
+const PP=8;
+function getF(){return SD.filter(s=>{const ms=!sf||s.st===sf;const q=ss.toLowerCase();const mq=!q||s.fn.toLowerCase().includes(q)||s.sn.toLowerCase().includes(q)||s.tin.toLowerCase().includes(q)||s.em.toLowerCase().includes(q);return ms&&mq;});}
+function renderS(){
+  const data=getF();const start=(sp-1)*PP;const page=data.slice(start,start+PP);
+  document.getElementById('stbody').innerHTML=page.length?page.map(s=>`
     <tr onclick="openDetail('${s.id}')">
-      <td><div class="cell">
-        <div class="av">${(s.fn||'?')[0].toUpperCase()}</div>
-        <div>
-          <div class="cn">${x(s.fn)}${s._src==='ls'?'<span class="ls-badge"><i class="fa-solid fa-wifi" style="font-size:8px"></i> Live</span>':''}</div>
-          <div class="cm">${x(s.em)}</div>
-        </div>
-      </div></td>
+      <td><div class="cell"><div class="av">${(s.fn||'?')[0].toUpperCase()}</div><div><div class="cn">${x(s.fn)}${s._src==='ls'?'<span class="ls-badge"><i class="fa-solid fa-wifi" style="font-size:8px"></i> Live</span>':''}</div><div class="cm">${x(s.em)}</div></div></div></td>
       <td><span style="font-weight:600">${x(s.sn)}</span></td>
       <td><span class="badge bs" style="font-size:9px">${x(s.cat)}</span></td>
       <td style="color:var(--t2);font-size:12px">${x(s.prov)}</td>
@@ -677,295 +986,120 @@ function renderS() {
         <button class="ab av2" onclick="openDetail('${s.id}')">View</button>
         ${s.st==='pending'?`<button class="ab aap" onclick="qd('${s.id}','approved')"><i class="fa-solid fa-check"></i></button><button class="ab arj" onclick="qd('${s.id}','rejected')"><i class="fa-solid fa-xmark"></i></button>`:''}
       </td>
-    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--t3);font-size:13px"><i class="fa-solid fa-inbox" style="font-size:26px;display:block;margin-bottom:10px;opacity:.3"></i>No applications found</td></tr>';
-
-  const tp = Math.ceil(data.length / PP);
-  document.getElementById('spgi').textContent = `Showing ${Math.min(start + PP, data.length)} of ${data.length}`;
-  document.getElementById('spgb').innerHTML = Array.from({length:tp},(_,i) => `<button class="pb ${sp===i+1?'ap':''}" onclick="gp(${i+1})">${i+1}</button>`).join('') +
-    `<button class="pb" onclick="gp(${Math.min(sp+1,tp)})"><i class="fa-solid fa-chevron-right"></i></button>`;
+    </tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--t3);font-size:13px"><i class="fa-solid fa-inbox" style="font-size:26px;display:block;margin-bottom:10px;opacity:.3"></i>No applications found</td></tr>';
+  const tp=Math.ceil(data.length/PP);
+  document.getElementById('spgi').textContent=`Showing ${Math.min(start+PP,data.length)} of ${data.length}`;
+  document.getElementById('spgb').innerHTML=Array.from({length:tp},(_,i)=>`<button class="pb ${sp===i+1?'ap':''}" onclick="gp(${i+1})">${i+1}</button>`).join('')+`<button class="pb" onclick="gp(${Math.min(sp+1,tp)})"><i class="fa-solid fa-chevron-right"></i></button>`;
 }
-
-function gp(n) { sp = n; renderS(); }
-function filterS(v, btn) { sf = v; sp = 1; document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderS(); }
-function searchS(v) { ss = v; sp = 1; renderS(); }
-
-function qd(id, st) {
-  if (st === 'rejected') {
-    const n = prompt('Rejection reason (required):');
-    if (!n) return;
-    decide(id, st, n);
-  } else {
-    decide(id, st, 'Verified by admin.');
-  }
-}
-
-function decide(id, st, note) {
-  const s = SD.find(e => e.id === id);
-  if (!s) return;
-  s.st = st;
-  s.note = note;
-  s.rev = new Date().toISOString();
-  syncToLS(s, st, note);
-  updPend(); renderS(); renderPrev(); renderAct();
+function gp(n){sp=n;renderS();}
+function filterS(v,btn){sf=v;sp=1;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderS();}
+function searchS(v){ss=v;sp=1;renderS();}
+function qd(id,st){if(st==='rejected'){const n=prompt('Rejection reason (required):');if(!n)return;decide(id,st,n);}else{decide(id,st,'Verified by admin.');}}
+function decide(id,st,note){
+  const s=SD.find(e=>e.id===id);if(!s)return;
+  s.st=st;s.note=note;s.rev=new Date().toISOString();
+  syncToLS(s,st,note);updPend();renderS();renderPrev();renderAct();
   NOTIFS.unshift({id:'n'+Date.now(),tp:st==='approved'?'ok':'no',ic:st==='approved'?'fa-check':'fa-xmark',title:st==='approved'?`${s.sn} approved`:`${s.sn} rejected`,msg:note,time:'Just now',read:false,aid:id});
-  renderNotifs(); updDot();
-  showToast(st === 'approved' ? `${s.sn} approved!` : `${s.sn} rejected`);
-  goBack();
+  renderNotifs();updDot();showToast(st==='approved'?`${s.sn} approved!`:`${s.sn} rejected`);goBack();
 }
+function updPend(){const n=SD.filter(s=>s.st==='pending').length;const b=document.getElementById('pbadge');b.textContent=n;b.style.display=n?'':'none';document.getElementById('dpend').textContent=n;}
+function exportCSV(){const rows=[['ID','Name','Email','Store','Category','Province','TIN','Status']];SD.forEach(s=>rows.push([s.id,s.fn,s.em,s.sn,s.cat,s.prov,s.tin,s.st]));const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='sellers.csv';a.click();showToast('CSV exported!');}
 
-function updPend() {
-  const n = SD.filter(s => s.st === 'pending').length;
-  const b = document.getElementById('pbadge');
-  b.textContent = n;
-  b.style.display = n ? '' : 'none';
-  document.getElementById('dpend').textContent = n;
+// ── DETAIL PAGE ──
+function buildDetail(s){
+  const identityDocs=s.docs.filter(d=>d.t!=='product_photo');
+  const productDocs=s.docs.filter(d=>d.t==='product_photo');
+  const miss=identityDocs.filter(d=>!d.s).length;
+  const docCards=identityDocs.length?identityDocs.map(d=>{const hasSrc=!!d.s;return`<div class="dcard"${hasSrc?` onclick="openLB('${d.s.startsWith('data:')?'data-lb-'+d.t:d.s}')"`:''} style="${!hasSrc?'opacity:.4;cursor:default':''}">${hasSrc?`<img class="dthumb" src="${d.s}" onerror="this.outerHTML='<div class=dph><i class=fa-solid\\ fa-image></i></div>'"/>`:'<div class="dph"><i class="fa-solid fa-file-slash"></i></div>'}<div class="dfoot"><span class="dname">${DL[d.t]||d.t}</span>${hasSrc?'<span style="font-size:10px;color:var(--sky)"><i class="fa-solid fa-expand"></i></span>':'<span style="font-size:9px;color:var(--red);font-weight:700">Missing</span>'}</div></div>`;}).join(''):'<p style="font-size:12px;color:var(--t3);padding:8px 0">No documents uploaded yet.</p>';
+  const prodStrip=productDocs.length?`<div style="margin-top:10px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">Product Photos (${productDocs.length})</div><div class="prod-strip">${productDocs.map((d,i)=>d.s?`<img class="prod-thumb" src="${d.s}" onclick="openLB('${d.s}')" onerror="this.style.display='none'" title="Product ${i+1}"/>`:'').join('')}</div></div>`:'';
+  const pay=[s.aba?`ABA: ${s.aba}`:null,s.wing?`Wing: ${s.wing}`:null].filter(Boolean).join(' · ')||'<span style="color:var(--red)">None on file</span>';
+  const sc=s.st==='approved'?'var(--gd)':s.st==='rejected'?'var(--red)':'var(--orange)';
+  const sb=s.st==='approved'?'var(--gdim)':s.st==='rejected'?'var(--rdim)':'var(--odim)';
+  const sl=s.st==='approved'?'Approved':s.st==='rejected'?'Rejected':'Pending Review';
+  return`<div class="dhero"><div class="dav">${(s.fn||'?')[0].toUpperCase()}</div><div class="dhi"><div class="dsn">${x(s.sn)}</div><div class="dss">${x(s.fn)} · Submitted ${fd(s.sub)}</div><div class="dtags"><span class="badge bs">${x(s.cat)}</span><span class="badge" style="background:rgba(12,43,24,.06);color:var(--t2)"><i class="fa-solid fa-location-dot" style="font-size:9px"></i> ${x(s.prov)}</span><span class="badge" style="background:${sb};color:${sc}">${sl}</span></div></div>${s.st==='pending'?`<button class="bap" style="padding:9px 18px;font-size:12px;white-space:nowrap;flex:none" onclick="scrollToReview()"><i class="fa-solid fa-pen-to-square" style="margin-right:5px"></i>Review</button>`:''}</div><div class="dgrid"><div style="display:flex;flex-direction:column;gap:14px"><div class="dc"><h3><i class="fa-solid fa-circle-user" style="color:var(--green)"></i>Personal Information</h3><div class="ig"><div class="ii"><div class="ik">Full Name</div><div class="iv">${x(s.fn)}</div></div>${s.dob&&s.dob!=='—'?`<div class="ii"><div class="ik">Date of Birth</div><div class="iv">${s.dob}</div></div>`:''}<div class="ii"><div class="ik">Email</div><div class="iv">${x(s.em)}</div></div><div class="ii"><div class="ik">Phone</div><div class="iv">${s.ph?'+855 '+s.ph:'—'}</div></div></div></div><div class="dc"><h3><i class="fa-solid fa-store" style="color:var(--orange)"></i>Store Information</h3><div class="ig"><div class="ii"><div class="ik">Store Name</div><div class="iv">${x(s.sn)}</div></div><div class="ii"><div class="ik">Category</div><div class="iv">${x(s.cat)}</div></div><div class="ii"><div class="ik">Province</div><div class="iv">${x(s.prov)}</div></div>${s.stk&&s.stk!=='—'?`<div class="ii"><div class="ik">Stock Volume</div><div class="iv">${x(s.stk)}</div></div>`:''}<div class="ii" style="grid-column:1/-1"><div class="ik">Payout Methods</div><div class="iv">${pay}</div></div></div>${s.desc?`<div style="margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--t2);line-height:1.6">${x(s.desc)}</div>`:''}</div></div><div style="display:flex;flex-direction:column;gap:14px"><div class="dc"><h3><i class="fa-solid fa-file-shield" style="color:var(--sky)"></i>Documents ${identityDocs.length?`<span style="font-size:10px;background:${miss>0?'var(--rdim)':'var(--gdim)'};color:${miss>0?'var(--red)':'var(--gd)'};padding:2px 7px;border-radius:99px;font-weight:700;margin-left:4px">${identityDocs.length-miss}/${identityDocs.length}</span>`:''}</h3><div class="docsw">${docCards}</div>${prodStrip}</div>${s.st==='pending'?`<div class="rp" id="rsec"><h3><i class="fa-solid fa-pen-to-square" style="color:var(--orange)"></i>Your Decision</h3><textarea id="rnote" placeholder="Add a note or rejection reason…"></textarea><div class="rrow"><button class="bap" onclick="submitD('${s.id}','approved')"><i class="fa-solid fa-check" style="margin-right:5px"></i>Approve</button><button class="brj" onclick="submitD('${s.id}','rejected')"><i class="fa-solid fa-xmark" style="margin-right:5px"></i>Reject</button></div></div>`:s.note?`<div class="deccard"><h3><i class="fa-solid fa-clipboard-check" style="color:${s.st==='approved'?'var(--green)':'var(--red)'}"></i>Decision</h3><div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><span class="badge ${s.st==='approved'?'bg':'br2'}">${s.st==='approved'?'Approved':'Rejected'}</span><span style="font-size:11px;color:var(--t3)">${fd(s.rev)}</span></div><p style="font-size:13px;color:var(--t2);line-height:1.6;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px">${x(s.note)}</p></div>`:''}</div></div>`;
 }
+function openLB(src){document.getElementById('lbimg').src=src;document.getElementById('lb').classList.add('open');}
+function closeLB(){document.getElementById('lb').classList.remove('open');}
+function scrollToReview(){const el=document.getElementById('rsec');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
+function submitD(id,st){const note=document.getElementById('rnote')?.value.trim()||'';if(st==='rejected'&&!note){document.getElementById('rnote').style.borderColor='var(--red)';showToast('Please enter a rejection reason.',true);return;}decide(id,st,note||'Verified by admin.');}
 
-function exportCSV() {
-  const rows = [['ID','Name','Email','Store','Category','Province','TIN','Status']];
-  SD.forEach(s => rows.push([s.id, s.fn, s.em, s.sn, s.cat, s.prov, s.tin, s.st]));
-  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'sellers.csv';
-  a.click();
-  showToast('CSV exported!');
+// ── REPORTS TABS ──
+function switchReport(tab,btn){
+  ['revenue','sellers','customers','products'].forEach(t=>{const el=document.getElementById('rep-'+t);if(el)el.style.display=t===tab?'block':'none';});
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  initRepChart(tab);
 }
-
-// ─────────────────────────────────────────────
-//  DETAIL PAGE
-//  Now renders base64 images from LS entries,
-//  plus product photo strips for multiple photos
-// ─────────────────────────────────────────────
-function buildDetail(s) {
-  // Separate product photos (can be multiple) from identity docs
-  const identityDocs = s.docs.filter(d => d.t !== 'product_photo');
-  const productDocs  = s.docs.filter(d => d.t === 'product_photo');
-
-  const miss = identityDocs.filter(d => !d.s).length;
-
-  const docCards = identityDocs.length ? identityDocs.map(d => {
-    const hasSrc = !!d.s;
-    return `<div class="dcard"${hasSrc ? ` onclick="openLB('${d.s.startsWith('data:') ? 'data-lb-' + d.t : d.s}')"` : ''} style="${!hasSrc?'opacity:.4;cursor:default':''}">
-      ${hasSrc
-        ? `<img class="dthumb" src="${d.s.startsWith('data:') ? d.s : d.s}" onerror="this.outerHTML='<div class=dph><i class=fa-solid\\ fa-image></i></div>'"/>`
-        : '<div class="dph"><i class="fa-solid fa-file-slash"></i></div>'}
-      <div class="dfoot">
-        <span class="dname">${DL[d.t]||d.t}</span>
-        ${hasSrc
-          ? '<span style="font-size:10px;color:var(--sky)"><i class="fa-solid fa-expand"></i></span>'
-          : '<span style="font-size:9px;color:var(--red);font-weight:700">Missing</span>'}
-      </div>
-    </div>`;
-  }).join('') : '<p style="font-size:12px;color:var(--t3);padding:8px 0">No documents uploaded yet.</p>';
-
-  // Product photo strip (for multiple uploads)
-  const prodStrip = productDocs.length ? `
-    <div style="margin-top:10px">
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">
-        Product Photos (${productDocs.length})
-      </div>
-      <div class="prod-strip">
-        ${productDocs.map((d, i) => d.s
-          ? `<img class="prod-thumb" src="${d.s}" onclick="openLB('${d.s}')" onerror="this.style.display='none'" title="Product ${i+1}"/>`
-          : ''
-        ).join('')}
-      </div>
-    </div>` : '';
-
-  const pay = [
-    s.aba  ? `ABA: ${s.aba}`   : null,
-    s.acl  ? `ACLEDA: ${s.acl}` : null,
-    s.wing ? `Wing: ${s.wing}` : null,
-  ].filter(Boolean).join(' · ') || '<span style="color:var(--red)">None on file</span>';
-
-  const sc = s.st==='approved'?'var(--gd)':s.st==='rejected'?'var(--red)':'var(--orange)';
-  const sb = s.st==='approved'?'var(--gdim)':s.st==='rejected'?'var(--rdim)':'var(--odim)';
-  const sl = s.st==='approved'?'Approved':s.st==='rejected'?'Rejected':'Pending Review';
-
-  return `<div class="dhero">
-    <div class="dav">${(s.fn||'?')[0].toUpperCase()}</div>
-    <div class="dhi">
-      <div class="dsn">${x(s.sn)}</div>
-      <div class="dss">${x(s.fn)} &middot; Submitted ${fd(s.sub)}${s._src==='ls'?' &middot; <span style="color:var(--sky);font-weight:700;font-size:11px"><i class="fa-solid fa-wifi" style="font-size:9px"></i> From Registration Form</span>':''}</div>
-      <div class="dtags">
-        <span class="badge bs">${x(s.cat)}</span>
-        <span class="badge" style="background:rgba(12,43,24,.06);color:var(--t2)"><i class="fa-solid fa-location-dot" style="font-size:9px"></i> ${x(s.prov)}</span>
-        ${s.tin && s.tin!=='—'?`<span class="badge bs">${x(s.tin)}</span>`:''}
-        <span class="badge" style="background:${sb};color:${sc}">${sl}</span>
-      </div>
-    </div>
-    ${s.st==='pending'?`<button class="bap" style="padding:9px 18px;font-size:12px;white-space:nowrap;flex:none" onclick="scrollToReview()"><i class="fa-solid fa-pen-to-square" style="margin-right:5px"></i>Review</button>`:''}
-  </div>
-  <div class="dgrid">
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="dc"><h3><i class="fa-solid fa-circle-user" style="color:var(--green)"></i>Personal Information</h3>
-        <div class="ig">
-          <div class="ii"><div class="ik">Full Name</div><div class="iv">${x(s.fn)}</div></div>
-          ${s.dob&&s.dob!=='—'?`<div class="ii"><div class="ik">Date of Birth</div><div class="iv">${s.dob}</div></div>`:''}
-          <div class="ii"><div class="ik">Email</div><div class="iv">${x(s.em)}</div></div>
-          <div class="ii"><div class="ik">Phone</div><div class="iv">${s.ph ? '+855 '+s.ph : '—'}</div></div>
-        </div>
-      </div>
-      <div class="dc"><h3><i class="fa-solid fa-store" style="color:var(--orange)"></i>Store Information</h3>
-        <div class="ig">
-          <div class="ii"><div class="ik">Store Name</div><div class="iv">${x(s.sn)}</div></div>
-          <div class="ii"><div class="ik">Category</div><div class="iv">${x(s.cat)}</div></div>
-          <div class="ii"><div class="ik">Province / Address</div><div class="iv">${x(s.prov)}</div></div>
-          ${s.stk&&s.stk!=='—'?`<div class="ii"><div class="ik">Stock Volume</div><div class="iv">${x(s.stk)}</div></div>`:''}
-          ${s.tin&&s.tin!=='—'?`<div class="ii"><div class="ik">TIN Number</div><div class="iv" style="color:var(--sky)">${x(s.tin)}</div></div>`:''}
-          ${s.breg?`<div class="ii"><div class="ik">Business Reg</div><div class="iv">${x(s.breg)}</div></div>`:''}
-          <div class="ii" style="grid-column:1/-1"><div class="ik">Payout Methods</div><div class="iv">${pay}</div></div>
-        </div>
-        ${s.desc?`<div style="margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--t2);line-height:1.6">${x(s.desc)}</div>`:''}
-        ${s.fb?`<div style="margin-top:9px"><a href="${s.fb}" target="_blank" style="font-size:12px;color:var(--sky);font-weight:600;text-decoration:none"><i class="fa-brands fa-facebook" style="margin-right:5px"></i>${x(s.fb)}</a></div>`:''}
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="dc"><h3><i class="fa-solid fa-file-shield" style="color:var(--sky)"></i>Documents
-        ${identityDocs.length?`<span style="font-size:10px;background:${miss>0?'var(--rdim)':'var(--gdim)'};color:${miss>0?'var(--red)':'var(--gd)'};padding:2px 7px;border-radius:99px;font-weight:700;margin-left:4px">${identityDocs.length-miss}/${identityDocs.length}</span>`:''}
-      </h3>
-        <div class="docsw">${docCards}</div>
-        ${prodStrip}
-      </div>
-      ${s.st==='pending'?`<div class="rp" id="rsec"><h3><i class="fa-solid fa-pen-to-square" style="color:var(--orange)"></i>Your Decision</h3>
-        <textarea id="rnote" placeholder="Add a note or rejection reason (required for rejection)…"></textarea>
-        <div class="rrow">
-          <button class="bap" onclick="submitD('${s.id}','approved')"><i class="fa-solid fa-check" style="margin-right:5px"></i>Approve</button>
-          <button class="brj" onclick="submitD('${s.id}','rejected')"><i class="fa-solid fa-xmark" style="margin-right:5px"></i>Reject</button>
-        </div>
-      </div>`:s.note?`<div class="deccard"><h3><i class="fa-solid fa-clipboard-check" style="color:${s.st==='approved'?'var(--green)':'var(--red)'}"></i>Decision</h3>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-          <span class="badge ${s.st==='approved'?'bg':'br2'}">${s.st==='approved'?'Approved':'Rejected'}</span>
-          <span style="font-size:11px;color:var(--t3)">${fd(s.rev)}</span>
-        </div>
-        <p style="font-size:13px;color:var(--t2);line-height:1.6;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px">${x(s.note)}</p>
-      </div>`:''}
-    </div>
-  </div>`;
-}
-
-// ─────────────────────────────────────────────
-//  LIGHTBOX — supports both URLs and base64 data URLs
-// ─────────────────────────────────────────────
-function openLB(src) {
-  // src might be a prefixed key 'data-lb-TYPE' — not used now,
-  // but kept for future use. Actual src is a full data URL or https URL.
-  document.getElementById('lbimg').src = src;
-  document.getElementById('lb').classList.add('open');
-}
-function closeLB() { document.getElementById('lb').classList.remove('open'); }
-
-function scrollToReview() { const el=document.getElementById('rsec'); if(el)el.scrollIntoView({behavior:'smooth',block:'center'}); }
-
-function submitD(id, st) {
-  const note = document.getElementById('rnote')?.value.trim() || '';
-  if (st==='rejected' && !note) {
-    document.getElementById('rnote').style.borderColor = 'var(--red)';
-    showToast('Please enter a rejection reason.', true);
-    return;
+const repChartRefs={};
+function initRepChart(tab){
+  const gc='rgba(200,230,200,.5)',tc='rgba(107,152,120,.6)',tf={family:'DM Sans',size:11};
+  if(tab==='revenue'){
+    if(!repChartRefs.rep1&&document.getElementById('repChart1')){
+      repChartRefs.rep1=new Chart(document.getElementById('repChart1'),{type:'line',data:{labels:Array.from({length:24},(_,i)=>`May ${i+1}`),datasets:[{label:'Revenue ($)',data:Array.from({length:24},()=>Math.floor(8000+Math.random()*6000)),borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.07)',fill:true,tension:.45,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf,maxTicksLimit:8}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+    }
+    if(!repChartRefs.rep2&&document.getElementById('repChart2')){
+      repChartRefs.rep2=new Chart(document.getElementById('repChart2'),{type:'doughnut',data:{labels:['Phnom Penh','Siem Reap','Battambang','Kampot','Other'],datasets:[{data:[38,22,18,12,10],backgroundColor:['#22C55E','#0EA5E9','#F97316','#8B5CF6','#94A3B8'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:'DM Sans',size:11},boxWidth:10,padding:10}}}}});
+    }
   }
-  decide(id, st, note || 'Verified by admin.');
-}
-
-// ─────────────────────────────────────────────
-//  NOTIFICATIONS
-// ─────────────────────────────────────────────
-function renderNotifs() {
-  const im = {n:'npi-n',ok:'npi-ok',no:'npi-no'};
-  document.getElementById('npl').innerHTML = NOTIFS.map(n=>`
-    <div class="npi ${n.read?'':'ur'}" onclick="nClick('${n.id}','${n.aid||''}')">
-      <div class="npic ${im[n.tp]}"><i class="fa-solid ${n.ic}" style="color:${n.tp==='n'?'var(--orange)':n.tp==='ok'?'var(--green)':'var(--red)'}"></i></div>
-      <div style="flex:1;min-width:0"><div class="nptit">${x(n.title)}</div><div class="npmsg">${x(n.msg)}</div><div class="nptm">${n.time}</div></div>
-      ${!n.read?'<div class="npdot"></div>':''}
-    </div>`).join('');
-}
-function toggleNotif() { const p=document.getElementById('npanel'); p.classList.toggle('open'); if(p.classList.contains('open'))renderNotifs(); }
-function markRead() { NOTIFS.forEach(n=>n.read=true); updDot(); renderNotifs(); }
-function updDot() { document.getElementById('ndot').style.display=NOTIFS.filter(n=>!n.read).length?'block':'none'; }
-function nClick(id, aid) { const n=NOTIFS.find(e=>e.id===id); if(n)n.read=true; updDot(); document.getElementById('npanel').classList.remove('open'); if(aid)openDetail(aid); renderNotifs(); }
-document.addEventListener('click', e => { if(!e.target.closest('#npanel')&&!e.target.closest('#ntog')) document.getElementById('npanel').classList.remove('open'); });
-
-// ─────────────────────────────────────────────
-//  DASHBOARD PREVIEW
-// ─────────────────────────────────────────────
-function renderPrev() {
-  const p = SD.filter(s=>s.st==='pending').slice(0, 3);
-  document.getElementById('dpreview').innerHTML = p.length ? p.map(s=>`
-    <tr onclick="openDetail('${s.id}')">
-      <td><div class="cell"><div class="av">${(s.fn||'?')[0].toUpperCase()}</div><div>
-        <div class="cn" style="font-size:12px">${x(s.fn)}${s._src==='ls'?'<span class="ls-badge">Live</span>':''}</div>
-        <div class="cm">${x(s.sn)}</div>
-      </div></div></td>
-      <td style="font-size:12px;color:var(--t2)">${s.prov}</td>
-      <td style="font-size:11px;color:var(--sky)">${s.tin&&s.tin!=='—'?s.tin:'—'}</td>
-      <td onclick="event.stopPropagation()" style="display:flex;gap:4px">
-        <button class="ab aap" style="padding:4px 9px;font-size:10px" onclick="qd('${s.id}','approved')">Approve</button>
-        <button class="ab arj" style="padding:4px 9px;font-size:10px" onclick="qd('${s.id}','rejected')">Reject</button>
-      </td>
-    </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--t3);font-size:12px">No pending requests 🎉</td></tr>';
-}
-
-function renderAct() {
-  document.getElementById('afeed').innerHTML = ACT.slice(0,5).map(a=>`
-    <div class="aitem">
-      <div class="aav2">${a.ic}</div>
-      <div><div class="atxt">${a.h}</div><div class="atm">${a.t}</div></div>
-    </div>`).join('');
-}
-
-// ─────────────────────────────────────────────
-//  SEARCH
-// ─────────────────────────────────────────────
-function gSearch(v) {
-  if (!v) return;
-  const q = v.toLowerCase();
-  if (SD.filter(s=>s.fn.toLowerCase().includes(q)||s.sn.toLowerCase().includes(q)).length) {
-    ss = v;
-    showPage('sellers', document.querySelector('.ni[onclick*="sellers"]'));
-    renderS();
+  if(tab==='sellers'&&!repChartRefs.repS&&document.getElementById('repSellersChart')){
+    repChartRefs.repS=new Chart(document.getElementById('repSellersChart'),{type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'New Sellers',data:[18,22,29,36,48,0],backgroundColor:'rgba(34,197,94,.8)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+  }
+  if(tab==='customers'){
+    if(!repChartRefs.repC&&document.getElementById('repCustChart')){
+      repChartRefs.repC=new Chart(document.getElementById('repCustChart'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'MAU',data:[380000,410000,445000,482000,520000],borderColor:'#0EA5E9',backgroundColor:'rgba(14,165,233,.07)',fill:true,tension:.45,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+    }
+    if(!repChartRefs.repP&&document.getElementById('repProvChart')){
+      repChartRefs.repP=new Chart(document.getElementById('repProvChart'),{type:'doughnut',data:{labels:['Phnom Penh','Siem Reap','Battambang','Kampong Cham','Other'],datasets:[{data:[42,20,14,12,12],backgroundColor:['#0EA5E9','#22C55E','#F97316','#8B5CF6','#94A3B8'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:'DM Sans',size:11},boxWidth:10,padding:10}}}}});
+    }
   }
 }
 
-// ─────────────────────────────────────────────
-//  TOAST
-// ─────────────────────────────────────────────
-function showToast(msg, err) {
-  const t = document.getElementById('toast');
-  t.querySelector('i').style.color = err?'var(--red)':'var(--green)';
-  t.querySelector('i').className = 'fa-solid '+(err?'fa-circle-xmark':'fa-circle-check');
-  document.getElementById('tmsg').textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+// ── PAGE CHART INIT ──
+const initedCharts={};
+function initPageCharts(id){
+  if(initedCharts[id])return;
+  initedCharts[id]=true;
+  const gc='rgba(200,230,200,.5)',tc='rgba(107,152,120,.6)',tf={family:'DM Sans',size:11};
+  if(id==='payments'){
+    if(document.getElementById('payChart'))new Chart(document.getElementById('payChart'),{type:'bar',data:{labels:['Dec','Jan','Feb','Mar','Apr','May'],datasets:[{label:'Payouts ($K)',data:[180,210,188,224,201,238],backgroundColor:'rgba(34,197,94,.8)',borderRadius:6},{label:'Revenue ($K)',data:[210,240,220,260,241,284],backgroundColor:'rgba(14,165,233,.6)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,font:tf,boxWidth:10,padding:14}}},scales:{x:{grid:{display:false},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+    if(document.getElementById('payMethods'))new Chart(document.getElementById('payMethods'),{type:'doughnut',data:{labels:['ABA','Wing','ACLEDA','Other'],datasets:[{data:[48,28,18,6],backgroundColor:['#22C55E','#8B5CF6','#0EA5E9','#94A3B8'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:'DM Sans',size:11},boxWidth:10,padding:8}}}}});
+  }
+  if(id==='reports')initRepChart('revenue');
 }
 
-// ─────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────
-function x(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fd(d) {
-  if (!d) return '—';
-  const dt = new Date(d);
-  if (isNaN(dt)) return d;
-  return dt.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+// ── NOTIFS ──
+function renderNotifs(){const im={n:'npi-n',ok:'npi-ok',no:'npi-no'};document.getElementById('npl').innerHTML=NOTIFS.map(n=>`<div class="npi ${n.read?'':'ur'}" onclick="nClick('${n.id}','${n.aid||''}')"><div class="npic ${im[n.tp]}"><i class="fa-solid ${n.ic}" style="color:${n.tp==='n'?'var(--orange)':n.tp==='ok'?'var(--green)':'var(--red)'}"></i></div><div style="flex:1;min-width:0"><div class="nptit">${x(n.title)}</div><div class="npmsg">${x(n.msg)}</div><div class="nptm">${n.time}</div></div>${!n.read?'<div class="npdot"></div>':''}</div>`).join('');}
+function toggleNotif(){const p=document.getElementById('npanel');p.classList.toggle('open');if(p.classList.contains('open'))renderNotifs();}
+function markRead(){NOTIFS.forEach(n=>n.read=true);updDot();renderNotifs();}
+function updDot(){document.getElementById('ndot').style.display=NOTIFS.filter(n=>!n.read).length?'block':'none';}
+function nClick(id,aid){const n=NOTIFS.find(e=>e.id===id);if(n)n.read=true;updDot();document.getElementById('npanel').classList.remove('open');if(aid)openDetail(aid);renderNotifs();}
+document.addEventListener('click',e=>{if(!e.target.closest('#npanel')&&!e.target.closest('#ntog'))document.getElementById('npanel').classList.remove('open');});
+
+// ── DASHBOARD ──
+function renderPrev(){
+  const p=SD.filter(s=>s.st==='pending').slice(0,3);
+  document.getElementById('dpreview').innerHTML=p.length?p.map(s=>`<tr onclick="openDetail('${s.id}')"><td><div class="cell"><div class="av">${(s.fn||'?')[0].toUpperCase()}</div><div><div class="cn" style="font-size:12px">${x(s.fn)}</div><div class="cm">${x(s.sn)}</div></div></div></td><td style="font-size:12px;color:var(--t2)">${s.prov}</td><td style="font-size:11px;color:var(--sky)">${s.tin&&s.tin!=='—'?s.tin:'—'}</td><td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="ab aap" style="padding:4px 9px;font-size:10px" onclick="qd('${s.id}','approved')">✓</button><button class="ab arj" style="padding:4px 9px;font-size:10px" onclick="qd('${s.id}','rejected')">✗</button></td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--t3);font-size:12px">No pending requests 🎉</td></tr>';
 }
+function renderAct(){document.getElementById('afeed').innerHTML=ACT.slice(0,5).map(a=>`<div class="aitem"><div class="aav2">${a.ic}</div><div><div class="atxt">${a.h}</div><div class="atm">${a.t}</div></div></div>`).join('');}
 
-// ─────────────────────────────────────────────
-//  CHARTS
-// ─────────────────────────────────────────────
-const gc='rgba(200,230,200,.5)', tc='rgba(107,152,120,.6)', tf={family:'DM Sans',size:11};
-new Chart(document.getElementById('lc'), {type:'line',data:{labels:['Dec','Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue ($K)',data:[42,68,54,80,72,95],borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.07)',fill:true,tension:0.45,pointBackgroundColor:'#22C55E',pointRadius:4,pointBorderColor:'#fff',pointBorderWidth:2},{label:'Orders',data:[1800,2400,2100,3100,2900,3800],borderColor:'#0EA5E9',backgroundColor:'rgba(14,165,233,.04)',fill:true,tension:0.45,yAxisID:'y2',pointBackgroundColor:'#0EA5E9',pointRadius:4,pointBorderColor:'#fff',pointBorderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tc,font:tf,boxWidth:12,padding:14}}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf},position:'left'},y2:{grid:{display:false},ticks:{color:tc,font:tf},position:'right'}}}});
-new Chart(document.getElementById('dc2'), {type:'doughnut',data:{labels:['Vegetables','Crafts','Grains','Fruits','Seafood','Other'],datasets:[{data:[28,22,20,14,10,6],backgroundColor:['#22C55E','#F97316','#0EA5E9','#EF4444','#A78BFA','#94A3B8'],borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',layout:{padding:{bottom:4}},plugins:{legend:{display:true,position:'bottom',labels:{color:tc,font:{family:'DM Sans',size:11},boxWidth:10,padding:10}}}}});
-window.addEventListener('resize', () => { ['lc','dc2'].forEach(id=>{const c=Chart.getChart(id);if(c)c.resize();}); });
+// ── SEARCH ──
+function gSearch(v){if(!v)return;const q=v.toLowerCase();if(SD.filter(s=>s.fn.toLowerCase().includes(q)||s.sn.toLowerCase().includes(q)).length){ss=v;showPage('seller-requests',document.querySelector('.ni[onclick*="seller-requests"]'));renderS();}}
 
-// ─────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────
-renderPrev();
-renderAct();
-updDot();
-renderNotifs();
-updPend();
+// ── TOAST ──
+function showToast(msg,err){const t=document.getElementById('toast');t.querySelector('i').style.color=err?'var(--red)':'var(--green)';t.querySelector('i').className='fa-solid '+(err?'fa-circle-xmark':'fa-circle-check');document.getElementById('tmsg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ── HELPERS ──
+function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fd(d){if(!d)return'—';const dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+
+// ── MAIN CHARTS ──
+const gc='rgba(200,230,200,.5)',tc='rgba(107,152,120,.6)',tf={family:'DM Sans',size:11};
+new Chart(document.getElementById('lc'),{type:'line',data:{labels:['Dec','Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue ($K)',data:[42,68,54,80,72,95],borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.07)',fill:true,tension:0.45,pointBackgroundColor:'#22C55E',pointRadius:4,pointBorderColor:'#fff',pointBorderWidth:2},{label:'Orders',data:[1800,2400,2100,3100,2900,3800],borderColor:'#0EA5E9',backgroundColor:'rgba(14,165,233,.04)',fill:true,tension:0.45,yAxisID:'y2',pointBackgroundColor:'#0EA5E9',pointRadius:4,pointBorderColor:'#fff',pointBorderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tc,font:tf,boxWidth:12,padding:14}}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf},position:'left'},y2:{grid:{display:false},ticks:{color:tc,font:tf},position:'right'}}}});
+new Chart(document.getElementById('dc2'),{type:'doughnut',data:{labels:['Vegetables','Crafts','Grains','Fruits','Seafood','Other'],datasets:[{data:[28,22,20,14,10,6],backgroundColor:['#22C55E','#F97316','#0EA5E9','#EF4444','#A78BFA','#94A3B8'],borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',layout:{padding:{bottom:4}},plugins:{legend:{display:true,position:'bottom',labels:{color:tc,font:{family:'DM Sans',size:11},boxWidth:10,padding:10}}}}});
+window.addEventListener('resize',()=>{Chart.instances&&Object.values(Chart.instances).forEach(c=>{try{c.resize();}catch(e){}});});
+
+// ── INIT ──
+renderPrev();renderAct();updDot();renderNotifs();updPend();renderS();
 </script>
 </body>
 </html>
