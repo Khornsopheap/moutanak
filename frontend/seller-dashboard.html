@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Moutanak — Seller Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --sand: #F0EDE5;
+  --cream: #F5F0E8;
+  --lemon: #EDE8C0;
+  --sage: #D6E8D0;
+  --mint: #C8DFC8;
+  --sky: #C8DCE8;
+  --green: #3A8C3F;
+  --green-light: #5AAF5F;
+  --green-dark: #2A6A2E;
+  --green-pale: #EAF3E0;
+  --charcoal: #1A2218;
+  --red: #DC2626;
+  --red-pale: #FEF2F2;
+  --amber: #D97706;
+  --amber-pale: #FFFBEB;
+  --blue: #2563EB;
+  --blue-pale: #EFF6FF;
+  --sidebar-w: 256px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--charcoal);min-height:100vh;display:flex;overflow-x:hidden;}
+h1,h2,h3,h4,.brand{font-family:'Sora',sans-serif;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--charcoal);
+  display:flex;flex-direction:column;
+  height:100vh;position:sticky;top:0;
+  z-index:40;transition:width .3s;overflow:hidden;
+}
+.sidebar.collapsed{width:72px;}
+.sidebar-logo{
+  display:flex;align-items:center;gap:10px;
+  padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08);
+  flex-shrink:0;
+}
+.sidebar-logo .logo-text{font-size:20px;font-weight:900;color:#fff;white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .logo-text{opacity:0;width:0;overflow:hidden;}
+.sidebar-logo .logo-icon{width:36px;height:36px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+.sidebar-seller{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px;margin:12px;
+  background:rgba(255,255,255,.06);border-radius:14px;
+  flex-shrink:0;transition:all .2s;overflow:hidden;
+}
+.sidebar.collapsed .sidebar-seller{padding:10px;justify-content:center;}
+.sidebar-seller .avatar{width:36px;height:36px;border-radius:10px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--green-dark);flex-shrink:0;}
+.sidebar-seller .seller-info{flex:1;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .seller-info{opacity:0;width:0;}
+.seller-info .s-name{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.seller-info .s-status{font-size:10px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;}
+.s-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;}
+
+.nav-section{padding:6px 12px;flex:1;overflow-y:auto;}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.25);text-transform:uppercase;padding:12px 8px 6px;white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .nav-label{opacity:0;}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:12px;
+  cursor:pointer;transition:all .2s;
+  color:rgba(255,255,255,.55);font-size:13px;font-weight:600;
+  white-space:nowrap;position:relative;margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-item.active{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(58,140,63,.35);}
+.nav-item .ni-icon{width:18px;text-align:center;flex-shrink:0;font-size:14px;}
+.nav-item .ni-label{flex:1;transition:opacity .2s;}
+.sidebar.collapsed .ni-label{opacity:0;width:0;overflow:hidden;}
+.nav-item .badge{background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;flex-shrink:0;}
+.sidebar.collapsed .badge{position:absolute;top:6px;right:6px;padding:2px 4px;}
+
+.sidebar-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+.collapse-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:9px;border-radius:10px;
+  border:none;cursor:pointer;background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.4);font-size:12px;font-weight:600;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.collapse-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+
+/* ── TOP BAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;background:rgba(245,240,232,.9);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--sage);
+  position:sticky;top:0;z-index:30;flex-shrink:0;gap:16px;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.page-title{font-size:18px;font-weight:800;color:var(--charcoal);}
+.page-sub{font-size:12px;color:rgba(26,34,24,.4);font-weight:500;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:8px 14px;border-radius:10px;border:1.5px solid var(--sage);
+  background:#fff;font-size:12px;font-weight:700;color:var(--charcoal);
+  cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;
+}
+.tb-btn:hover{border-color:var(--green);color:var(--green);}
+.tb-btn.primary{background:var(--green);border-color:var(--green);color:#fff;}
+.tb-btn.primary:hover{background:var(--green-dark);}
+.tb-icon{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--sage);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:rgba(26,34,24,.5);font-size:14px;position:relative;}
+.tb-icon:hover{border-color:var(--green);color:var(--green);}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid #fff;}
+
+/* ── VIEWS ── */
+.view{display:none;flex:1;padding:24px 28px;overflow-y:auto;animation:fadeUp .3s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:20px;border:1px solid var(--sage);padding:20px;transition:all .25s;}
+.card:hover{box-shadow:0 6px 24px -6px rgba(26,34,24,.1);}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(26,34,24,.4);margin-bottom:4px;}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:20px;border:1px solid var(--sage);
+  padding:18px 20px;transition:all .25s;cursor:default;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px -10px rgba(26,34,24,.12);border-color:var(--mint);}
+.stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px;}
+.stat-val{font-size:26px;font-weight:900;color:var(--charcoal);line-height:1;}
+.stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(26,34,24,.4);margin-top:4px;}
+.stat-change{font-size:11px;font-weight:700;margin-top:6px;display:flex;align-items:center;gap:4px;}
+.up{color:#22c55e;} .down{color:var(--red);}
+
+/* ── GRID LAYOUTS ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.main-aside{display:grid;grid-template-columns:1fr 340px;gap:16px;}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;border-radius:16px;border:1px solid var(--sage);}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--sand);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(26,34,24,.45);padding:10px 16px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--sage);}
+tbody tr{border-bottom:1px solid rgba(214,232,208,.5);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--sand);}
+td{padding:11px 16px;font-size:13px;color:var(--charcoal);}
+td .product-thumb{width:40px;height:40px;border-radius:10px;object-fit:cover;background:var(--sand);}
+td .product-cell{display:flex;align-items:center;gap:10px;}
+td .p-name{font-weight:700;font-size:13px;}
+td .p-sku{font-size:10px;color:rgba(26,34,24,.4);font-weight:600;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;}
+.badge-green{background:var(--green-pale);color:var(--green-dark);}
+.badge-amber{background:var(--amber-pale);color:var(--amber);}
+.badge-red{background:var(--red-pale);color:var(--red);}
+.badge-blue{background:var(--blue-pale);color:var(--blue);}
+.badge-gray{background:var(--sand);color:rgba(26,34,24,.5);}
+
+/* ── FORM INPUTS ── */
+.finput{
+  width:100%;border:1.5px solid var(--sage);border-radius:10px;padding:9px 12px;
+  font-size:13px;background:#fff;color:var(--charcoal);outline:none;transition:.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.finput:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(58,140,63,.1);}
+.finput::placeholder{color:rgba(26,34,24,.3);}
+select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233A8C3F' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+textarea.finput{resize:vertical;min-height:90px;line-height:1.6;}
+.flabel{font-size:11px;font-weight:700;color:var(--charcoal);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.05em;}
+.field-group{margin-bottom:14px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field-row.three{grid-template-columns:1fr 1fr 1fr;}
+
+/* ── UPLOAD BOX ── */
+.ubox{border:2px dashed var(--mint);border-radius:14px;padding:22px 16px;text-align:center;background:#F5FBF0;cursor:pointer;transition:.2s;position:relative;}
+.ubox:hover{border-color:var(--green);background:var(--green-pale);}
+.ubox.uploaded{border-color:var(--green);border-style:solid;background:var(--green-pale);}
+.ubox input[type=file]{display:none;}
+.ubox-mini{padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;}
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(26,34,24,.5);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:24px;width:100%;max-width:680px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px -20px rgba(26,34,24,.3);}
+.modal-header{padding:18px 22px 16px;border-bottom:1px solid var(--sage);display:flex;align-items:center;justify-content:space-between;background:var(--sand);flex-shrink:0;}
+.modal-title{font-size:15px;font-weight:800;color:var(--charcoal);}
+.modal-close{width:32px;height:32px;border-radius:99px;border:none;background:rgba(26,34,24,.08);cursor:pointer;font-size:14px;color:rgba(26,34,24,.5);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-close:hover{background:var(--red-pale);color:var(--red);}
+.modal-body{padding:22px;overflow-y:auto;flex:1;}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--sage);display:flex;justify-content:flex-end;gap:10px;background:var(--sand);flex-shrink:0;}
+
+/* ── BTN ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.btn-primary{background:var(--green);color:#fff;}
+.btn-primary:hover{background:var(--green-dark);}
+.btn-secondary{background:#fff;color:var(--charcoal);border:1.5px solid var(--sage);}
+.btn-secondary:hover{background:var(--sand);}
+.btn-danger{background:var(--red-pale);color:var(--red);border:1.5px solid rgba(220,38,38,.2);}
+.btn-danger:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:6px 12px;font-size:11px;border-radius:8px;}
+.btn-icon{width:32px;height:32px;padding:0;border-radius:8px;justify-content:center;}
+
+/* ── QUICK STAT ROW ── */
+.qs-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.qs{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--sage);border-radius:12px;padding:9px 14px;font-size:12px;font-weight:700;}
+.qs .qs-val{font-size:15px;font-weight:900;}
+
+/* ── PROGRESS BAR ── */
+.prog-bar{height:6px;background:var(--sage);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:var(--green);transition:width .5s;}
+
+/* ── MINI CHART BARS ── */
+.mini-bars{display:flex;gap:4px;align-items:flex-end;height:40px;}
+.mini-bar{flex:1;border-radius:4px 4px 0 0;background:var(--sage);transition:all .3s;}
+.mini-bar.active{background:var(--green);}
+
+/* ── PRODUCT IMAGE PREVIEW GRID ── */
+.img-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
+.img-prev{width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;border:2px solid var(--sage);}
+.img-prev-add{width:100%;aspect-ratio:1;border-radius:10px;border:2px dashed var(--mint);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--green-pale);color:var(--green);font-size:18px;}
+
+/* ── CASHFLOW CHART ── */
+.cf-chart{display:flex;gap:3px;align-items:flex-end;height:90px;padding-top:8px;}
+.cf-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.cf-bar{width:100%;border-radius:4px 4px 0 0;background:var(--sage);transition:all .3s;cursor:pointer;min-height:3px;}
+.cf-bar.income{background:var(--green);}
+.cf-bar.expense{background:rgba(220,38,38,.2);}
+.cf-bar-label{font-size:8px;font-weight:700;color:rgba(26,34,24,.35);text-transform:uppercase;}
+.cf-legend{display:flex;gap:14px;margin-top:8px;}
+.cf-leg{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:rgba(26,34,24,.5);}
+.cf-dot{width:8px;height:8px;border-radius:2px;}
+
+/* ── ORDER TIMELINE ── */
+.timeline{position:relative;padding-left:24px;}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--sage);}
+.tl-item{position:relative;margin-bottom:14px;}
+.tl-dot{position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--sage);background:#fff;}
+.tl-dot.done{background:var(--green);border-color:var(--green);}
+.tl-dot.active{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 3px rgba(217,119,6,.15);}
+.tl-text{font-size:12px;font-weight:700;}
+.tl-sub{font-size:10px;color:rgba(26,34,24,.4);}
+
+/* ── NOTIFICATION PANEL ── */
+.notif-panel{position:fixed;top:60px;right:20px;width:320px;background:#fff;border-radius:20px;border:1px solid var(--sage);box-shadow:0 16px 48px -10px rgba(26,34,24,.18);z-index:200;display:none;}
+.notif-panel.open{display:block;animation:fadeUp .2s ease;}
+.notif-head{padding:14px 16px;border-bottom:1px solid var(--sage);display:flex;justify-content:space-between;align-items:center;}
+.notif-item{padding:12px 16px;border-bottom:1px solid rgba(214,232,208,.4);display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:background .15s;}
+.notif-item:hover{background:var(--sand);}
+.notif-item.unread{background:var(--green-pale);}
+.notif-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+/* ── STAR RATING ── */
+.stars{display:flex;gap:2px;cursor:pointer;}
+.star{font-size:16px;color:#e2e8f0;transition:color .15s;}
+.star.on,.stars:hover .star{color:#f59e0b;}
+.stars .star:hover ~ .star{color:#e2e8f0;}
+
+/* ── SEARCH BAR ── */
+.search-bar{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--sage);border-radius:10px;padding:8px 12px;transition:.2s;}
+.search-bar:focus-within{border-color:var(--green);}
+.search-bar i{color:rgba(26,34,24,.3);font-size:13px;}
+.search-bar input{border:none;outline:none;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--charcoal);width:100%;}
+.search-bar input::placeholder{color:rgba(26,34,24,.3);}
+
+/* ── FILTER CHIPS ── */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.chip{padding:5px 12px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:1.5px solid var(--sage);background:#fff;color:rgba(26,34,24,.5);}
+.chip.active{background:var(--charcoal);border-color:var(--charcoal);color:#fff;}
+.chip:hover:not(.active){border-color:var(--green);color:var(--green);}
+
+/* ── STORE PROFILE CARD ── */
+.store-banner{height:120px;border-radius:16px 16px 0 0;background:linear-gradient(135deg,var(--green-dark),var(--green));position:relative;overflow:hidden;}
+.store-banner::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.store-avatar{width:64px;height:64px;border-radius:16px;border:4px solid #fff;background:var(--lemon);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:var(--green-dark);margin-top:-32px;position:relative;z-index:2;}
+
+/* ── TOGGLE SWITCH ── */
+.toggle{width:40px;height:22px;background:var(--sage);border-radius:99px;position:relative;cursor:pointer;transition:.3s;flex-shrink:0;}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle.on{background:var(--green);}
+.toggle.on::after{left:21px;}
+
+/* ── TOOLTIP ── */
+[data-tip]{position:relative;}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--charcoal);color:#fff;font-size:10px;font-weight:600;padding:4px 8px;border-radius:6px;white-space:nowrap;z-index:999;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--sage);border-radius:99px;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);opacity:0;z-index:999;background:var(--charcoal);color:#fff;padding:12px 22px;border-radius:99px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;transition:all .35s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 32px -8px rgba(0,0,0,.4);}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .main-aside{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-256px;height:100%;transition:left .3s;}
+  .sidebar.mobile-open{left:0;}
+  .main{margin-left:0;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .field-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-leaf" style="color:#fff;font-size:16px;"></i></div>
+    <span class="logo-text">Moutanak<span style="color:var(--green)">.</span></span>
+  </div>
+
+  <div class="sidebar-seller">
+    <div class="avatar">V</div>
+    <div class="seller-info">
+      <div class="s-name">Vanna's Spicy Farm</div>
+      <div class="s-status"><span class="s-dot"></span>Active Seller</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" onclick="nav('dashboard')">
+      <i class="fa-solid fa-chart-pie ni-icon"></i>
+      <span class="ni-label">Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="nav('products')">
+      <i class="fa-solid fa-box ni-icon"></i>
+      <span class="ni-label">Products</span>
+    </div>
+    <div class="nav-item" onclick="nav('orders')">
+      <i class="fa-solid fa-bag-shopping ni-icon"></i>
+      <span class="ni-label">Orders</span>
+      <span class="badge">5</span>
+    </div>
+    <div class="nav-item" onclick="nav('cashflow')">
+      <i class="fa-solid fa-wallet ni-icon"></i>
+      <span class="ni-label">Cashflow</span>
+    </div>
+    <div class="nav-item" onclick="nav('analytics')">
+      <i class="fa-solid fa-chart-line ni-icon"></i>
+      <span class="ni-label">Analytics</span>
+    </div>
+
+    <div class="nav-label" style="margin-top:6px;">Store</div>
+    <div class="nav-item" onclick="nav('promotions')">
+      <i class="fa-solid fa-tag ni-icon"></i>
+      <span class="ni-label">Promotions</span>
+    </div>
+    <div class="nav-item" onclick="nav('reviews')">
+      <i class="fa-solid fa-star ni-icon"></i>
+      <span class="ni-label">Reviews</span>
+    </div>
+    <div class="nav-item" onclick="nav('settings')">
+      <i class="fa-solid fa-gear ni-icon"></i>
+      <span class="ni-label">Store Settings</span>
+    </div>
+
+    <div class="nav-label" style="margin-top:6px;">Support</div>
+    <div class="nav-item">
+      <i class="fa-solid fa-headset ni-icon"></i>
+      <span class="ni-label">Help Center</span>
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <button class="collapse-btn" onclick="toggleSidebar()">
+      <i class="fa-solid fa-chevron-left" id="collapse-icon" style="transition:transform .3s;"></i>
+      <span style="transition:opacity .2s;" id="collapse-label">Collapse</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="tb-icon" onclick="toggleSidebar()" style="display:none" id="mobile-menu-btn">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="page-sub" id="page-sub">Welcome back, Vanna 👋</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-bar" style="width:200px;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search…"/>
+      </div>
+      <button class="tb-btn primary" onclick="openProductModal()">
+        <i class="fa-solid fa-plus"></i> Add Product
+      </button>
+      <div class="tb-icon" data-tip="Notifications" onclick="toggleNotif()" style="position:relative">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="tb-icon" data-tip="Profile" style="background:var(--green-pale);border-color:var(--mint);">
+        <span style="font-size:12px;font-weight:800;color:var(--green-dark);">V</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: DASHBOARD ════════ -->
+  <div class="view active" id="view-dashboard">
+
+    <!-- KPI Stats -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--green-pale)"><i class="fa-solid fa-dollar-sign" style="color:var(--green)"></i></div>
+        <div class="stat-val">$3,241</div>
+        <div class="stat-label">Revenue This Month</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--blue-pale)"><i class="fa-solid fa-bag-shopping" style="color:var(--blue)"></i></div>
+        <div class="stat-val">84</div>
+        <div class="stat-label">Orders This Month</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +12 orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--amber-pale)"><i class="fa-solid fa-box" style="color:var(--amber)"></i></div>
+        <div class="stat-val">48</div>
+        <div class="stat-label">Active Products</div>
+        <div class="stat-change" style="color:rgba(26,34,24,.4)"><i class="fa-solid fa-circle-info"></i> 4 low stock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#F5F3FF"><i class="fa-solid fa-star" style="color:#7C3AED"></i></div>
+        <div class="stat-val">4.91</div>
+        <div class="stat-label">Avg. Store Rating</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> 142 reviews</div>
+      </div>
+    </div>
+
+    <div class="main-aside" style="margin-bottom:16px;">
+      <!-- Recent Sales Chart -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <div>
+            <div class="card-title">Revenue Overview</div>
+            <div style="font-size:22px;font-weight:900;">$3,241.00</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div class="chip active" onclick="setChip(this)">7d</div>
+            <div class="chip" onclick="setChip(this)">30d</div>
+            <div class="chip" onclick="setChip(this)">90d</div>
+          </div>
+        </div>
+        <div class="stat-change up mb-3" style="margin-bottom:14px;"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% vs previous period</div>
+        <!-- Simple Bar Chart -->
+        <div style="display:flex;gap:5px;align-items:flex-end;height:100px;margin-bottom:6px;" id="revenue-chart"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;" id="revenue-labels"></div>
+      </div>
+
+      <!-- Quick Actions + Recent Alerts -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card" style="padding:16px;">
+          <div class="card-title" style="margin-bottom:12px;">Quick Actions</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button class="btn btn-secondary" style="justify-content:center;font-size:12px;" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> New Product</button>
+            <button class="btn btn-secondary" style="justify-content:center;font-size:12px;" onclick="nav('orders')"><i class="fa-solid fa-bag-shopping"></i> View Orders</button>
+            <button class="btn btn-secondary" style="justify-content:center;font-size:12px;" onclick="nav('cashflow')"><i class="fa-solid fa-wallet"></i> Withdraw</button>
+            <button class="btn btn-secondary" style="justify-content:center;font-size:12px;" onclick="nav('promotions')"><i class="fa-solid fa-tag"></i> Promotions</button>
+          </div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div class="card-title" style="margin-bottom:10px;">Alerts</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:9px;padding:9px;background:var(--amber-pale);border-radius:10px;cursor:pointer;">
+              <div style="width:30px;height:30px;border-radius:8px;background:rgba(217,119,6,.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--amber);flex-shrink:0;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div><div style="font-size:12px;font-weight:700;color:var(--amber);">4 products low stock</div><div style="font-size:10px;color:rgba(26,34,24,.4);">Restock before they run out</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:9px;background:var(--blue-pale);border-radius:10px;cursor:pointer;">
+              <div style="width:30px;height:30px;border-radius:8px;background:rgba(37,99,235,.1);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--blue);flex-shrink:0;"><i class="fa-solid fa-clock"></i></div>
+              <div><div style="font-size:12px;font-weight:700;color:var(--blue);">5 orders awaiting fulfillment</div><div style="font-size:10px;color:rgba(26,34,24,.4);">Ship within 24h to maintain rating</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:9px;background:var(--green-pale);border-radius:10px;cursor:pointer;">
+              <div style="width:30px;height:30px;border-radius:8px;background:rgba(58,140,63,.12);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green);flex-shrink:0;"><i class="fa-solid fa-money-bill-wave"></i></div>
+              <div><div style="font-size:12px;font-weight:700;color:var(--green-dark);">Payout $1,840 ready</div><div style="font-size:10px;color:rgba(26,34,24,.4);">Scheduled for Friday</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;">
+      <div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--sage);">
+        <div>
+          <div class="card-title" style="margin:0;">Recent Orders</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="nav('orders')">View All <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></button>
+      </div>
+      <div class="tbl-wrap" style="border:none;border-radius:0;">
+        <table id="dashboard-orders-table">
+          <thead><tr>
+            <th>Order ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th>
+          </tr></thead>
+          <tbody id="dashboard-orders-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="two-col">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--sage);display:flex;justify-content:space-between;align-items:center;">
+          <div class="card-title" style="margin:0;">Top Products</div>
+          <button class="btn btn-secondary btn-sm" onclick="nav('products')">Manage</button>
+        </div>
+        <div style="padding:4px 0;" id="top-products-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;">Stock Levels</div>
+        <div id="stock-levels"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: PRODUCTS ════════ -->
+  <div class="view" id="view-products">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap;">
+      <div class="search-bar" style="flex:1;max-width:320px;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search products…" oninput="filterProducts(this.value)"/>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select class="finput" style="width:auto;" onchange="filterByCategory(this.value)">
+          <option value="">All Categories</option>
+          <option>Vegetables & Herbs</option><option>Fresh Fruits</option>
+          <option>Artisan Crafts</option><option>Grains & Spices</option>
+        </select>
+        <button class="btn btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> Add Product</button>
+      </div>
+    </div>
+    <div class="chips" id="product-chips">
+      <div class="chip active" onclick="filterByStatus('all',this)">All (48)</div>
+      <div class="chip" onclick="filterByStatus('active',this)">Active (40)</div>
+      <div class="chip" onclick="filterByStatus('low',this)">Low Stock (4)</div>
+      <div class="chip" onclick="filterByStatus('draft',this)">Draft (3)</div>
+      <div class="chip" onclick="filterByStatus('inactive',this)">Inactive (1)</div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="tbl-wrap" style="border:none;border-radius:0;">
+        <table>
+          <thead><tr>
+            <th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Sold</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="products-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: ORDERS ════════ -->
+  <div class="view" id="view-orders">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap;">
+      <div class="search-bar" style="flex:1;max-width:320px;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search orders, customers…" oninput="filterOrders(this.value)"/>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select class="finput" style="width:auto;">
+          <option>Last 30 days</option><option>Last 7 days</option><option>This month</option>
+        </select>
+        <button class="btn btn-secondary"><i class="fa-solid fa-download"></i> Export</button>
+      </div>
+    </div>
+    <div class="chips" id="order-chips">
+      <div class="chip active" onclick="filterOrderStatus('all',this)">All Orders</div>
+      <div class="chip" onclick="filterOrderStatus('pending',this)">Pending <span class="badge badge-amber" style="padding:1px 5px;font-size:9px;">5</span></div>
+      <div class="chip" onclick="filterOrderStatus('processing',this)">Processing</div>
+      <div class="chip" onclick="filterOrderStatus('shipped',this)">Shipped</div>
+      <div class="chip" onclick="filterOrderStatus('delivered',this)">Delivered</div>
+      <div class="chip" onclick="filterOrderStatus('cancelled',this)">Cancelled</div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="qs-row" style="margin-bottom:14px;">
+      <div class="qs"><span style="color:rgba(26,34,24,.4);">Total Orders</span><span class="qs-val">84</span></div>
+      <div class="qs"><span style="color:rgba(26,34,24,.4);">Avg. Order</span><span class="qs-val">$38.58</span></div>
+      <div class="qs"><span style="color:rgba(26,34,24,.4);">Return Rate</span><span class="qs-val">1.2%</span></div>
+      <div class="qs"><span style="color:var(--amber);">Pending</span><span class="qs-val" style="color:var(--amber);">5</span></div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="tbl-wrap" style="border:none;border-radius:0;">
+        <table>
+          <thead><tr>
+            <th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th>
+          </tr></thead>
+          <tbody id="orders-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: CASHFLOW ════════ -->
+  <div class="view" id="view-cashflow">
+    <!-- Balance Cards -->
+    <div class="three-col" style="margin-bottom:16px;">
+      <div class="card" style="background:var(--charcoal);border-color:var(--charcoal);">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Available Balance</div>
+        <div style="font-size:32px;font-weight:900;color:#fff;">$1,840.00</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:6px;">Next payout: Friday, May 30</div>
+        <button class="btn btn-primary" style="margin-top:14px;width:100%;justify-content:center;" onclick="showToast('Withdrawal request submitted!')"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw Now</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Total Earned (Lifetime)</div>
+        <div style="font-size:28px;font-weight:900;color:var(--green);margin:6px 0;">$45,241.00</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +$3,241 this month</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pending Clearance</div>
+        <div style="font-size:28px;font-weight:900;color:var(--amber);margin:6px 0;">$892.00</div>
+        <div style="font-size:11px;color:rgba(26,34,24,.4);margin-top:6px;">Clears in 2–3 business days</div>
+      </div>
+    </div>
+
+    <div class="main-aside" style="margin-bottom:16px;">
+      <!-- Income / Expense Chart -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div>
+            <div class="card-title">Income vs. Expenses</div>
+            <div style="font-size:20px;font-weight:900;">May 2025</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div class="chip active" onclick="setChip(this)">Monthly</div>
+            <div class="chip" onclick="setChip(this)">Weekly</div>
+          </div>
+        </div>
+        <div class="cf-chart" id="cf-chart"></div>
+        <div class="cf-legend">
+          <div class="cf-leg"><div class="cf-dot" style="background:var(--green);"></div>Income</div>
+          <div class="cf-leg"><div class="cf-dot" style="background:rgba(220,38,38,.35);"></div>Expenses</div>
+        </div>
+        <div style="height:1px;background:var(--sage);margin:14px 0;"></div>
+        <div class="two-col" style="gap:12px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:rgba(26,34,24,.4);text-transform:uppercase;letter-spacing:.05em;">Total Income</div>
+            <div style="font-size:20px;font-weight:900;color:var(--green);">$3,241.00</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:rgba(26,34,24,.4);text-transform:uppercase;letter-spacing:.05em;">Total Expenses</div>
+            <div style="font-size:20px;font-weight:900;color:var(--red);">$284.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payout Methods -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;">Payout Methods</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--green-pale);border-radius:12px;border:1px solid var(--mint);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:var(--lemon);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">ABA</div>
+                <div><div style="font-size:12px;font-weight:700;">ABA Bank</div><div style="font-size:10px;color:rgba(26,34,24,.4);">••• 4892</div></div>
+              </div>
+              <span class="badge badge-green">Primary</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#fff;border-radius:12px;border:1px solid var(--sage);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">WNG</div>
+                <div><div style="font-size:12px;font-weight:700;">Wing Money</div><div style="font-size:10px;color:rgba(26,34,24,.4);">012 345 678</div></div>
+              </div>
+              <span class="badge badge-gray">Backup</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;"><i class="fa-solid fa-plus"></i> Add Method</button>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:8px;">Fee Breakdown</div>
+          <div style="font-size:12px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;"><span style="color:rgba(26,34,24,.5);">Platform Commission (2%)</span><span style="font-weight:700;">−$64.82</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:rgba(26,34,24,.5);">Payment Processing</span><span style="font-weight:700;">−$12.18</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:rgba(26,34,24,.5);">Packaging Support</span><span style="font-weight:700;">−$18.00</span></div>
+            <div style="height:1px;background:var(--sage);margin:4px 0;"></div>
+            <div style="display:flex;justify-content:space-between;font-weight:800;font-size:13px;"><span>Net Earned</span><span style="color:var(--green);">$3,146.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--sage);display:flex;justify-content:space-between;align-items:center;">
+        <div class="card-title" style="margin:0;">Transaction History</div>
+        <button class="btn btn-secondary btn-sm"><i class="fa-solid fa-download"></i> Download PDF</button>
+      </div>
+      <div class="tbl-wrap" style="border:none;border-radius:0;">
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="txn-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: ANALYTICS ════════ -->
+  <div class="view" id="view-analytics">
+    <div class="stat-grid" style="margin-bottom:16px;">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#F5F3FF;"><i class="fa-solid fa-eye" style="color:#7C3AED;"></i></div>
+        <div class="stat-val">12,840</div>
+        <div class="stat-label">Store Views</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +24%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--blue-pale);"><i class="fa-solid fa-arrow-pointer" style="color:var(--blue);"></i></div>
+        <div class="stat-val">3.8%</div>
+        <div class="stat-label">Conversion Rate</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +0.4%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--amber-pale);"><i class="fa-solid fa-cart-shopping" style="color:var(--amber);"></i></div>
+        <div class="stat-val">$38.58</div>
+        <div class="stat-label">Avg. Order Value</div>
+        <div class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +$4.12</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--red-pale);"><i class="fa-solid fa-rotate-left" style="color:var(--red);"></i></div>
+        <div class="stat-val">1.2%</div>
+        <div class="stat-label">Return Rate</div>
+        <div class="stat-change down"><i class="fa-solid fa-arrow-trend-down"></i> −0.3%</div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">Sales by Category</div>
+        <div id="category-bars"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">Customer Geography</div>
+        <div id="geo-bars"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px;">Visitor Traffic (Last 7 Days)</div>
+      <div style="display:flex;gap:5px;align-items:flex-end;height:80px;" id="traffic-chart"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;" id="traffic-labels"></div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: PROMOTIONS ════════ -->
+  <div class="view" id="view-promotions">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:14px;color:rgba(26,34,24,.5);">Create and manage discount codes, flash sales, and bundle deals.</div>
+      <button class="btn btn-primary" onclick="openPromoModal()"><i class="fa-solid fa-plus"></i> New Promotion</button>
+    </div>
+    <!-- Active Promos -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;" id="promo-list">
+      <!-- filled by JS -->
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px;">Promotion Performance</div>
+      <div class="tbl-wrap" style="border:none;">
+        <table>
+          <thead><tr><th>Code</th><th>Discount</th><th>Uses</th><th>Revenue Generated</th><th>Valid Until</th><th>Status</th></tr></thead>
+          <tbody id="promo-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: REVIEWS ════════ -->
+  <div class="view" id="view-reviews">
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="card" style="display:flex;gap:20px;align-items:center;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:56px;font-weight:900;line-height:1;color:var(--charcoal);">4.9</div>
+          <div style="display:flex;gap:3px;justify-content:center;margin:6px 0;">
+            <i class="fa-solid fa-star" style="color:#f59e0b;font-size:14px;"></i>
+            <i class="fa-solid fa-star" style="color:#f59e0b;font-size:14px;"></i>
+            <i class="fa-solid fa-star" style="color:#f59e0b;font-size:14px;"></i>
+            <i class="fa-solid fa-star" style="color:#f59e0b;font-size:14px;"></i>
+            <i class="fa-solid fa-star" style="color:#f59e0b;font-size:14px;"></i>
+          </div>
+          <div style="font-size:11px;color:rgba(26,34,24,.4);font-weight:600;">142 reviews</div>
+        </div>
+        <div style="flex:1;">
+          <div id="rating-bars"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">Response Rate</div>
+        <div style="font-size:32px;font-weight:900;color:var(--green);">87%</div>
+        <div style="font-size:12px;color:rgba(26,34,24,.4);margin-top:4px;">You responded to 124 out of 142 reviews</div>
+        <div class="prog-bar" style="margin-top:12px;"><div class="prog-fill" style="width:87%;"></div></div>
+        <div style="font-size:11px;color:var(--amber);margin-top:8px;font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> 18 reviews awaiting reply</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;" id="reviews-list"></div>
+  </div>
+
+  <!-- ════════ VIEW: SETTINGS ════════ -->
+  <div class="view" id="view-settings">
+    <div class="main-aside">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- Store Info -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="store-banner" id="store-banner">
+            <div style="position:absolute;bottom:0;right:0;padding:12px;">
+              <button class="btn btn-secondary btn-sm" style="background:rgba(255,255,255,.9);font-size:11px;" onclick="showToast('Banner upload coming soon!')"><i class="fa-solid fa-camera"></i> Change Banner</button>
+            </div>
+          </div>
+          <div style="padding:0 20px 20px;">
+            <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:16px;">
+              <div class="store-avatar" id="store-avatar-disp">V</div>
+              <div>
+                <div style="font-size:16px;font-weight:800;">Vanna's Spicy Farm</div>
+                <div style="font-size:12px;color:rgba(26,34,24,.4);">Kampot Province</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" style="margin-left:auto;" onclick="showToast('Photo uploaded!')"><i class="fa-solid fa-camera"></i></button>
+            </div>
+            <div class="field-group">
+              <label class="flabel">Store Name</label>
+              <input class="finput" value="Vanna's Spicy Farm"/>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="flabel">Category</label>
+                <select class="finput"><option selected>Vegetables & Herbs</option><option>Fresh Fruits</option></select>
+              </div>
+              <div class="field-group">
+                <label class="flabel">Province</label>
+                <select class="finput"><option>Kampot</option><option selected>Kampot</option></select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="flabel">Store Description</label>
+              <textarea class="finput">We grow and sell the finest organic spices and herbs from Kampot province. Specializing in Kampot pepper, lemongrass, and fresh chili varieties.</textarea>
+            </div>
+            <div class="field-group">
+              <label class="flabel">Facebook Page</label>
+              <input class="finput" value="https://facebook.com/vannasspicyfarm"/>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Store info saved!')"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- Notifications -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;">Notification Preferences</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:13px;font-weight:700;">New Orders</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Get notified when a new order arrives</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:13px;font-weight:700;">Low Stock Alerts</div><div style="font-size:11px;color:rgba(26,34,24,.4);">When stock drops below 10 units</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:13px;font-weight:700;">Payout Notifications</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Weekly payout confirmations</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:13px;font-weight:700;">Review Alerts</div><div style="font-size:11px;color:rgba(26,34,24,.4);">When customers leave a review</div></div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:13px;font-weight:700;">Promotions & Tips</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Platform tips and seller news</div></div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Account -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;">Account & Security</div>
+          <div class="field-group">
+            <label class="flabel">Email</label>
+            <input class="finput" value="vanna@spicyfarm.kh" type="email"/>
+          </div>
+          <div class="field-group">
+            <label class="flabel">Phone</label>
+            <input class="finput" value="+855 12 345 678" type="tel"/>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-bottom:8px;" onclick="showToast('Password reset email sent!')"><i class="fa-solid fa-lock"></i> Change Password</button>
+          <button class="btn btn-danger" style="width:100%;justify-content:center;"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+        </div>
+        <!-- Store Status -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;">Store Status</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div><div style="font-size:13px;font-weight:700;">Store Active</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Customers can see and order</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div><div style="font-size:13px;font-weight:700;">Vacation Mode</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Pause orders temporarily</div></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══════════ NOTIFICATION PANEL ══════════ -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-head">
+    <span style="font-size:13px;font-weight:800;">Notifications</span>
+    <button class="btn btn-secondary btn-sm" onclick="showToast('All marked as read!')">Mark all read</button>
+  </div>
+  <div class="notif-item unread">
+    <div class="notif-icon" style="background:var(--blue-pale);color:var(--blue);"><i class="fa-solid fa-bag-shopping"></i></div>
+    <div><div style="font-size:12px;font-weight:700;">New Order #ORD-0084</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Sothea Pich ordered 2x Kampot Pepper — $24.00</div><div style="font-size:10px;color:rgba(26,34,24,.3);margin-top:2px;">2 min ago</div></div>
+  </div>
+  <div class="notif-item unread">
+    <div class="notif-icon" style="background:var(--amber-pale);color:var(--amber);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div><div style="font-size:12px;font-weight:700;">Low Stock Alert</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Lemongrass Bundle — only 3 units left</div><div style="font-size:10px;color:rgba(26,34,24,.3);margin-top:2px;">1 hour ago</div></div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon" style="background:var(--green-pale);color:var(--green);"><i class="fa-solid fa-money-bill-wave"></i></div>
+    <div><div style="font-size:12px;font-weight:700;">Payout Processed</div><div style="font-size:11px;color:rgba(26,34,24,.4);">$1,620.00 sent to ABA Bank — ••• 4892</div><div style="font-size:10px;color:rgba(26,34,24,.3);margin-top:2px;">Yesterday</div></div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-icon" style="background:#F5F3FF;color:#7C3AED;"><i class="fa-solid fa-star"></i></div>
+    <div><div style="font-size:12px;font-weight:700;">New 5-Star Review</div><div style="font-size:11px;color:rgba(26,34,24,.4);">Dara Sok left a review on Red Chili Flakes</div><div style="font-size:10px;color:rgba(26,34,24,.3);margin-top:2px;">2 days ago</div></div>
+  </div>
+</div>
+
+<!-- ══════════ PRODUCT MODAL ══════════ -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="product-modal-title">Add New Product</div>
+      <button class="modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row" style="margin-bottom:12px;">
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Product Name <span style="color:var(--red);">*</span></label>
+          <input class="finput" id="pm-name" placeholder="e.g. Organic Kampot Pepper"/>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Category <span style="color:var(--red);">*</span></label>
+          <select class="finput" id="pm-cat">
+            <option value="">— Select —</option>
+            <option>Vegetables & Herbs</option><option>Fresh Fruits</option>
+            <option>Artisan Crafts</option><option>Grains & Spices</option>
+            <option>Seafood & Fish</option><option>Dairy & Eggs</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row three" style="margin-bottom:12px;">
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Price (USD) <span style="color:var(--red);">*</span></label>
+          <input class="finput" id="pm-price" type="number" step="0.01" placeholder="0.00"/>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Compare Price</label>
+          <input class="finput" id="pm-compare" type="number" step="0.01" placeholder="Optional"/>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Stock Qty <span style="color:var(--red);">*</span></label>
+          <input class="finput" id="pm-stock" type="number" placeholder="0"/>
+        </div>
+      </div>
+      <div class="field-row" style="margin-bottom:12px;">
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Unit</label>
+          <select class="finput" id="pm-unit">
+            <option>kg</option><option>gram</option><option>piece</option><option>bundle</option><option>bottle</option><option>box</option>
+          </select>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">SKU</label>
+          <input class="finput" id="pm-sku" placeholder="e.g. VSF-001"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="flabel">Description <span style="color:var(--red);">*</span></label>
+        <textarea class="finput" id="pm-desc" placeholder="Describe your product — freshness, origin, how it's grown…"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="flabel">Product Photos <span style="color:var(--red);">*</span> <span style="font-size:10px;font-weight:500;text-transform:none;letter-spacing:0;color:rgba(26,34,24,.4);">(min. 1 photo)</span></label>
+        <div class="ubox" id="pm-photo-box" onclick="this.querySelector('input').click()">
+          <i class="fa-solid fa-images" style="font-size:22px;color:var(--green);margin-bottom:6px;"></i>
+          <div style="font-size:12px;font-weight:700;color:rgba(26,34,24,.4);">Click to upload product photos</div>
+          <div style="font-size:11px;color:rgba(26,34,24,.25);margin-top:2px;">JPG, PNG — max 5MB each</div>
+          <div id="pm-photo-preview" class="img-preview-grid" style="display:none;"></div>
+          <input type="file" multiple accept="image/*" onchange="previewProductImages(this)"/>
+        </div>
+      </div>
+      <div class="field-row" style="margin-bottom:12px;">
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Weight (kg)</label>
+          <input class="finput" id="pm-weight" type="number" step="0.01" placeholder="For shipping calc"/>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Origin / Province</label>
+          <input class="finput" id="pm-origin" placeholder="e.g. Kampot"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="flabel">Tags</label>
+        <input class="finput" id="pm-tags" placeholder="organic, fresh, local (comma separated)"/>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--sand);border-radius:12px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;">Publish immediately</div>
+          <div style="font-size:11px;color:rgba(26,34,24,.4);">Product will be visible to buyers right away</div>
+        </div>
+        <div class="toggle on" id="pm-publish" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct()"><i class="fa-solid fa-floppy-disk"></i> Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ORDER DETAIL MODAL ══════════ -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="order-modal-id">Order #ORD-0084</div>
+        <div style="font-size:11px;color:rgba(26,34,24,.4);" id="order-modal-date">Placed May 20, 2025</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('order-modal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px;padding:14px;background:var(--sand);border-radius:14px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(26,34,24,.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Customer</div>
+          <div style="font-size:14px;font-weight:800;" id="om-customer">—</div>
+          <div style="font-size:12px;color:rgba(26,34,24,.5);" id="om-phone">—</div>
+        </div>
+        <div style="flex:1;min-width:180px;padding:14px;background:var(--sand);border-radius:14px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(26,34,24,.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Delivery Address</div>
+          <div style="font-size:12px;font-weight:600;" id="om-address">—</div>
+        </div>
+        <div style="flex:1;min-width:120px;padding:14px;background:var(--sand);border-radius:14px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(26,34,24,.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Total</div>
+          <div style="font-size:20px;font-weight:900;color:var(--green);" id="om-total">—</div>
+        </div>
+      </div>
+      <!-- Items -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(26,34,24,.4);margin-bottom:8px;">Order Items</div>
+      <div id="om-items" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+      <!-- Status Update -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(26,34,24,.4);margin-bottom:8px;">Update Status</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" onclick="updateOrderStatus('processing')"><i class="fa-solid fa-cog"></i> Processing</button>
+        <button class="btn btn-secondary btn-sm" onclick="updateOrderStatus('shipped')"><i class="fa-solid fa-truck"></i> Mark Shipped</button>
+        <button class="btn btn-secondary btn-sm" onclick="updateOrderStatus('delivered')"><i class="fa-solid fa-circle-check"></i> Delivered</button>
+        <button class="btn btn-danger btn-sm" onclick="updateOrderStatus('cancelled')"><i class="fa-solid fa-xmark"></i> Cancel</button>
+      </div>
+      <!-- Timeline -->
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(26,34,24,.4);margin-bottom:10px;">Tracking</div>
+        <div class="timeline" id="om-timeline"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('order-modal').classList.remove('open')">Close</button>
+      <button class="btn btn-primary" onclick="showToast('Invoice sent to customer!'); document.getElementById('order-modal').classList.remove('open')"><i class="fa-solid fa-file-invoice"></i> Send Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PROMO MODAL ══════════ -->
+<div class="modal-overlay" id="promo-modal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title">Create Promotion</div>
+      <button class="modal-close" onclick="document.getElementById('promo-modal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="flabel">Promotion Type</label>
+        <select class="finput" id="promo-type" onchange="updatePromoType()">
+          <option value="discount">Discount Code</option>
+          <option value="flash">Flash Sale</option>
+          <option value="bundle">Bundle Deal</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="flabel">Code / Name <span style="color:var(--red);">*</span></label>
+        <input class="finput" id="promo-code" placeholder="e.g. FARM20"/>
+      </div>
+      <div class="field-row" style="margin-bottom:12px;">
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Discount</label>
+          <input class="finput" id="promo-value" placeholder="20"/>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Type</label>
+          <select class="finput" id="promo-disc-type">
+            <option>% Percentage</option>
+            <option>$ Fixed Amount</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row" style="margin-bottom:12px;">
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">Start Date</label>
+          <input class="finput" type="date" id="promo-start"/>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="flabel">End Date</label>
+          <input class="finput" type="date" id="promo-end"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="flabel">Max Uses</label>
+        <input class="finput" id="promo-max" type="number" placeholder="Leave blank for unlimited"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('promo-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePromo()"><i class="fa-solid fa-tag"></i> Create Promotion</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><i class="fa-solid fa-circle-check" style="color:#4ade80;"></i><span id="toast-text">Done!</span></div>
+
+<script>
+// ═══════════════════════════
+// DATA
+// ═══════════════════════════
+const PRODUCTS = [
+  {id:'P001',name:'Kampot Black Pepper',cat:'Grains & Spices',price:12.50,stock:240,sold:1840,status:'active',sku:'VSF-001'},
+  {id:'P002',name:'Fresh Lemongrass Bundle',cat:'Vegetables & Herbs',price:3.50,stock:8,sold:920,status:'active',sku:'VSF-002'},
+  {id:'P003',name:'Red Chili Flakes',cat:'Grains & Spices',price:6.00,stock:180,sold:610,status:'active',sku:'VSF-003'},
+  {id:'P004',name:'Organic Kaffir Lime Leaves',cat:'Vegetables & Herbs',price:2.80,stock:5,sold:440,status:'active',sku:'VSF-004'},
+  {id:'P005',name:'Turmeric Root (Fresh)',cat:'Vegetables & Herbs',price:4.20,stock:90,sold:320,status:'active',sku:'VSF-005'},
+  {id:'P006',name:'Dried Galangal Slices',cat:'Grains & Spices',price:8.00,stock:3,sold:280,status:'active',sku:'VSF-006'},
+  {id:'P007',name:'Kampot Green Pepper (Brine)',cat:'Grains & Spices',price:14.00,stock:120,sold:240,status:'active',sku:'VSF-007'},
+  {id:'P008',name:'Chili Paste (Sambal)',cat:'Processed Foods',price:5.50,stock:0,sold:180,status:'inactive',sku:'VSF-008'},
+  {id:'P009',name:'Herb Garden Bundle',cat:'Vegetables & Herbs',price:18.00,stock:15,sold:92,status:'draft',sku:'VSF-009'},
+];
+const ORDERS = [
+  {id:'ORD-0084',customer:'Sothea Pich',phone:'+855 12 888 123',address:'St 178, BKK1, Phnom Penh',items:[{name:'Kampot Black Pepper',qty:2,price:12.50}],total:25.00,status:'pending',date:'May 20, 2025'},
+  {id:'ORD-0083',customer:'Dara Sok',phone:'+855 17 234 567',address:'Wat Phnom St, Phnom Penh',items:[{name:'Red Chili Flakes',qty:3,price:6.00},{name:'Turmeric Root (Fresh)',qty:1,price:4.20}],total:22.20,status:'processing',date:'May 19, 2025'},
+  {id:'ORD-0082',customer:'Channary Lim',phone:'+855 99 456 789',address:'Siem Reap Town Center',items:[{name:'Kampot Green Pepper (Brine)',qty:1,price:14.00}],total:14.00,status:'shipped',date:'May 18, 2025'},
+  {id:'ORD-0081',customer:'Pisach Morn',phone:'+855 78 123 456',address:'Kampot Town, Kampot',items:[{name:'Organic Kaffir Lime Leaves',qty:5,price:2.80}],total:14.00,status:'delivered',date:'May 17, 2025'},
+  {id:'ORD-0080',customer:'Bopha Keo',phone:'+855 11 987 654',address:'Battambang City Center',items:[{name:'Lemongrass Bundle',qty:2,price:3.50},{name:'Kampot Black Pepper',qty:1,price:12.50}],total:19.50,status:'delivered',date:'May 16, 2025'},
+  {id:'ORD-0079',customer:'Vuthy Chan',phone:'+855 85 654 321',address:'Kandal Province',items:[{name:'Dried Galangal Slices',qty:1,price:8.00}],total:8.00,status:'pending',date:'May 15, 2025'},
+  {id:'ORD-0078',customer:'Sreyleak Nhem',phone:'+855 96 111 222',address:'Takeo Province',items:[{name:'Herb Garden Bundle',qty:1,price:18.00}],total:18.00,status:'cancelled',date:'May 14, 2025'},
+  {id:'ORD-0077',customer:'Ratanak Heng',phone:'+855 12 333 444',address:'Phnom Penh',items:[{name:'Red Chili Flakes',qty:2,price:6.00}],total:12.00,status:'pending',date:'May 13, 2025'},
+  {id:'ORD-0076',customer:'Monita Say',phone:'+855 77 555 666',address:'Kampong Cham',items:[{name:'Turmeric Root (Fresh)',qty:3,price:4.20}],total:12.60,status:'shipped',date:'May 12, 2025'},
+  {id:'ORD-0075',customer:'Kimhak Pov',phone:'+855 16 777 888',address:'Sihanoukville',items:[{name:'Kampot Black Pepper',qty:1,price:12.50},{name:'Kampot Green Pepper (Brine)',qty:1,price:14.00}],total:26.50,status:'pending',date:'May 11, 2025'},
+];
+const TRANSACTIONS = [
+  {date:'May 20',desc:'Order #ORD-0084 — Sale',type:'income',amount:25.00,status:'pending'},
+  {date:'May 19',desc:'Order #ORD-0083 — Sale',type:'income',amount:22.20,status:'completed'},
+  {date:'May 17',desc:'Platform Commission (2%)',type:'expense',amount:-0.44,status:'deducted'},
+  {date:'May 16',desc:'Payout to ABA Bank',type:'withdrawal',amount:-1620.00,status:'completed'},
+  {date:'May 15',desc:'Order #ORD-0079 — Sale',type:'income',amount:8.00,status:'completed'},
+  {date:'May 14',desc:'Refund — Order #ORD-0078',type:'expense',amount:-18.00,status:'refunded'},
+  {date:'May 13',desc:'Order #ORD-0077 — Sale',type:'income',amount:12.00,status:'completed'},
+  {date:'May 10',desc:'Packaging Supplies',type:'expense',amount:-18.00,status:'deducted'},
+];
+const REVIEWS = [
+  {name:'Sothea Pich',rating:5,product:'Kampot Black Pepper',date:'May 20',comment:'Absolutely amazing pepper! Very fragrant, best I\'ve ever tried. Will order again!',replied:false},
+  {name:'Dara Sok',rating:5,product:'Red Chili Flakes',date:'May 18',comment:'Great quality and fast shipping. Perfectly spicy!',replied:true},
+  {name:'Channary Lim',rating:4,product:'Kampot Green Pepper',date:'May 15',comment:'Good product but packaging could be better. Otherwise excellent!',replied:false},
+  {name:'Pisach Morn',rating:5,product:'Kaffir Lime Leaves',date:'May 12',comment:'Super fresh and aromatic. My curry turned out perfect!',replied:true},
+  {name:'Bopha Keo',rating:3,product:'Lemongrass Bundle',date:'May 10',comment:'Decent quality but some stems were a bit dry.',replied:false},
+];
+const PROMOS = [
+  {code:'FARM20',type:'Discount',value:'20%',uses:42,revenue:840,validUntil:'May 31',status:'active'},
+  {code:'SUMMER10',type:'Discount',value:'10%',uses:18,revenue:210,validUntil:'Jun 30',status:'active'},
+  {code:'BUNDLE5',type:'Bundle',value:'$5 off',uses:8,revenue:120,validUntil:'May 25',status:'expired'},
+];
+
+// ═══════════════════════════
+// NAV
+// ═══════════════════════════
+const PAGE_META = {
+  dashboard: {title:'Dashboard', sub:'Welcome back, Vanna 👋'},
+  products:  {title:'Products', sub:'Manage your product listings'},
+  orders:    {title:'Orders', sub:'Track and fulfill customer orders'},
+  cashflow:  {title:'Cashflow', sub:'Monitor earnings & payouts'},
+  analytics: {title:'Analytics', sub:'Understand your store performance'},
+  promotions:{title:'Promotions', sub:'Discounts, flash sales, and deals'},
+  reviews:   {title:'Reviews', sub:'Customer feedback & ratings'},
+  settings:  {title:'Store Settings', sub:'Manage your store profile & account'},
+};
+function nav(page) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+  // find nav item by onclick
+  document.querySelectorAll('.nav-item').forEach(el => {
+    const oc = el.getAttribute('onclick');
+    if (oc && oc.includes(`'${page}'`)) el.classList.add('active');
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + page).classList.add('active');
+  const meta = PAGE_META[page] || {};
+  document.getElementById('page-title').textContent = meta.title || '';
+  document.getElementById('page-sub').textContent = meta.sub || '';
+  document.getElementById('notif-panel').classList.remove('open');
+}
+
+// ═══════════════════════════
+// SIDEBAR COLLAPSE
+// ═══════════════════════════
+let sidebarCollapsed = false;
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+  document.getElementById('collapse-icon').style.transform = sidebarCollapsed ? 'rotate(180deg)' : '';
+  document.getElementById('collapse-label').style.opacity = sidebarCollapsed ? '0' : '1';
+}
+
+// ═══════════════════════════
+// TOAST
+// ═══════════════════════════
+function showToast(msg, icon = '✓') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════
+function toggleNotif() {
+  document.getElementById('notif-panel').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notif-panel');
+  if (!panel.contains(e.target) && !e.target.closest('[onclick="toggleNotif()"]')) {
+    panel.classList.remove('open');
+  }
+});
+
+// ═══════════════════════════
+// STATUS BADGE
+// ═══════════════════════════
+function statusBadge(s) {
+  const map = {
+    pending:    ['badge-amber','⏳ Pending'],
+    processing: ['badge-blue','⚙️ Processing'],
+    shipped:    ['badge-blue','🚚 Shipped'],
+    delivered:  ['badge-green','✅ Delivered'],
+    cancelled:  ['badge-red','✖ Cancelled'],
+    active:     ['badge-green','● Active'],
+    draft:      ['badge-gray','● Draft'],
+    inactive:   ['badge-red','● Inactive'],
+    low:        ['badge-amber','⚠ Low Stock'],
+    income:     ['badge-green','Income'],
+    expense:    ['badge-red','Expense'],
+    withdrawal: ['badge-blue','Withdrawal'],
+    completed:  ['badge-green','Completed'],
+    deducted:   ['badge-gray','Deducted'],
+    pending2:   ['badge-amber','Pending'],
+    refunded:   ['badge-red','Refunded'],
+    expired:    ['badge-gray','Expired'],
+  };
+  const key = s === 'pending' && arguments[1] === 'txn' ? 'pending2' : s;
+  const [cls, lbl] = map[s] || ['badge-gray', s];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+// ═══════════════════════════
+// DASHBOARD: REVENUE CHART
+// ═══════════════════════════
+function buildRevenueChart() {
+  const data = [420, 380, 510, 490, 620, 580, 680];
+  const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max = Math.max(...data);
+  const c = document.getElementById('revenue-chart');
+  const l = document.getElementById('revenue-labels');
+  c.innerHTML = '';
+  l.innerHTML = '';
+  data.forEach((v, i) => {
+    const bar = document.createElement('div');
+    bar.style.cssText = `flex:1;border-radius:6px 6px 0 0;background:${i===6?'var(--green)':'var(--sage)'};height:${(v/max*100)}%;transition:all .3s;cursor:pointer;`;
+    bar.title = `${labels[i]}: $${v}`;
+    bar.onmouseenter = () => { bar.style.background = 'var(--green)'; bar.style.opacity = '.85'; };
+    bar.onmouseleave = () => { bar.style.background = i===6 ? 'var(--green)' : 'var(--sage)'; bar.style.opacity = '1'; };
+    c.appendChild(bar);
+    const lbl = document.createElement('div');
+    lbl.textContent = labels[i];
+    lbl.style.cssText = 'font-size:9px;font-weight:700;color:rgba(26,34,24,.3);text-align:center;flex:1;';
+    l.appendChild(lbl);
+  });
+}
+
+// ═══════════════════════════
+// DASHBOARD: ORDERS TABLE
+// ═══════════════════════════
+function buildDashboardOrders() {
+  const tbody = document.getElementById('dashboard-orders-body');
+  tbody.innerHTML = ORDERS.slice(0,5).map(o => `
+    <tr>
+      <td><span style="font-weight:800;font-size:12px;">${o.id}</span></td>
+      <td>${o.customer}</td>
+      <td style="font-size:12px;color:rgba(26,34,24,.6);">${o.items.map(i=>i.name).join(', ')}</td>
+      <td style="font-weight:800;">$${o.total.toFixed(2)}</td>
+      <td>${statusBadge(o.status)}</td>
+      <td style="font-size:11px;color:rgba(26,34,24,.4);">${o.date}</td>
+      <td><button class="btn btn-secondary btn-sm" onclick="openOrderModal('${o.id}')">View</button></td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════
+// DASHBOARD: TOP PRODUCTS
+// ═══════════════════════════
+function buildTopProducts() {
+  const sorted = [...PRODUCTS].sort((a,b) => b.sold-a.sold).slice(0,5);
+  const max = sorted[0].sold;
+  document.getElementById('top-products-list').innerHTML = sorted.map(p => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid rgba(214,232,208,.4);">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🌶️</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>
+        <div class="prog-bar" style="margin-top:4px;height:4px;"><div class="prog-fill" style="width:${(p.sold/max*100).toFixed(0)}%;"></div></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:12px;font-weight:800;">${p.sold}</div>
+        <div style="font-size:10px;color:rgba(26,34,24,.4);">sold</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════
+// DASHBOARD: STOCK LEVELS
+// ═══════════════════════════
+function buildStockLevels() {
+  const lowStock = PRODUCTS.filter(p => p.stock <= 10 && p.stock > 0);
+  const outStock = PRODUCTS.filter(p => p.stock === 0);
+  document.getElementById('stock-levels').innerHTML = `
+    ${outStock.map(p => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(214,232,208,.4);">
+        <div style="font-size:12px;font-weight:700;flex:1;">${p.name}</div>
+        <span class="badge badge-red">Out of Stock</span>
+      </div>
+    `).join('')}
+    ${lowStock.map(p => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(214,232,208,.4);">
+        <div style="font-size:12px;font-weight:700;flex:1;">${p.name}</div>
+        <span class="badge badge-amber">⚠ ${p.stock} left</span>
+      </div>
+    `).join('')}
+    <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;" onclick="nav('products')"><i class="fa-solid fa-boxes-stacked"></i> Manage Inventory</button>
+  `;
+}
+
+// ═══════════════════════════
+// PRODUCTS TABLE
+// ═══════════════════════════
+let filteredProducts = [...PRODUCTS];
+function buildProductsTable(data) {
+  const d = data || filteredProducts;
+  document.getElementById('products-table-body').innerHTML = d.map(p => `
+    <tr>
+      <td>
+        <div class="product-cell">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🌶️</div>
+          <div><div class="p-name">${p.name}</div><div class="p-sku">${p.sku}</div></div>
+        </div>
+      </td>
+      <td><span style="font-size:12px;color:rgba(26,34,24,.5);">${p.cat}</span></td>
+      <td><span style="font-weight:800;">$${p.price.toFixed(2)}</span></td>
+      <td>
+        <span style="font-weight:700;color:${p.stock===0?'var(--red)':p.stock<=10?'var(--amber)':'var(--charcoal)'};">
+          ${p.stock === 0 ? '— Out' : p.stock}
+        </span>
+      </td>
+      <td style="font-weight:700;color:var(--green);">${p.sold.toLocaleString()}</td>
+      <td>${statusBadge(p.stock===0?'inactive':p.stock<=10?'low':p.status)}</td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick="openProductModal('${p.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn btn-secondary btn-sm btn-icon" title="Duplicate" onclick="showToast('Product duplicated!')"><i class="fa-solid fa-copy"></i></button>
+          <button class="btn btn-danger btn-sm btn-icon" title="Delete" onclick="showToast('Product deleted!')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+function filterProducts(q) {
+  filteredProducts = PRODUCTS.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.sku.toLowerCase().includes(q.toLowerCase()));
+  buildProductsTable();
+}
+function filterByCategory(c) {
+  filteredProducts = c ? PRODUCTS.filter(p => p.cat === c) : [...PRODUCTS];
+  buildProductsTable();
+}
+function filterByStatus(s, el) {
+  document.querySelectorAll('#product-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  if (s === 'all') filteredProducts = [...PRODUCTS];
+  else if (s === 'low') filteredProducts = PRODUCTS.filter(p => p.stock <= 10 && p.stock > 0);
+  else if (s === 'active') filteredProducts = PRODUCTS.filter(p => p.status === 'active' && p.stock > 10);
+  else filteredProducts = PRODUCTS.filter(p => p.status === s);
+  buildProductsTable();
+}
+
+// ═══════════════════════════
+// ORDERS TABLE
+// ═══════════════════════════
+let filteredOrders = [...ORDERS];
+function buildOrdersTable(data) {
+  const d = data || filteredOrders;
+  document.getElementById('orders-table-body').innerHTML = d.map(o => `
+    <tr>
+      <td><span style="font-weight:800;font-size:12px;">${o.id}</span></td>
+      <td>
+        <div style="font-weight:700;">${o.customer}</div>
+        <div style="font-size:11px;color:rgba(26,34,24,.4);">${o.phone}</div>
+      </td>
+      <td style="font-size:12px;">${o.items.map(i=>`${i.name} ×${i.qty}`).join('<br>')}</td>
+      <td><span style="font-weight:900;font-size:14px;">$${o.total.toFixed(2)}</span></td>
+      <td>${statusBadge(o.status)}</td>
+      <td style="font-size:11px;color:rgba(26,34,24,.4);">${o.date}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openOrderModal('${o.id}')">Details</button></td>
+    </tr>
+  `).join('');
+}
+function filterOrders(q) {
+  filteredOrders = ORDERS.filter(o => o.customer.toLowerCase().includes(q.toLowerCase()) || o.id.toLowerCase().includes(q.toLowerCase()));
+  buildOrdersTable();
+}
+function filterOrderStatus(s, el) {
+  document.querySelectorAll('#order-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  filteredOrders = s === 'all' ? [...ORDERS] : ORDERS.filter(o => o.status === s);
+  buildOrdersTable();
+}
+
+// ═══════════════════════════
+// ORDER MODAL
+// ═══════════════════════════
+let currentOrderId = null;
+function openOrderModal(id) {
+  const o = ORDERS.find(x => x.id === id);
+  if (!o) return;
+  currentOrderId = id;
+  document.getElementById('order-modal-id').textContent = `Order ${o.id}`;
+  document.getElementById('order-modal-date').textContent = `Placed ${o.date}`;
+  document.getElementById('om-customer').textContent = o.customer;
+  document.getElementById('om-phone').textContent = o.phone;
+  document.getElementById('om-address').textContent = o.address;
+  document.getElementById('om-total').textContent = `$${o.total.toFixed(2)}`;
+  document.getElementById('om-items').innerHTML = o.items.map(i => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--sand);border-radius:10px;">
+      <div style="font-size:13px;font-weight:700;">${i.name}</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span style="font-size:12px;color:rgba(26,34,24,.4);">×${i.qty}</span>
+        <span style="font-weight:800;">$${(i.price*i.qty).toFixed(2)}</span>
+      </div>
+    </div>
+  `).join('');
+  const statusSteps = ['pending','processing','shipped','delivered'];
+  const curIdx = statusSteps.indexOf(o.status);
+  const tl = document.getElementById('om-timeline');
+  tl.innerHTML = statusSteps.map((s,i) => `
+    <div class="tl-item">
+      <div class="tl-dot ${i<curIdx?'done':i===curIdx&&o.status!=='cancelled'?'active':''}"></div>
+      <div class="tl-text" style="color:${i<=curIdx?'var(--charcoal)':'rgba(26,34,24,.3)'};">${s.charAt(0).toUpperCase()+s.slice(1)}</div>
+      <div class="tl-sub">${i<=curIdx?o.date:'—'}</div>
+    </div>
+  `).join('');
+  if (o.status === 'cancelled') {
+    tl.innerHTML += `<div class="tl-item"><div class="tl-dot" style="background:var(--red);border-color:var(--red);"></div><div class="tl-text" style="color:var(--red);">Cancelled</div><div class="tl-sub">${o.date}</div></div>`;
+  }
+  document.getElementById('order-modal').classList.add('open');
+}
+function updateOrderStatus(newStatus) {
+  const o = ORDERS.find(x => x.id === currentOrderId);
+  if (o) { o.status = newStatus; buildOrdersTable(); buildDashboardOrders(); }
+  document.getElementById('order-modal').classList.remove('open');
+  showToast(`Order ${currentOrderId} marked as ${newStatus}`);
+}
+
+// ═══════════════════════════
+// PRODUCT MODAL
+// ═══════════════════════════
+function openProductModal(id) {
+  document.getElementById('product-modal-title').textContent = id ? 'Edit Product' : 'Add New Product';
+  if (id) {
+    const p = PRODUCTS.find(x => x.id === id);
+    if (p) {
+      document.getElementById('pm-name').value = p.name;
+      document.getElementById('pm-cat').value = p.cat;
+      document.getElementById('pm-price').value = p.price;
+      document.getElementById('pm-stock').value = p.stock;
+      document.getElementById('pm-sku').value = p.sku;
+    }
+  } else {
+    ['pm-name','pm-price','pm-compare','pm-stock','pm-sku','pm-desc','pm-weight','pm-origin','pm-tags'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+  }
+  document.getElementById('product-modal').classList.add('open');
+}
+function closeProductModal() {
+  document.getElementById('product-modal').classList.remove('open');
+}
+function previewProductImages(inp) {
+  const preview = document.getElementById('pm-photo-preview');
+  preview.innerHTML = '';
+  preview.style.display = 'grid';
+  Array.from(inp.files).slice(0,4).forEach(file => {
+    const img = document.createElement('img');
+    img.className = 'img-prev';
+    img.src = URL.createObjectURL(file);
+    preview.appendChild(img);
+  });
+  document.getElementById('pm-photo-box').classList.add('uploaded');
+}
+function saveProduct() {
+  const name = document.getElementById('pm-name').value.trim();
+  if (!name) { showToast('Please enter a product name!'); return; }
+  closeProductModal();
+  showToast('Product saved successfully!');
+  buildProductsTable();
+}
+
+// ═══════════════════════════
+// CASHFLOW CHART
+// ═══════════════════════════
+function buildCFChart() {
+  const income  = [380, 520, 410, 640, 580, 720, 810, 490, 630, 700, 580, 820];
+  const expense = [40,  60,  35,  80,  45,  70,  90,  30,  55,  65,  40,  75];
+  const labels  = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+  const max = Math.max(...income);
+  const c = document.getElementById('cf-chart');
+  c.innerHTML = '';
+  income.forEach((v,i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'cf-bar-wrap';
+    wrap.innerHTML = `
+      <div class="cf-bar income" style="height:${(v/max*80).toFixed(0)}px;" title="Income $${v}"></div>
+      <div class="cf-bar expense" style="height:${(expense[i]/max*80).toFixed(0)}px;" title="Expense $${expense[i]}"></div>
+      <div class="cf-bar-label">${labels[i]}</div>
+    `;
+    c.appendChild(wrap);
+  });
+}
+
+// ═══════════════════════════
+// TRANSACTIONS
+// ═══════════════════════════
+function buildTransactions() {
+  document.getElementById('txn-body').innerHTML = TRANSACTIONS.map(t => `
+    <tr>
+      <td style="font-size:11px;color:rgba(26,34,24,.4);font-weight:600;">${t.date}</td>
+      <td style="font-weight:600;">${t.desc}</td>
+      <td>${statusBadge(t.type)}</td>
+      <td style="font-weight:800;color:${t.amount>0?'var(--green)':'var(--red)'};">${t.amount>0?'+':''}$${Math.abs(t.amount).toFixed(2)}</td>
+      <td>${statusBadge(t.status)}</td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════
+// ANALYTICS
+// ═══════════════════════════
+function buildAnalytics() {
+  // Category bars
+  const cats = [
+    {name:'Grains & Spices',pct:48},
+    {name:'Vegetables & Herbs',pct:32},
+    {name:'Processed Foods',pct:12},
+    {name:'Artisan Crafts',pct:8},
+  ];
+  document.getElementById('category-bars').innerHTML = cats.map(c => `
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:12px;font-weight:700;">${c.name}</span>
+        <span style="font-size:12px;font-weight:800;color:var(--green);">${c.pct}%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${c.pct}%;"></div></div>
+    </div>
+  `).join('');
+  // Geo bars
+  const geos = [
+    {name:'Phnom Penh',pct:52},
+    {name:'Siem Reap',pct:18},
+    {name:'Kampot',pct:14},
+    {name:'Battambang',pct:10},
+    {name:'Other',pct:6},
+  ];
+  document.getElementById('geo-bars').innerHTML = geos.map(g => `
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:12px;font-weight:700;">${g.name}</span>
+        <span style="font-size:12px;font-weight:800;">${g.pct}%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${g.pct}%;background:var(--sky);"></div></div>
+    </div>
+  `).join('');
+  // Traffic chart
+  const traffic = [840, 720, 980, 860, 1100, 1240, 950];
+  const tdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const tmax = Math.max(...traffic);
+  const tc = document.getElementById('traffic-chart');
+  const tl = document.getElementById('traffic-labels');
+  tc.innerHTML = '';
+  tl.innerHTML = '';
+  traffic.forEach((v,i) => {
+    const bar = document.createElement('div');
+    bar.style.cssText = `flex:1;border-radius:5px 5px 0 0;background:${i===4?'#7C3AED':'#EDE9FE'};height:${(v/tmax*100)}%;`;
+    tc.appendChild(bar);
+    const lbl = document.createElement('div');
+    lbl.textContent = tdays[i];
+    lbl.style.cssText = 'font-size:9px;font-weight:700;color:rgba(26,34,24,.3);text-align:center;flex:1;margin-top:4px;';
+    tl.appendChild(lbl);
+  });
+}
+
+// ═══════════════════════════
+// PROMOTIONS
+// ═══════════════════════════
+function buildPromos() {
+  document.getElementById('promo-list').innerHTML = PROMOS.filter(p => p.status === 'active').map(p => `
+    <div class="card" style="padding:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div style="width:50px;height:50px;border-radius:14px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏷️</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;font-weight:900;letter-spacing:.05em;">${p.code}</span>
+          ${statusBadge('active')}
+        </div>
+        <div style="font-size:12px;color:rgba(26,34,24,.5);margin-top:2px;">${p.type} • ${p.value} off • Valid until ${p.validUntil}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:18px;font-weight:900;color:var(--green);">${p.uses} uses</div>
+        <div style="font-size:11px;color:rgba(26,34,24,.4);">$${p.revenue} generated</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="showToast('Promotion ended!')"><i class="fa-solid fa-stop"></i> End</button>
+    </div>
+  `).join('');
+  document.getElementById('promo-table-body').innerHTML = PROMOS.map(p => `
+    <tr>
+      <td><span style="font-weight:800;letter-spacing:.05em;">${p.code}</span></td>
+      <td>${p.value}</td>
+      <td>${p.uses}</td>
+      <td style="font-weight:700;color:var(--green);">$${p.revenue}</td>
+      <td style="font-size:11px;color:rgba(26,34,24,.4);">${p.validUntil}</td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>
+  `).join('');
+}
+function openPromoModal() {
+  document.getElementById('promo-modal').classList.add('open');
+}
+function savePromo() {
+  const code = document.getElementById('promo-code').value.trim().toUpperCase();
+  if (!code) { showToast('Enter a promotion code!'); return; }
+  PROMOS.unshift({code, type:'Discount', value: document.getElementById('promo-value').value+'%', uses:0, revenue:0, validUntil: document.getElementById('promo-end').value || 'TBD', status:'active'});
+  buildPromos();
+  document.getElementById('promo-modal').classList.remove('open');
+  showToast(`Promotion ${code} created!`);
+}
+
+// ═══════════════════════════
+// REVIEWS
+// ═══════════════════════════
+function buildReviews() {
+  // Rating bars
+  const counts = [0,0,1,1,140];
+  document.getElementById('rating-bars').innerHTML = [5,4,3,2,1].map(n => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="font-size:11px;font-weight:700;width:10px;">${n}</span>
+      <i class="fa-solid fa-star" style="color:#f59e0b;font-size:10px;"></i>
+      <div class="prog-bar" style="flex:1;"><div class="prog-fill" style="width:${(counts[n-1]/142*100).toFixed(0)}%;"></div></div>
+      <span style="font-size:11px;color:rgba(26,34,24,.4);width:20px;">${counts[n-1]}</span>
+    </div>
+  `).join('');
+  // Review cards
+  document.getElementById('reviews-list').innerHTML = REVIEWS.map(r => `
+    <div class="card" style="padding:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:var(--sand);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--charcoal);">${r.name[0]}</div>
+          <div>
+            <div style="font-weight:800;font-size:13px;">${r.name}</div>
+            <div style="font-size:10px;color:rgba(26,34,24,.4);">On: ${r.product}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div>${'★'.repeat(r.rating)}<span style="color:var(--sage);">${'★'.repeat(5-r.rating)}</span></div>
+          <div style="font-size:10px;color:rgba(26,34,24,.4);">${r.date}</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:rgba(26,34,24,.7);line-height:1.6;margin-bottom:10px;">"${r.comment}"</p>
+      ${r.replied
+        ? `<div style="background:var(--green-pale);border-radius:10px;padding:9px 12px;font-size:12px;border-left:3px solid var(--green);"><span style="font-weight:700;color:var(--green-dark);">Your reply:</span> Thank you for your feedback! We're glad you enjoyed our products.</div>`
+        : `<button class="btn btn-secondary btn-sm" onclick="showToast('Reply sent!');this.parentElement.innerHTML+='<div style=\\"background:var(--green-pale);border-radius:10px;padding:9px 12px;font-size:12px;border-left:3px solid var(--green);margin-top:8px;\\"><span style=\\"font-weight:700;color:var(--green-dark)\\">Your reply:</span> Thank you for your feedback!</div>';this.remove();">
+            <i class="fa-solid fa-reply"></i> Reply
+          </button>`
+      }
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════
+// CHIP HELPER
+// ═══════════════════════════
+function setChip(el) {
+  el.closest('.card, .view').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ═══════════════════════════
+// PROMO MODAL TYPE CHANGE
+// ═══════════════════════════
+function updatePromoType() {}
+
+// ═══════════════════════════
+// INIT
+// ═══════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildRevenueChart();
+  buildDashboardOrders();
+  buildTopProducts();
+  buildStockLevels();
+  buildProductsTable();
+  buildOrdersTable();
+  buildCFChart();
+  buildTransactions();
+  buildAnalytics();
+  buildPromos();
+  buildReviews();
+});
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
